@@ -14,8 +14,8 @@ class UserController extends Controller
      */
     public function index()
     {
-        $user = User::all();
-     
+        $user = User::with('roles')->get();
+
         return response()->json(['data'=> $user],200);
     }
 
@@ -56,7 +56,50 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,'.$id,
+            'phone' => 'required|string|max:20|unique:users,email,'.$id,
+            'role_id' => 'nullable|exists:roles,id', // Assuming roles are stored in the 'roles' table
+            'is_active' => 'required|boolean',
+        ]);
+
+        //if the request have some validation errors
+        if ($validator->fails()) {
+
+            return response()->json([
+                'success' => false,
+                'message' => $validator->messages()
+            ], 403);
+        }
+
+        $user = User::find($id);
+
+        if(!empty($user)) {
+
+            $result = $user->update($request->all());
+
+            if ($result) {
+
+                return response()->json([
+                                      'success' => true,
+                                      'message' => 'User Updated successfully'
+                                        ], 201);
+            }else{
+
+                return response()->json([
+                                        'success' => false,
+                                        'message' => 'Something went wrong'
+                                        ], 500);
+            }
+
+        }else{
+
+            return response()->json([
+                                    'success' => false,
+                                    'message' => 'User not found'
+                                    ], 404);
+        }
     }
 
     /**

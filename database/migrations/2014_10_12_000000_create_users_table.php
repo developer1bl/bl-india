@@ -20,7 +20,8 @@ return new class extends Migration
             $table->boolean('is_email_verified')->default(false);
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->foreignIdFor(Role::class)->nullable();
+            $table->boolean('is_approved')->default(false);
+            $table->foreignIdFor(Role::class)->default(3);
             $table->foreignId('current_team_id')->nullable();
             $table->string('profile_photo_path', 2048)->nullable();
             $table->boolean('is_online')->default(false)->comment('this column help to check is user online or offline');

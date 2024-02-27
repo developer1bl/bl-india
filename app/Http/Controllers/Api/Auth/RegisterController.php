@@ -13,10 +13,11 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Carbon;
+use App\Models\Role;
 
 class RegisterController extends Controller
 {
-    /**
+    /** 
      * registerUser() this function is used to register new user
      * 
      * @param Request $request
@@ -49,6 +50,9 @@ class RegisterController extends Controller
             'phone' => $request->phone,
             'role_id' => $request->role_id
         ]);
+
+        // Attach the role to the user
+        $user->roles()->attach($request->role_id);
 
         if (!empty($user)) {
 

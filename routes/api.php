@@ -41,8 +41,6 @@ Route::prefix('v1')->group(function () {
     // public routes (register routes)
     Route::controller(RegisterController::class)->group(function () {
 
-        //for user routes
-        Route::post('/addUser', 'registerUser');
         //for client routes
         Route::post('/Register', 'registerClient');
     });
@@ -66,6 +64,20 @@ Route::prefix('v1')->group(function () {
 
     //protected routes 
     Route::middleware('auth:sanctum')->group(function () {
+
+        //for user routes
+        Route::post('/addUser', [RegisterController::class, 'registerUser'])->middleware(['checkRoleAndPermission:admin,create_user']);
+
+        //user Routs
+        Route::prefix('/User')->group(function(){
+
+            Route::controller(UserController::class)->group(function(){
+
+                Route::get('/', 'index');
+                Route::post('/{user}', 'update')->middleware(['checkRoleAndPermission:admin,edit_user']);
+                Route::delete('/{user}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_user']);
+            });
+        });
 
         //logout user routes
         Route::Post('/logout', [LoginController::class, 'logout']);
@@ -94,18 +106,6 @@ Route::prefix('v1')->group(function () {
                     Route::post('/create', 'create');
                     Route::post('/{permission}', 'update');
                     Route::delete('/{permission}', 'destroy');
-                });
-            });
-
-            //user Routs
-            Route::prefix('/User')->group(function(){
-
-                Route::controller(UserController::class)->group(function(){
-
-                    Route::get('/', 'index');
-                    Route::post('/create', 'create');
-                    Route::post('/{user}', 'update');
-                    Route::delete('/{user}', 'destroy');
                 });
             });
             

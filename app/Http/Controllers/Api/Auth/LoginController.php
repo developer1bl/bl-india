@@ -64,6 +64,7 @@ class LoginController extends Controller
             ]);
 
             //remove all previous tokens
+            $user->tokens()->delete();
 
             return response()->json([
                 'success' => true,
@@ -145,6 +146,9 @@ class LoginController extends Controller
                         'login_at' => now(),
                         'is_online' => true
                     ]);
+
+                    //remove all previous tokens
+                    $client->tokens()->delete();
 
                     return response()->json([
                         'success' => true,

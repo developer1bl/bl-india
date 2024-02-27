@@ -76,6 +76,9 @@ class OtpController extends Controller
                             'login_at' => now()
                         ]);
 
+                        //remove all previous tokens
+                        $client->tokens()->delete();
+
                         return response()->json([
                             'success' => true,
                             'message' => 'client login successful',
