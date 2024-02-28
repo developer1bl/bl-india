@@ -44,15 +44,66 @@ class UserController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * update the specified resource
+     *  
+     * @param integer $id
+     * @param Request $request
+     * @return Response
      */
-    public function edit(string $id)
+    public function updateUserSelf(Request $request, string $id)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,'.$id,
+            'phone' => 'required|string|max:20|unique:users,email,'.$id,
+        ]);
+
+        //if the request have some validation errors
+        if ($validator->fails()) {
+
+            return response()->json([
+                'success' => false,
+                'message' => $validator->messages()
+            ], 403);
+        }
+
+        $user = User::find($id);
+    
+        if (!empty($user)) {
+           
+            $result = $user->update($request->all());
+
+             if ($result) {
+                
+                return response()->json([
+                                        'success' => true,
+                                        'message' => 'User updated successfully'
+                                        ], 202);
+
+             } else {
+                
+                return response()->json([
+                                        'success' => false,
+                                         'message' => 'something went wrong'
+                                        ], 403);
+             }
+        
+        } else {
+
+            return response()->json([
+                                    'success' => false,
+                                    'message' => 'User not found'
+                                    ], 404);
+        }
+        
     }
 
     /**
      * Update the specified resource in storage.
+     * 
+     * @param integer $id
+     * @param Request $request
+     * @return Response
      */
     public function update(Request $request, string $id)
     {
@@ -68,9 +119,9 @@ class UserController extends Controller
         if ($validator->fails()) {
 
             return response()->json([
-                'success' => false,
-                'message' => $validator->messages()
-            ], 403);
+                                    'success' => false,
+                                    'message' => $validator->messages()
+                                    ], 403);
         }
 
         $user = User::find($id);
@@ -82,8 +133,8 @@ class UserController extends Controller
             if ($result) {
 
                 return response()->json([
-                                      'success' => true,
-                                      'message' => 'User Updated successfully'
+                                        'success' => true,
+                                        'message' => 'User Updated successfully'
                                         ], 201);
             }else{
 
@@ -104,9 +155,40 @@ class UserController extends Controller
 
     /**
      * Remove the specified resource from storage.
+     * 
+     *  @param int $id
+     *  @return response
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        //
+        $user = User::find($id);
+
+        if(!empty($user)) {
+
+            $user->tokens()->delete();
+
+            $result = $user->delete();
+
+            if ($result) {
+
+                return response()->json([
+                                        'success' => true,
+                                        'message' => 'User Deleted successfully'
+                                        ], 202);
+            }else{
+
+                return response()->json([
+                                       'success' => false,
+                                       'message' => 'Something went wrong'
+                                        ], 500);
+            }
+
+        }else{
+
+            return response()->json([
+                                   'success' => false,
+                                   'message' => 'User not found'
+                                    ], 404);
+        }
     }
 }

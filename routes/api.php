@@ -73,8 +73,9 @@ Route::prefix('v1')->group(function () {
 
             Route::controller(UserController::class)->group(function(){
 
-                Route::get('/', 'index');
+                Route::get('/', 'index')->middleware(['checkRoleAndPermission:admin,view_user']);
                 Route::post('/{user}', 'update')->middleware(['checkRoleAndPermission:admin,edit_user']);
+                Route::post('/self/{user}', 'updateUserSelf');
                 Route::delete('/{user}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_user']);
             });
         });
@@ -90,10 +91,10 @@ Route::prefix('v1')->group(function () {
 
                 Route::controller(RoleController::class)->group(function () {
 
-                    Route::get('/', 'index');
-                    Route::post('/create', 'create');
-                    Route::post('/{role}', 'update');
-                    Route::delete('/{role}', 'destroy');
+                    Route::get('/', 'index')->middleware(['checkRoleAndPermission:admin,view_role']);
+                    Route::post('/create', 'create')->middleware(['checkRoleAndPermission:admin,create_role']);
+                    Route::post('/{role}', 'update')->middleware(['checkRoleAndPermission:admin,edit_role']);
+                    Route::delete('/{role}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_role']);
                 });
             });
 
@@ -102,10 +103,10 @@ Route::prefix('v1')->group(function () {
 
                 Route::controller(permissionController::class)->group(function () {
 
-                    Route::get('/', 'index');
-                    Route::post('/create', 'create');
-                    Route::post('/{permission}', 'update');
-                    Route::delete('/{permission}', 'destroy');
+                    Route::get('/', 'index')->middleware(['checkRoleAndPermission:admin,view_permission']);
+                    Route::post('/create', 'create')->middleware(['checkRoleAndPermission:admin,create_permission']);
+                    Route::post('/{permission}', 'update')->middleware(['checkRoleAndPermission:admin,edit_permission']);
+                    Route::delete('/{permission}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_permission']);
                 });
             });
             
@@ -116,7 +117,10 @@ Route::prefix('v1')->group(function () {
 
             Route::controller(ClientController::class)->group(function () {
 
+                Route::get('/clientlist', 'index')->middleware(['checkRoleAndPermission:admin,view_client']);
                 Route::get('/client', 'index');
+                Route::post('/client/{client}', 'update');
+                Route::delete('/client/{client}', 'destroy');
             });
         });
     });

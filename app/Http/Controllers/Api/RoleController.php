@@ -150,7 +150,7 @@ class RoleController extends Controller
             return response()->json([
                                     'success' => true,
                                     'message' => 'Role deleted successfully'
-                                    ], 200);
+                                    ], 202);
 
         } else {
            

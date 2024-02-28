@@ -39,19 +39,21 @@ class PermissionAndRoleSeed extends Seeder
          $editContentPermission = Permission::create(['name' => 'edit_content', 'permissions_description' => 'this permission is for edit content permission']);
          $deleteContentPermission = Permission::create(['name' => 'delete_content', 'permissions_description' => 'this permission is for delete content permission']);
          $approveContentPermission = Permission::create(['name' => 'approve_content', 'permissions_description' => 'this permission is for approve content permission']);
+         $viewClientPermission = Permission::create(['name' => 'view_client', 'permissions_description' => 'this permission is for view client permission']);
 
-         // Assign permissions to roles
+        // Assign permissions to roles
         $adminRole->permissions()->sync([$creaUserPermission->id, $editUserPermission->id, $deleteUserPermission->id,
                                         $viewUserPermission->id, $approveUserPermission->id, $createRolePermission->id, 
                                         $editRolePermission->id, $deleteRolePermission->id, $viewRolePermission->id, 
                                         $viewPermissionsPermission->id, $createPermissionsPermission->id, $editPermissionsPermission->id,
                                         $deletePermissionPermission->id, $viewContentPermission->id, $createContentPermission->id,
-                                        $editContentPermission->id, $deleteContentPermission->id, $approveContentPermission->id ]);
+                                        $editContentPermission->id, $deleteContentPermission->id, $approveContentPermission->id,
+                                        $viewClientPermission->id ]);
 
          $moderatorRole->permissions()->sync([$viewUserPermission->id, $approveUserPermission->id, $approveContentPermission->id,
-                                              $assignUserPermission->id ]);
+                                              $assignUserPermission->id, $viewClientPermission->id ]);
 
-         $contributorRole->permissions()->sync([$viewContentPermission->id, $createContentPermission->id,$editContentPermission->id ]);
+         $contributorRole->permissions()->sync([$viewContentPermission->id, $createContentPermission->id, $editContentPermission->id ]);
 
     }
 }
