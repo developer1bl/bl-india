@@ -111,7 +111,7 @@ class ProductCatrgoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $validator = Validator::make([
+        $validator = Validator::make($request->all(),[
             'product_category_name' => ['required', 'string', 'max:150', Rule::unique('product_categories', 'product_category_name')->ignore($id, 'product_category_id')],
             'product_category_slug' => ['required', 'string', 'max:255', Rule::unique('product_categories', 'product_category_slug')->ignore($id, 'product_category_id')],
             'product_category_content' => ['nullable', 'string'],
@@ -155,6 +155,22 @@ class ProductCatrgoryController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $productCategory = ProductCategories::find($id);
+
+        if ($productCategory) {
+
+            $productCategory->delete();
+
+            return response()->json([
+                                   'success' => true,
+                                   'message' => 'Product Category deleted successfully'
+                                    ], 202);
+        }else{
+
+            return response()->json([
+                                   'success' => false,
+                                   'message' => 'Something went wrong'
+                                    ], 500);
+        }
     }
 }
