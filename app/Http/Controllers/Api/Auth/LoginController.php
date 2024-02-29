@@ -25,7 +25,7 @@ class LoginController extends Controller
      * @return Response
      */
     public function loginUser(Request $request)
-    { 
+    {
         //set validation 
         $validator = Validator::make($request->all(), [
             'email' => 'required',

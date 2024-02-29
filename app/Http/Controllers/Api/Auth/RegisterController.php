@@ -46,7 +46,7 @@ class RegisterController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make(12345678), // set 123456 as a default password for every user
+            'password' => 12345678, // set 123456 as a default password for every user
             'phone' => $request->phone,
             'role_id' => $request->role_id
         ]);
@@ -99,7 +99,7 @@ class RegisterController extends Controller
         $client = Client::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'password' => $request->password,
             'phone' => $request->phone,
         ]);
 

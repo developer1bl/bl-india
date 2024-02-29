@@ -9,6 +9,9 @@ use App\Http\Controllers\Api\ClientController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\permissionController;
+use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\ProductCatrgoryController;
+use App\Http\Controllers\Api\ServiceController;
 use Illuminate\Http\Request;
 
 /*
@@ -109,7 +112,44 @@ Route::prefix('v1')->group(function () {
                     Route::delete('/{permission}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_permission']);
                 });
             });
-            
+
+            //services routes
+            Route::prefix('/Services')->group(function () {
+
+                Route::controller(ServiceController::class)->group(function () {
+
+                    Route::get('/', 'index')->middleware(['checkRoleAndPermission:admin,view_service']);
+                    Route::post('/create', 'create')->middleware(['checkRoleAndPermission:admin,create_service']);
+                    Route::post('/{service}', 'update')->middleware(['checkRoleAndPermission:admin,edit_service']);
+                    Route::delete('/{service}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_service']);
+                });
+            });
+
+            //product routes
+            Route::prefix('/product')->group(function () {
+
+                Route::controller(ProductController::class)->group(function () {
+
+                    Route::get('/', 'index');
+                    Route::post('/create', 'create');
+                    Route::post('/{product}', 'update');
+                    Route::delete('/{product}', 'destroy');
+                });
+            });
+
+            //product_categories routes
+            Route::prefix('/productcategories')->group(function () {
+
+                Route::controller(ProductCatrgoryController::class)->group(function () {
+
+                    Route::get('/', 'index');
+                    Route::get('/{productcategories}', 'show');
+                    Route::post('/create', 'create');
+                    Route::post('/{productcategories}', 'update');
+                    Route::delete('/{productcategories}', 'destroy');
+                });
+            });
+
         });
 
         //Client accessble routes

@@ -26,7 +26,7 @@ class UserFactory extends Factory
             'email' => 'Admin@blindia.com',  //$this->faker->unique()->safeEmail(),
             'phone' => 987654321,
             'email_verified_at' => now(),
-            'password' => Hash::make(12345678),//'$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
+            'password' => 12345678,//'$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
             'two_factor_secret' => null,
             'two_factor_recovery_codes' => null,
             'remember_token' => Str::random(10),
