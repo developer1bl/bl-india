@@ -72,7 +72,24 @@ class permissionController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $permission = Permission::find($id);
+
+        if ($permission) {
+            
+            return response()->json([
+                                    'data' => $permission,
+                                     'success' => true,
+                                     'message' => 'Permission retrieved successfully'
+                                     ], 200);
+        } else {
+            
+            return response()->json([
+                                    'data' => [],
+                                    'success' => false,
+                                    'message' => 'Permission not found'
+                                     ], 404);
+        }
+        
     }
 
     /**

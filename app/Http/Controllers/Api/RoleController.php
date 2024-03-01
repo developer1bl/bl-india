@@ -18,7 +18,7 @@ class RoleController extends Controller
         $roles = Role::all();
 
         return response()->json([
-                                'roles' => $roles ?? [],
+                                'data' => $roles ?? [],
                                 'success' => true
                                 ], 200);
     }
@@ -73,7 +73,23 @@ class RoleController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $role = Role::find($id);
+
+        if ($role) {
+
+            return response()->json([
+                                    'data' => $role,
+                                    'success' => true,
+                                    'message' => ''
+                                    ], 200);
+        } else {
+            
+            return response()->json([
+                                    'data' => [],
+                                    'success' => false,
+                                    'message' => 'Role not found'
+                                    ], 404);
+        }
     }
 
     /**

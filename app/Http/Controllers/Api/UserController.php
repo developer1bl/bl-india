@@ -11,6 +11,8 @@ class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
+     * 
+     * @return Response
      */
     public function index()
     {
@@ -37,10 +39,29 @@ class UserController extends Controller
 
     /**
      * Display the specified resource.
+     * 
+     *  @param integer $id
+     *  @return Response
      */
     public function show(string $id)
     {
-        //
+        $user = User::with('roles')->find($id);
+
+        if ($user) {
+            
+            return response()->json([
+                                    'data'=> $user,
+                                    'sucess' => true,
+                                    'message' => ''
+                                    ],200);
+        } else {
+            
+            return response()->json([
+                                    'data'=> [],
+                                    'sucess' => false,
+                                    'message' => 'User not found'
+                                    ],404);
+        }
     }
 
     /**

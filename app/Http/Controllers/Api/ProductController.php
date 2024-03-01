@@ -16,7 +16,7 @@ class ProductController extends Controller
         $product = Product::All();
 
         return response()->json([
-                                'data'=> $product,
+                                'data'=> $product ?? [],
                                 'success' => true
                                 ],200);
     }
@@ -26,7 +26,7 @@ class ProductController extends Controller
      */
     public function create()
     {
-        //
+        
     }
 
     /**
@@ -42,7 +42,23 @@ class ProductController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $product = Product::find($id);
+
+        if ($product) {
+
+            return response()->json([
+                                    'data' => $product,
+                                    'success' => true,
+                                    'message' =>''
+                                    ],200);
+        } else {
+
+            return response()->json([
+                                    'data' => [],
+                                    'success' => false,
+                                    'message' => 'Product not found',
+                                    ],404);
+        }
     }
 
     /**
@@ -66,6 +82,32 @@ class ProductController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $product = Product::find($id);
+
+        if ($product) {
+            
+            $result = $product->delete();
+
+            if ($result) {
+
+                return response()->json([
+                                        'success' => true,
+                                        'message' => 'Product deleted successfully'
+                                        ],202);
+            } else {
+                
+                return response()->json([
+                                       'success' => false,
+                                       'message' => 'Something went wrong',
+                                        ],500);
+            }
+            
+        } else {
+            
+            return response()->json([
+                                  'success' => false,
+                                  'message' => 'Product not found',
+                                    ],404);
+        }
     }
 }

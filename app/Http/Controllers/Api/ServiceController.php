@@ -94,7 +94,23 @@ class ServiceController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $service = Service::find($id);
+        
+        if ($service) {
+            
+            return response()->json([
+                                    'data' => $service,
+                                    'success' => true,
+                                    'message' => ''
+                                    ], 200);
+        } else {
+            
+            return response()->json([
+                                    'data' => [],
+                                    'success' => false,
+                                    'message' => 'Service not found'
+                                    ], 404);
+        }
     }
 
     /**

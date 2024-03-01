@@ -32,5 +32,4 @@ class Product extends Model
         'product_status',
         'product_order',
     ];
-
 }

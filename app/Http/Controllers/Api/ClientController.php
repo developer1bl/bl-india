@@ -18,9 +18,12 @@ class ClientController extends Controller
      */
     public function index(Request $request)
     {
-        $client = Client::where('id', auth()->user()->id)->first();
+        $client = Client::all();
 
-        return response()->json(['data'=> $client],200);
+        return response()->json([
+                                'data' => $client?? [],
+                                'success' => true
+                                ], 200);
     }
 
     /**
@@ -44,7 +47,23 @@ class ClientController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $client = Client::where('id', auth()->user()->id)->first();
+
+        if ($client) {
+
+            return response()->json([
+                                    'data' => $client,
+                                    'sucess' => true,
+                                    'message' => '',
+                                    ],200);
+        } else {
+            
+            return response()->json([
+                                    'data' => [],
+                                    'sucess' => false,
+                                    'message' => 'Client not found',
+                                    ],404);
+        }
     }
 
     /**
