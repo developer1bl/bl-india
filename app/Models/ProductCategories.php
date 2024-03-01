@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Product;
 
 class ProductCategories extends Model
 {
@@ -29,4 +30,9 @@ class ProductCategories extends Model
         'product_category_status' => 'boolean',
         'product_category_order' => 'integer',
     ];
+
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
 }

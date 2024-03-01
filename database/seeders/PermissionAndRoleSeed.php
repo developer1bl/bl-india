@@ -45,7 +45,14 @@ class PermissionAndRoleSeed extends Seeder
         $editServicePermission = Permission::create(['name' => 'edit_service', 'permissions_description' => 'this permission is for edit Service permission']);
         $deleteServicePermission = Permission::create(['name' => 'delete_service', 'permissions_description' => 'this permission is for delete Service permission']);
         $restoreDataPermission = Permission::create(['name' => 'restore_data', 'permissions_description' => 'this permission is for restore data permission']);
-
+        $viewProductPermission = Permission::create(['name' => 'view_product', 'permissions_description' => 'this permission is for view Product permission']);
+        $createProductPermission = Permission::create(['name' => 'create_product', 'permissions_description' => 'this permission is for create Product permission']);
+        $editProductPermission = Permission::create(['name' => 'edit_product', 'permissions_description' => 'this permission is for edit Product permission']);
+        $deleteProductPermission = Permission::create(['name' => 'delete_product', 'permissions_description' => 'this permission is for delete Product permission']);
+        $viewProductCategoryPermission = Permission::create(['name' => 'view_productCategory', 'permissions_description' => 'this permission is for view Product Category permission']);
+        $createProductCategoryPermission = Permission::create(['name' => 'create_productCategory', 'permissions_description' => 'this permission is for create Product Category permission']);
+        $editProductCategoryPermission = Permission::create(['name' => 'edit_ProductCategory', 'permissions_description' => 'this permission is for edit Product Category permission']);
+        $deleteProductCategoryPermission = Permission::create(['name' => 'delete_productCategory', 'permissions_description' => 'this permission is for delete ProductCategory permission']);
         // Assign permissions to roles
         $adminRole->permissions()->sync([$creaUserPermission->id, $editUserPermission->id, $deleteUserPermission->id,
                                         $viewUserPermission->id, $approveUserPermission->id, $createRolePermission->id, 
@@ -54,7 +61,10 @@ class PermissionAndRoleSeed extends Seeder
                                         $deletePermissionPermission->id, $viewContentPermission->id, $createContentPermission->id,
                                         $editContentPermission->id, $deleteContentPermission->id, $approveContentPermission->id,
                                         $viewClientPermission->id, $viewServicePermission->id, $createServicePermission->id,
-                                        $editServicePermission->id, $deleteServicePermission->id, $restoreDataPermission->id ]);
+                                        $editServicePermission->id, $deleteServicePermission->id, $restoreDataPermission->id,
+                                        $viewProductPermission->id, $createProductPermission->id, $editProductPermission->id,
+                                        $deleteProductPermission->id, $viewProductCategoryPermission->id, $createProductCategoryPermission->id,
+                                        $editProductCategoryPermission->id, $deleteProductCategoryPermission->id ]);
 
         $moderatorRole->permissions()->sync([$viewUserPermission->id, $approveUserPermission->id, $approveContentPermission->id,
                                             $assignUserPermission->id, $viewClientPermission->id ]);

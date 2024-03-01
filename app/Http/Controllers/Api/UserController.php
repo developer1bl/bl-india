@@ -31,10 +31,29 @@ class UserController extends Controller
 
     /**
      * Store a newly created resource in storage.
+     * 
+     * @param string $request
+     * @return Response
      */
-    public function store(Request $request)
+    public function restore(string $request)
     {
-        //
+        $user = User::withTrashed(true)->whereName($request)->first();
+
+        if ($user) {
+            
+            $user->restore();
+
+            return response()->json([
+                                    'success' => true,
+                                    'message' => 'user restored successfully'
+                                    ],200);
+        }else{
+
+            return response()->json([
+                                   'success' => false,
+                                   'message' => 'user not found'
+                                    ],404);
+        }
     }
 
     /**
