@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\ProductCategories;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use App\Exceptions\UserExistPreviouslyException;
 
 class ProductCatrgoryController extends Controller
 {
@@ -48,29 +49,55 @@ class ProductCatrgoryController extends Controller
                                     ], 403);
         }
 
-        $product_category = ProductCategories::create($request->all());
+        try {
 
-        if ($product_category) {
+            $product_category = ProductCategories::create($request->all());
 
-            return response()->json([
-                                    'success' => true,
-                                    'message' => 'Product Category created successfully'
-                                    ], 201);
-        } else {
-           
-            return response()->json([
-                                   'success' => false,
-                                   'message' => 'Something went wrong'
-                                    ], 500);
+            if ($product_category) {
+
+                return response()->json([
+                                        'success' => true,
+                                        'message' => 'Product Category created successfully'
+                                        ], 201);
+            } else {
+            
+                return response()->json([
+                                    'success' => false,
+                                    'message' => 'Something went wrong'
+                                        ], 500);
+            }
+            
+        } catch (\Throwable $th) {
+            
+            throw new UserExistPreviouslyException('this Product category was deleted previously, did you want to restore it?');
         }
     }
 
     /**
      * Store a newly created resource in storage.
+     * 
+     *  @param string $request
+     *  @return Response
      */
-    public function store(Request $request)
+    public function restore(string $request)
     {
-        //
+        $service = ProductCategories::withTrashed(true)->whereProduct_category_name($request)->first();
+        
+        if ($service) {
+            
+            $service->restore();
+
+            return response()->json([
+                                    'success' => true,
+                                    'message' => 'Product category restored successfully'
+                                    ], 200);
+        } else {
+            
+            return response()->json([
+                                    'success' => false,
+                                    'message' => 'Product category not found'
+                                    ], 404);
+        }
     }
 
     /**

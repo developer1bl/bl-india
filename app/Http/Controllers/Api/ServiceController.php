@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Service;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use App\Exceptions\UserExistPreviouslyException;
 
 class ServiceController extends Controller
 {
@@ -63,30 +64,56 @@ class ServiceController extends Controller
             'service_order' => $request->service_order,
             'service_status' => $request->service_status,
         ];
-    
-        $result = Service::create($data);
 
-        if ($result) {
+        try {
 
-            return response()->json([
-                                    'success' => true,
-                                    'message' => 'Service created successfully'
-                                    ], 201);
-        } else {
+            $result = Service::create($data);
+
+            if ($result) {
+
+                return response()->json([
+                                        'success' => true,
+                                        'message' => 'Service created successfully'
+                                        ], 201);
+            } else {
+                
+                return response()->json([
+                                        'success' => false,
+                                        'message' => 'Something went wrong, please try again later'
+                                        ], 422);
+            }
             
-            return response()->json([
-                                    'success' => false,
-                                    'message' => 'Something went wrong'
-                                    ], 500);
+        } catch (\Exception $th) {
+            
+            throw new UserExistPreviouslyException('this service was deleted previously, did you want to restore it?');
         }
     }
 
     /**
      * Store a newly created resource in storage.
+     * 
+     * @param string $request
+     * @return response
      */
-    public function store(Request $request)
+    public function restore(string $request)
     {
+        $service = Service::withTrashed(true)->whereService_name($request)->first();
         
+        if ($service) {
+            
+            $service->restore();
+
+            return response()->json([
+                                    'success' => true,
+                                    'message' => 'Service restored successfully'
+                                    ], 200);
+        } else {
+            
+            return response()->json([
+                                    'success' => false,
+                                    'message' => 'Service not found'
+                                    ], 404);
+        }   
     }
 
     /**
@@ -118,13 +145,15 @@ class ServiceController extends Controller
      */
     public function edit(string $id)
     {
-        //
     }
 
     /**
      * Update the specified resource in storage.
+     * 
+     * @param $id, Request $request
+     * @return Response
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request,  $id)
     {
         $validator = Validator::make($request->all(),[
             'service_name' => ['required', 'string', 'max:150', Rule::unique('services', 'service_name')->ignore($id, 'service_id')],
@@ -178,8 +207,8 @@ class ServiceController extends Controller
                 
                 return response()->json([
                                        'success' => false,
-                                       'message' => 'Something went wrong'
-                                        ], 500);
+                                       'message' => 'Something went wrong, please try again later'
+                                        ], 422);
             }
 
         }else{

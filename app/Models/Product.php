@@ -32,4 +32,9 @@ class Product extends Model
         'product_status',
         'product_order',
     ];
+
+    protected $casts = [
+        'product_status' => 'boolean',
+        'product_order' => 'integer',
+    ];
 }

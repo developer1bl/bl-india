@@ -123,6 +123,7 @@ Route::prefix('v1')->group(function () {
 
                     Route::get('/', 'index')->middleware(['checkRoleAndPermission:admin,view_service']);
                     Route::get('/{services}', 'show')->middleware(['checkRoleAndPermission:admin,view_service']);
+                    Route::get('/{services}/restore', 'restore');
                     Route::post('/create', 'create')->middleware(['checkRoleAndPermission:admin,create_service']);
                     Route::post('/{service}', 'update')->middleware(['checkRoleAndPermission:admin,edit_service']);
                     Route::delete('/{service}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_service']);
@@ -136,6 +137,7 @@ Route::prefix('v1')->group(function () {
 
                     Route::get('/', 'index');
                     Route::get('/{product}', 'show');
+                    Route::get('/{product}/restore', 'restore');
                     Route::post('/create', 'create');
                     Route::post('/{product}', 'update');
                     Route::delete('/{product}', 'destroy');
@@ -149,6 +151,7 @@ Route::prefix('v1')->group(function () {
 
                     Route::get('/', 'index');
                     Route::get('/{productcategories}', 'show');
+                    Route::get('/{productcategories}/restore', 'restore');
                     Route::post('/create', 'create');
                     Route::post('/{productcategories}', 'update');
                     Route::delete('/{productcategories}', 'destroy');
@@ -170,5 +173,6 @@ Route::prefix('v1')->group(function () {
                 });
             });
         });
+
     });
 });
