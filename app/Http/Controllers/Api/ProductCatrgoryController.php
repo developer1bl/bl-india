@@ -67,7 +67,7 @@ class ProductCatrgoryController extends Controller
                                         ], 500);
             }
             
-        } catch (\Throwable $th) {
+        } catch (\Exception $th) {
             
             throw new UserExistPreviouslyException('this Product category was deleted previously, did you want to restore it?');
         }

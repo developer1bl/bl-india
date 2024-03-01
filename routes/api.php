@@ -8,7 +8,7 @@ use App\Http\Controllers\Api\Auth\OtpController;
 use App\Http\Controllers\Api\ClientController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\RoleController;
-use App\Http\Controllers\Api\permissionController;
+use App\Http\Controllers\Api\PermissionController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ProductCatrgoryController;
 use App\Http\Controllers\Api\ServiceController;
@@ -97,6 +97,7 @@ Route::prefix('v1')->group(function () {
 
                     Route::get('/', 'index')->middleware(['checkRoleAndPermission:admin,view_role']);
                     Route::get('/{role}', 'show')->middleware(['checkRoleAndPermission:admin,view_role']);
+                    Route::get('/{role}/restore', 'restore');
                     Route::post('/create', 'create')->middleware(['checkRoleAndPermission:admin,create_role']);
                     Route::post('/{role}', 'update')->middleware(['checkRoleAndPermission:admin,edit_role']);
                     Route::delete('/{role}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_role']);
@@ -106,10 +107,11 @@ Route::prefix('v1')->group(function () {
             //Permissions routes
             Route::prefix('/permission')->group(function () {
 
-                Route::controller(permissionController::class)->group(function () {
+                Route::controller(PermissionController::class)->group(function () {
 
                     Route::get('/', 'index')->middleware(['checkRoleAndPermission:admin,view_permission']);
                     Route::get('/{permission}', 'show')->middleware(['checkRoleAndPermission:admin,view_permission']);
+                    Route::get('/{permission}/restore', 'restore');
                     Route::post('/create', 'create')->middleware(['checkRoleAndPermission:admin,create_permission']);
                     Route::post('/{permission}', 'update')->middleware(['checkRoleAndPermission:admin,edit_permission']);
                     Route::delete('/{permission}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_permission']);

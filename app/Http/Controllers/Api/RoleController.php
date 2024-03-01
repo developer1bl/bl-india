@@ -7,6 +7,7 @@ use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use App\Exceptions\UserExistPreviouslyException;
 
 class RoleController extends Controller
 {
@@ -29,7 +30,7 @@ class RoleController extends Controller
     public function create(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:100|unique:roles,name',
+            'name' => ['required', 'string', 'max:100', Rule::unique('roles', 'name')->whereNull('deleted_at')],
             'role_description' => 'required|string',
         ]);
 
@@ -37,35 +38,60 @@ class RoleController extends Controller
         if ($validator->fails()) {
 
             return response()->json([
-                'success' => false,
-                'message' => $validator->messages()
-            ], 403);
+                                    'success' => false,
+                                    'message' => $validator->messages()
+                                    ], 403);
         }
 
-        $result = Role::create([ 'name' => $request->name, 'role_description' => $request->role_description]);
+        try {
+            $result = Role::create([ 'name' => $request->name, 'role_description' => $request->role_description]);
 
-        if($result){
+            if($result){
 
-            return response()->json([
-              'success' => true,
-              'message' => 'Role created successfully'
-            ], 201);
+                return response()->json([
+                'success' => true,
+                'message' => 'Role created successfully'
+                ], 201);
 
-        }else{
+            }else{
 
-            return response()->json([
-              'success' => false,
-              'message' => 'Something went wrong'
-            ], 500);
+                return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong'
+                ], 422);
+            }
+            
+        } catch (\Exception $th) {
+
+            throw new UserExistPreviouslyException('this Role was deleted previously, did you want to restore it?');
         }
     }
 
     /**
      * Store a newly created resource in storage.
+     * 
+     * @param string $request
+     * @return response object
      */
-    public function store(Request $request)
+    public function restore(string $request)
     {
-        //
+        $role = Role::withTrashed(true)->whereName($request)->first();
+        
+        if ($role) {
+            
+            $role->restore();
+
+            return response()->json([
+                                  'success' => true,
+                                  'message' => 'Role restored successfully'
+                                    ], 200);
+        } else {
+            
+            return response()->json([
+                                  'success' => false,
+                                  'message' => 'Role not found'
+                                    ], 404);
+        }        
     }
 
     /**

@@ -118,6 +118,9 @@ class ServiceController extends Controller
 
     /**
      * Display the specified resource.
+     * 
+     * @param string $id
+     * @return Response
      */
     public function show(string $id)
     {
@@ -222,6 +225,9 @@ class ServiceController extends Controller
 
     /**
      * Remove the specified resource from storage.
+     * 
+     * @param string $id
+     * @return response 
      */
     public function destroy(string $id)
     {

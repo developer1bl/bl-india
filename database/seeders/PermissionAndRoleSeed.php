@@ -44,6 +44,7 @@ class PermissionAndRoleSeed extends Seeder
         $createServicePermission = Permission::create(['name' => 'create_service', 'permissions_description' => 'this permission is for create Service permission']);
         $editServicePermission = Permission::create(['name' => 'edit_service', 'permissions_description' => 'this permission is for edit Service permission']);
         $deleteServicePermission = Permission::create(['name' => 'delete_service', 'permissions_description' => 'this permission is for delete Service permission']);
+        $restoreDataPermission = Permission::create(['name' => 'restore_data', 'permissions_description' => 'this permission is for restore data permission']);
 
         // Assign permissions to roles
         $adminRole->permissions()->sync([$creaUserPermission->id, $editUserPermission->id, $deleteUserPermission->id,
@@ -53,7 +54,7 @@ class PermissionAndRoleSeed extends Seeder
                                         $deletePermissionPermission->id, $viewContentPermission->id, $createContentPermission->id,
                                         $editContentPermission->id, $deleteContentPermission->id, $approveContentPermission->id,
                                         $viewClientPermission->id, $viewServicePermission->id, $createServicePermission->id,
-                                        $editServicePermission->id, $deleteServicePermission->id ]);
+                                        $editServicePermission->id, $deleteServicePermission->id, $restoreDataPermission->id ]);
 
         $moderatorRole->permissions()->sync([$viewUserPermission->id, $approveUserPermission->id, $approveContentPermission->id,
                                             $assignUserPermission->id, $viewClientPermission->id ]);
