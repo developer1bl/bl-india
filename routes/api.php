@@ -8,7 +8,10 @@ use App\Http\Controllers\Api\Auth\OtpController;
 use App\Http\Controllers\Api\ClientController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\RoleController;
-use App\Http\Controllers\Api\permissionController;
+use App\Http\Controllers\Api\PermissionController;
+use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\ProductCatrgoryController;
+use App\Http\Controllers\Api\ServiceController;
 use Illuminate\Http\Request;
 
 /*
@@ -29,7 +32,7 @@ Route::prefix('v1')->group(function () {
     Route::controller(LoginController::class)->group(function () {
 
         //for user routes
-        Route::post('/userAuth', 'loginUser');
+        Route::post('/user-auth', 'loginUser');
         //for client routes
         Route::post('/login', 'loginClient');
         //forgot password routes
@@ -41,10 +44,8 @@ Route::prefix('v1')->group(function () {
     // public routes (register routes)
     Route::controller(RegisterController::class)->group(function () {
 
-        //for user routes
-        Route::post('/addUser', 'registerUser');
         //for client routes
-        Route::post('/Register', 'registerClient');
+        Route::post('/register', 'registerClient');
     });
 
     // public routes (email verify routes)
@@ -67,6 +68,23 @@ Route::prefix('v1')->group(function () {
     //protected routes 
     Route::middleware('auth:sanctum')->group(function () {
 
+        //for user routes
+        Route::post('/add-user', [RegisterController::class, 'registerUser'])->middleware(['checkRoleAndPermission:admin,create_user']);
+
+        //user Routs
+        Route::prefix('/user')->group(function(){
+
+            Route::controller(UserController::class)->group(function(){
+
+                Route::get('/', 'index')->middleware(['checkRoleAndPermission:admin,view_user']);
+                Route::get('/{user}', 'show')->middleware(['checkRoleAndPermission:admin,view_user']);
+                Route::get('/{user}/restore', 'restore')->middleware(['checkRoleAndPermission:admin,restore_data']);
+                Route::post('/{user}', 'update')->middleware(['checkRoleAndPermission:admin,edit_user']);
+                Route::post('/self/{user}', 'updateUserSelf');
+                Route::delete('/{user}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_user']);
+            });
+        });
+
         //logout user routes
         Route::Post('/logout', [LoginController::class, 'logout']);
 
@@ -74,50 +92,90 @@ Route::prefix('v1')->group(function () {
         Route::middleware('UserRoute')->group(function () {
 
             //Roles routes
-            Route::prefix('/Role')->group(function () {
+            Route::prefix('/role')->group(function () {
 
                 Route::controller(RoleController::class)->group(function () {
 
-                    Route::get('/', 'index');
-                    Route::post('/create', 'create');
-                    Route::post('/{role}', 'update');
-                    Route::delete('/{role}', 'destroy');
+                    Route::get('/', 'index')->middleware(['checkRoleAndPermission:admin,view_role']);
+                    Route::get('/{role}', 'show')->middleware(['checkRoleAndPermission:admin,view_role']);
+                    Route::get('/{role}/restore', 'restore');
+                    Route::post('/create', 'create')->middleware(['checkRoleAndPermission:admin,create_role']);
+                    Route::post('/{role}', 'update')->middleware(['checkRoleAndPermission:admin,edit_role']);
+                    Route::delete('/{role}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_role']);
                 });
             });
 
             //Permissions routes
-            Route::prefix('/Permission')->group(function () {
+            Route::prefix('/permission')->group(function () {
 
-                Route::controller(permissionController::class)->group(function () {
+                Route::controller(PermissionController::class)->group(function () {
 
-                    Route::get('/', 'index');
-                    Route::post('/create', 'create');
-                    Route::post('/{permission}', 'update');
-                    Route::delete('/{permission}', 'destroy');
+                    Route::get('/', 'index')->middleware(['checkRoleAndPermission:admin,view_permission']);
+                    Route::get('/{permission}', 'show')->middleware(['checkRoleAndPermission:admin,view_permission']);
+                    Route::get('/{permission}/restore', 'restore');
+                    Route::post('/create', 'create')->middleware(['checkRoleAndPermission:admin,create_permission']);
+                    Route::post('/{permission}', 'update')->middleware(['checkRoleAndPermission:admin,edit_permission']);
+                    Route::delete('/{permission}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_permission']);
                 });
             });
 
-            //user Routs
-            Route::prefix('/User')->group(function(){
+            //services routes
+            Route::prefix('/services')->group(function () {
 
-                Route::controller(UserController::class)->group(function(){
+                Route::controller(ServiceController::class)->group(function () {
 
-                    Route::get('/', 'index');
-                    Route::post('/create', 'create');
-                    Route::post('/{user}', 'update');
-                    Route::delete('/{user}', 'destroy');
+                    Route::get('/', 'index')->middleware(['checkRoleAndPermission:admin,view_service']);
+                    Route::get('/{services}', 'show')->middleware(['checkRoleAndPermission:admin,view_service']);
+                    Route::get('/{services}/restore', 'restore');
+                    Route::post('/create', 'create')->middleware(['checkRoleAndPermission:admin,create_service']);
+                    Route::post('/{service}', 'update')->middleware(['checkRoleAndPermission:admin,edit_service']);
+                    Route::delete('/{service}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_service']);
                 });
             });
-            
+
+            //product routes
+            Route::prefix('/product')->group(function () {
+
+                Route::controller(ProductController::class)->group(function () {
+
+                    Route::get('/', 'index');
+                    Route::get('/{product}', 'show');
+                    Route::get('/{product}/restore', 'restore');
+                    Route::post('/create', 'create');
+                    Route::post('/{product}', 'update');
+                    Route::delete('/{product}', 'destroy');
+                });
+            });
+
+            //product_categories routes
+            Route::prefix('/product-categories')->group(function () {
+
+                Route::controller(ProductCatrgoryController::class)->group(function () {
+
+                    Route::get('/', 'index');
+                    Route::get('/{productcategories}', 'show');
+                    Route::get('/{productcategories}/restore', 'restore');
+                    Route::post('/create', 'create');
+                    Route::post('/{productcategories}', 'update');
+                    Route::delete('/{productcategories}', 'destroy');
+                });
+            });
         });
 
         //Client accessble routes
         Route::middleware('verified')->group(function () {
 
-            Route::controller(ClientController::class)->group(function () {
+            Route::prefix('/client')->group(function (){
+                
+                Route::controller(ClientController::class)->group(function () {
 
-                Route::get('/client', 'index');
+                    Route::get('/', 'index')->middleware(['checkRoleAndPermission:admin,view_client']);
+                    Route::get('/{client}', 'show');
+                    Route::post('/client/{client}', 'update');
+                    Route::delete('/client/{client}', 'destroy');
+                });
             });
         });
+
     });
 });

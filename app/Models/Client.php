@@ -8,6 +8,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\Hash;
 
 class Client extends Authenticatable implements MustVerifyEmail
 {
@@ -59,6 +60,17 @@ class Client extends Authenticatable implements MustVerifyEmail
         'email_verify_till_valid' => 'datetime',
         'otp_verify_till_valid' => 'datetime',
     ];
+
+    /**
+     * Automatically hash the password when setting it.
+     *
+     * @param  string  $value
+     * @return void
+     */
+    public function setPasswordAttribute($value)
+    {
+        $this->attributes['password'] = Hash::make($value);
+    }
 
     //check is user
     public function isUser(){

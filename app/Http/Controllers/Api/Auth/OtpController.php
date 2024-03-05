@@ -73,22 +73,26 @@ class OtpController extends Controller
                             'otp_generated_at' => null,
                             'otp_generated_address' => null,
                             'otp_verify_till_valid' => null,
-                            'login_at' => now()
+                            'login_at' => now(),
+                            'is_online' => true
                         ]);
 
+                        //remove all previous tokens
+                        $client->tokens()->delete();
+
                         return response()->json([
-                            'success' => true,
-                            'message' => 'client login successful',
-                            'client' => $client,
-                            'token' => $client->createToken($authByValue)->plainTextToken
-                        ], 200);
+                                                'success' => true,
+                                                'message' => 'client login successful',
+                                                'client' => $client,
+                                                'token' => $client->createToken($authByValue)->plainTextToken
+                                                ], 200);
 
                     } else {
 
                         return response()->json([
-                            'success' => false,
-                            'message' => 'OTP is not valid, try again'
-                        ], 401);
+                                                'success' => false,
+                                                'message' => 'OTP is not valid, try again'
+                                                ], 401);
                     }
                 } else {
 
@@ -101,9 +105,9 @@ class OtpController extends Controller
                     ]);
 
                     return response()->json([
-                        'success' => false,
-                        'message' => 'OTP has been expired, please try again'
-                    ], 408);
+                                            'success' => false,
+                                            'message' => 'OTP has been expired, please try again'
+                                            ], 408);
                 }
             }else{
 
@@ -115,9 +119,9 @@ class OtpController extends Controller
         } else {
 
             return response()->json([
-                'success' => false,
-                'message' => 'Please fill required fields'
-            ], 400);
+                                    'success' => false,
+                                    'message' => 'Please fill required fields'
+                                    ], 400);
         }
     }
 
@@ -153,9 +157,9 @@ class OtpController extends Controller
             if ($validator->fails()) {
 
                 return response()->json([
-                    'success' => false,
-                    'message' => $validator->errors()
-                ], 403);
+                                        'success' => false,
+                                        'message' => $validator->errors()
+                                        ], 403);
             }
 
             $client = Client::where((string)$sendOption, $content)
@@ -194,16 +198,16 @@ class OtpController extends Controller
                     Mail::to($client->email)->send(new SendMails($data));
         
                     return response()->json([
-                        'success' => true,
-                        'message' => 'OTP has been sent to your email address'
-                    ], 201);
+                                            'success' => true,
+                                            'message' => 'OTP has been sent to your email address'
+                                            ], 201);
         
                 } else {
         
                     return response()->json([
-                        'success' => false,
-                        'message' => 'Please check your Cridentials, something is wrong.'
-                    ], 404);
+                                            'success' => false,
+                                            'message' => 'Please check your Cridentials, something is wrong.'
+                                            ], 404);
                 }
 
             } else {
@@ -217,9 +221,9 @@ class OtpController extends Controller
         } else {
 
             return response()->json([
-                'success' => false,
-                'message' => 'Please fill required fields'
-            ], 400);
+                                    'success' => false,
+                                    'message' => 'Please fill required fields'
+                                    ], 400);
         }
     }
 }

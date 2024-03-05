@@ -13,10 +13,11 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Carbon;
+use App\Models\Role;
 
 class RegisterController extends Controller
 {
-    /**
+    /** 
      * registerUser() this function is used to register new user
      * 
      * @param Request $request
@@ -45,10 +46,13 @@ class RegisterController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make(12345678), // set 123456 as a default password for every user
+            'password' => 12345678, // set 123456 as a default password for every user
             'phone' => $request->phone,
             'role_id' => $request->role_id
         ]);
+
+        // Attach the role to the user
+        $user->roles()->attach($request->role_id);
 
         if (!empty($user)) {
 
@@ -95,7 +99,7 @@ class RegisterController extends Controller
         $client = Client::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'password' => $request->password,
             'phone' => $request->phone,
         ]);
 
