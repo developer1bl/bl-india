@@ -65,7 +65,7 @@ Route::prefix('v1')->group(function () {
         Route::post('/resend-otp', 'resendOTP');
     });
 
-    //protected routes 
+    //protected routes (autherized user can access)
     Route::middleware('auth:sanctum')->group(function () {
 
         //for user routes

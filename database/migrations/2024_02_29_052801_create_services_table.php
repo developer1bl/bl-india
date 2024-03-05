@@ -18,7 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('service_image_id')->nullable();
             $table->string('service_img_alt')->nullable();
             $table->longText('service_description')->nullable();
-            $table->text('service_compliance')->nullable();
+            $table->json('service_compliance')->nullable();
             $table->json('faqs')->nullable();
             $table->string('seo_title')->nullable();
             $table->text('seo_description')->nullable();

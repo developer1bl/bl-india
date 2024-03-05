@@ -16,7 +16,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $product = Product::All();
+        $product = Product::with(['productCategories', 'services'])->get();
 
         return response()->json([
                                 'data'=> $product ?? [],
@@ -35,6 +35,11 @@ class ProductController extends Controller
         $validator = Validator::make($request->all(), [
             'product_name' => ['required','string','max:150', Rule::unique('products', 'product_name')->whereNull('deleted_at')],
             'product_slug' => ['required','string','max:150', Rule::unique('products', 'product_slug')->whereNull('deleted_at')],
+            'product_category_id' => 'exists:product_categories,product_category_id',
+            'service_id' => 'exists:services,service_id',
+            'service_type' => 'in:1,2',
+            'service_compliance' => 'array',
+            'product_image_id' => 'integer'
         ]);
         
         //if the request have some validation errors
@@ -45,16 +50,13 @@ class ProductController extends Controller
                                     'message' => $validator->messages()
                                     ], 403);
         }
-        
+
         $data = [
             'product_name' => $request->product_name,
             'product_slug' => $request->product_slug,
             'product_technical_name' => $request->product_technical_name,
-            'product_service_id' => $request->product_service_id,
-            'product_category_id' => $request->product_category_id,
-            'product_image_id' => $request->media_id,
-            'product_img_alt' => $request->img_alt,
-            'product_compliance' => $request->product_compliance,
+            'product_image_id' => $request->product_image_id,
+            'product_img_alt' => $request->product_img_alt,
             'product_content' => $request->product_content,
             'product_information' => $request->product_information,
             'product_guidelines' => $request->product_guidelines,
@@ -66,19 +68,41 @@ class ProductController extends Controller
         ];
 
         try {
+            $product = Product::create($data);
+                
+            //attach product category with product
+            $category = explode(',', $request->product_category_id);
+            $category = array_map('intval', $category); 
+            $product->productCategories()->sync($category);
+            
+            //attach services on product
+            $services = [];
+            $serviceData = json_decode($request->service);
 
-            $result = Product::create($data);
+            foreach ($serviceData as $serviceData) {
 
-            if ($result) {
+                $serviceId = $serviceData->service_id;
+                $serviceType = $serviceData->service_type;
+                $serviceCompliance = json_encode(explode(',', $serviceData->service_compliance));
+
+                $services[$serviceId] = [
+                    'service_type' => $serviceType,
+                    'service_compliance' => $serviceCompliance,
+                ];
+            }
+            $product->services()->sync($services);
+
+        
+            if ($product) {
                 return response()->json([
-                                    'success' => true,
-                                    'message' => 'Product created successfully'
+                                        'success' => true,
+                                        'message' => 'Product created successfully'
                                         ], 200);
             }else{
 
                 return response()->json([
-                                'success' => false,
-                                'message' => 'Something went wrong, try again later'
+                                        'success' => false,
+                                        'message' => 'Something went wrong, try again later'
                                         ], 422);
             }
             
@@ -103,14 +127,14 @@ class ProductController extends Controller
             $product->restore();
 
             return response()->json([
-                               'success' => true,
-                               'message' => 'Product restored successfully'
+                                    'success' => true,
+                                    'message' => 'Product restored successfully'
                                     ], 202);
         } else {
             
             return response()->json([
-                             'success' => false,
-                             'message' => 'Product not found'
+                                    'success' => false,
+                                    'message' => 'Product not found'
                                     ], 404);
         }
     }
@@ -155,6 +179,11 @@ class ProductController extends Controller
         $validator = Validator::make($request->all(), [
             'product_name' => ['required','string','max:150', Rule::unique('products', 'product_name')->ignore($id, 'product_id')],
             'product_slug' => ['required','string','max:150', Rule::unique('products', 'product_slug')->ignore($id, 'product_id')],
+            'product_category_id' => 'exists:product_categories,product_category_id',
+            'service_id' => 'exists:services,service_id',
+            'service_type' => 'in:1,2',
+            'service_compliance' => 'array',
+            'product_image_id' => 'integer'
         ]);
         
         //if the request have some validation errors
@@ -174,11 +203,8 @@ class ProductController extends Controller
                 'product_name' => $request->product_name,
                 'product_slug' => $request->product_slug,
                 'product_technical_name' => $request->product_technical_name,
-                'product_service_id' => $request->product_service_id,
-                'product_category_id' => $request->product_category_id,
-                'product_image_id' => $request->media_id,
-                'product_img_alt' => $request->img_alt,
-                'product_compliance' => $request->product_compliance,
+                'product_image_id' => $request->product_image_id,
+                'product_img_alt' => $request->product_img_alt,
                 'product_content' => $request->product_content,
                 'product_information' => $request->product_information,
                 'product_guidelines' => $request->product_guidelines,
@@ -189,6 +215,28 @@ class ProductController extends Controller
                 'product_order' => $request->product_order,
             ];
             
+            //attach product category with product
+            $category = explode(',', $request->product_category_id);
+            $category = array_map('intval', $category);
+            $product->productCategories()->sync($category);
+            
+            //attach services on product
+            $services = [];
+            $serviceData = json_decode($request->service);
+
+            foreach ($serviceData as $serviceData) {
+
+                $serviceId = $serviceData->service_id;
+                $serviceType = $serviceData->service_type;
+                $serviceCompliance = json_encode(explode(',', $serviceData->service_compliance));
+
+                $services[$serviceId] = [
+                    'service_type' => $serviceType,
+                    'service_compliance' => $serviceCompliance,
+                ];
+            }
+            $product->services()->sync($services);
+
             $result = $product->update($data);
 
             if ($result) {

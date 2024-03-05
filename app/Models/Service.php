@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Product;
 
 class Service extends Model
 {
@@ -38,4 +39,9 @@ class Service extends Model
         'service_order' => 'integer',
         'faqs' => 'array'
     ];
+
+    public function products()
+    {
+        return $this->belongsToMany(Product::class, 'product_services', 'service_id', 'product_id')->withPivot('service_type', 'service_compliance');
+    }
 }

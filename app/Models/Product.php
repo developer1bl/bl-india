@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\ProductCategories;
+use App\Models\Service;
 
 class Product extends Model
 {
@@ -20,6 +21,7 @@ class Product extends Model
         'product_name',
         'product_slug',
         'product_image_id',
+        'product_technical_name',
         'product_img_alt',
         'product_compliance',
         'product_content',
@@ -39,8 +41,13 @@ class Product extends Model
         'product_order' => 'integer',
     ];
 
-    public function productCategory()
+    public function productCategories()
     {
-        return $this->belongsTo(ProductCategories::class);
+        return $this->belongsToMany(ProductCategories::class, 'product_product_category', 'product_id', 'product_category_id');
+    }
+
+    public function services()
+    {
+        return $this->belongsToMany(Service::class, 'product_services', 'product_id', 'service_id')->withPivot('service_type', 'service_compliance');
     }
 }

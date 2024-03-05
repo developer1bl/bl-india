@@ -28,7 +28,7 @@ class ProductCatrgoryController extends Controller
      * Show the form for creating a new resource.
      */
     public function create(Request $request)
-    {
+    {   
         $validator = Validator::make($request->all(), [
             'product_category_name' => ['required', 'string', 'max:150', Rule::unique('product_categories', 'product_category_name')->whereNull('deleted_at')],
             'product_category_slug' => ['required', 'string', 'max:255', Rule::unique('product_categories', 'product_category_slug')->whereNull('deleted_at')],
