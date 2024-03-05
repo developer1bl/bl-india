@@ -44,18 +44,20 @@ class ServiceController extends Controller
                                     ], 403);
         }
 
-        $faq = [
-            'question' => $request->question,
-            'answer' => $request->answer
-        ];
+        $question = explode(',' , $request->question); 
+        $answer = explode(',', $request->answer);
+        $faq = array_combine($question, $answer);
+
+        $compliance = explode(',', $request->service_compliance);
 
         $data = [
             'service_name' => $request->service_name,
             'service_slug' => $request->service_slug,
             'service_image_id' => $request->service_image_id,
             'service_img_alt' => $request->service_img_alt,
-            'service_compliance' => $request->service_compliance,
-            'faqs' => $faq,
+            'service_compliance' => json_encode($compliance),
+            'service_description' => $request->service_description,
+            'faqs' => json_encode($faq),
             'seo_title' => $request->seo_title,
             'seo_description' => $request->seo_description,
             'seo_keywords' => $request->seo_keywords,
@@ -173,18 +175,20 @@ class ServiceController extends Controller
                                     ], 403);
         }
 
-        $faq = [
-            'question' => $request->question,
-            'answer' => $request->answer
-        ];
+        $question = explode(',' , $request->question); 
+        $answer = explode(',', $request->answer);
+        $faq = array_combine($question, $answer);
+
+        $compliance = explode(',', $request->service_compliance);
 
         $data = [
             'service_name' => $request->service_name,
             'service_slug' => $request->service_slug,
             'service_image_id' => $request->service_image_id,
             'service_img_alt' => $request->service_img_alt,
-            'service_compliance' => $request->service_compliance,
-            'faqs' => $faq,
+            'service_compliance' => json_encode($compliance),
+            'service_description' => $request->service_description,
+            'faqs' => json_encode($faq),
             'seo_title' => $request->seo_title,
             'seo_description' => $request->seo_description,
             'seo_keywords' => $request->seo_keywords,

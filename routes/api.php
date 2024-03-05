@@ -65,7 +65,7 @@ Route::prefix('v1')->group(function () {
         Route::post('/resend-otp', 'resendOTP');
     });
 
-    //protected routes 
+    //protected routes (autherized user can access)
     Route::middleware('auth:sanctum')->group(function () {
 
         //for user routes
@@ -78,6 +78,7 @@ Route::prefix('v1')->group(function () {
 
                 Route::get('/', 'index')->middleware(['checkRoleAndPermission:admin,view_user']);
                 Route::get('/{user}', 'show')->middleware(['checkRoleAndPermission:admin,view_user']);
+                Route::get('/{user}/restore', 'restore')->middleware(['checkRoleAndPermission:admin,restore_data']);
                 Route::post('/{user}', 'update')->middleware(['checkRoleAndPermission:admin,edit_user']);
                 Route::post('/self/{user}', 'updateUserSelf');
                 Route::delete('/{user}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_user']);
