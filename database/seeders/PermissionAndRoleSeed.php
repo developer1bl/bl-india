@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Permission;
 use App\Models\Role;
@@ -52,7 +51,29 @@ class PermissionAndRoleSeed extends Seeder
         $viewProductCategoryPermission = Permission::create(['name' => 'view_productCategory', 'permissions_description' => 'this permission is for view Product Category permission']);
         $createProductCategoryPermission = Permission::create(['name' => 'create_productCategory', 'permissions_description' => 'this permission is for create Product Category permission']);
         $editProductCategoryPermission = Permission::create(['name' => 'edit_ProductCategory', 'permissions_description' => 'this permission is for edit Product Category permission']);
-        $deleteProductCategoryPermission = Permission::create(['name' => 'delete_productCategory', 'permissions_description' => 'this permission is for delete ProductCategory permission']);
+        $deleteProductCategoryPermission = Permission::create(['name' => 'delete_productCategory', 'permissions_description' => 'this permission is for delete Product Category permission']);
+        $viewNoticePermission = Permission::create(['name' => 'view_notice', 'permissions_description' => 'this permission is for view Notice permission']);
+        $createNoticePermission = Permission::create(['name' => 'create_notice', 'permissions_description' => 'this permission is for create Notice permission']);
+        $editNoticePermission = Permission::create(['name' => 'edit_notice', 'permissions_description' => 'this permission is for edit Notice permission']);
+        $deleteNoticePermission = Permission::create(['name' => 'delete_notice', 'permissions_description' => 'this permission is for delete Notice permission']);
+        $viewDownloadCategoryPermission = Permission::create(['name' => 'view_download_category', 'permissions_description' => 'this permission is for view Download Category permission']);
+        $createDownloadCategoryPermission = Permission::create(['name' => 'create_download_category', 'permissions_description' => 'this permission is for create Download Category permission']);
+        $editDownloadCategoryPermission = Permission::create(['name' => 'edit_download_category', 'permissions_description' => 'this permission is for edit Download Category permission']);
+        $deleteDownloadCategoryPermission = Permission::create(['name' => 'delete_download_category', 'permissions_description' => 'this permission is for delete Download Category permission']);
+        $viewDownloadPermission = Permission::create(['name' => 'view_download', 'permissions_description' => 'this permission is for view Download permission']);
+        $createDownloadPermission = Permission::create(['name' => 'create_download', 'permissions_description' => 'this permission is for create Download permission']);
+        $editDownloadPermission = Permission::create(['name' => 'edit_download', 'permissions_description' => 'this permission is for edit Download permission']);
+        $deleteDownloadPermission = Permission::create(['name' => 'delete_download', 'permissions_description' => 'this permission is for delete Download permission']);
+        $viewBlogCategoryPermission = Permission::create(['name' => 'view_blog_category', 'permissions_description' => 'this permission is for view Blog Category permission']);
+        $createBlogCategoryPermission = Permission::create(['name' => 'create_blog_category', 'permissions_description' => 'this permission is for create Blog Category permission']);
+        $editBlogCategoryPermission = Permission::create(['name' => 'edit_blog_category', 'permissions_description' => 'this permission is for edit Blog Category permission']);
+        $deleteBlogCategoryPermission = Permission::create(['name' => 'delete_blog_category', 'permissions_description' => 'this permission is for delete Blog Category permission']);
+        $viewBlogPermission = Permission::create(['name' => 'view_blog', 'permissions_description' => 'this permission is for view Blog permission']);
+        $createBlogPermission = Permission::create(['name' => 'create_blog', 'permissions_description' => 'this permission is for create Blog permission']);
+        $editBlogPermission = Permission::create(['name' => 'edit_blog', 'permissions_description' => 'this permission is for edit Blog permission']);
+        $deleteBlogPermission = Permission::create(['name' => 'delete_blog', 'permissions_description' => 'this permission is for delete Blog permission']);
+        
+
         // Assign permissions to roles
         $adminRole->permissions()->sync([$creaUserPermission->id, $editUserPermission->id, $deleteUserPermission->id,
                                         $viewUserPermission->id, $approveUserPermission->id, $createRolePermission->id, 
@@ -64,7 +85,14 @@ class PermissionAndRoleSeed extends Seeder
                                         $editServicePermission->id, $deleteServicePermission->id, $restoreDataPermission->id,
                                         $viewProductPermission->id, $createProductPermission->id, $editProductPermission->id,
                                         $deleteProductPermission->id, $viewProductCategoryPermission->id, $createProductCategoryPermission->id,
-                                        $editProductCategoryPermission->id, $deleteProductCategoryPermission->id ]);
+                                        $editProductCategoryPermission->id, $deleteProductCategoryPermission->id, $viewNoticePermission->id,
+                                        $createNoticePermission->id, $editNoticePermission->id, $deleteNoticePermission->id,
+                                        $viewDownloadCategoryPermission->id, $createDownloadCategoryPermission->id, $editDownloadCategoryPermission->id,
+                                        $deleteDownloadCategoryPermission->id, $viewDownloadPermission->id, $editDownloadPermission->id,
+                                        $createDownloadPermission->id, $deleteDownloadPermission->id, $viewBlogCategoryPermission->id,
+                                        $createBlogCategoryPermission->id, $editBlogCategoryPermission->id, $deleteBlogCategoryPermission->id,
+                                        $viewBlogPermission->id, $editBlogPermission->id, $deleteBlogPermission->id, 
+                                        $createBlogPermission->id]);
 
         $moderatorRole->permissions()->sync([$viewUserPermission->id, $approveUserPermission->id, $approveContentPermission->id,
                                             $assignUserPermission->id, $viewClientPermission->id ]);

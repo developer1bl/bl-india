@@ -16,7 +16,7 @@ class ServiceController extends Controller
      */
     public function index()
     {
-        $service = Service::All();
+        $service = Service::with('notices')->get();
 
         return response()->json([
                                 'success' => true,   

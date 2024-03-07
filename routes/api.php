@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\Auth\EmailVerifyController;
 use App\Http\Controllers\Api\Auth\OtpController;
+use App\Http\Controllers\Api\BlogCategoryController;
 use App\Http\Controllers\Api\ClientController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\RoleController;
@@ -12,6 +13,10 @@ use App\Http\Controllers\Api\PermissionController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ProductCatrgoryController;
 use App\Http\Controllers\Api\ServiceController;
+use App\Http\Controllers\Api\NoticeController;
+use App\Http\Controllers\Api\DownloadCategoryController;
+use App\Http\Controllers\Api\DownloadController;
+use App\Http\Controllers\Api\BlogController;
 use Illuminate\Http\Request;
 
 /*
@@ -98,7 +103,7 @@ Route::prefix('v1')->group(function () {
 
                     Route::get('/', 'index')->middleware(['checkRoleAndPermission:admin,view_role']);
                     Route::get('/{role}', 'show')->middleware(['checkRoleAndPermission:admin,view_role']);
-                    Route::get('/{role}/restore', 'restore');
+                    Route::get('/{role}/restore', 'restore')->middleware(['checkRoleAndPermission:admin,restore_data']);
                     Route::post('/create', 'create')->middleware(['checkRoleAndPermission:admin,create_role']);
                     Route::post('/{role}', 'update')->middleware(['checkRoleAndPermission:admin,edit_role']);
                     Route::delete('/{role}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_role']);
@@ -112,7 +117,7 @@ Route::prefix('v1')->group(function () {
 
                     Route::get('/', 'index')->middleware(['checkRoleAndPermission:admin,view_permission']);
                     Route::get('/{permission}', 'show')->middleware(['checkRoleAndPermission:admin,view_permission']);
-                    Route::get('/{permission}/restore', 'restore');
+                    Route::get('/{permission}/restore', 'restore')->middleware(['checkRoleAndPermission:admin,restore_data']);
                     Route::post('/create', 'create')->middleware(['checkRoleAndPermission:admin,create_permission']);
                     Route::post('/{permission}', 'update')->middleware(['checkRoleAndPermission:admin,edit_permission']);
                     Route::delete('/{permission}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_permission']);
@@ -160,6 +165,77 @@ Route::prefix('v1')->group(function () {
                     Route::delete('/{productcategories}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_productCategory']);
                 });
             });
+
+            //notice routes
+            Route::prefix('/notice')->group(function (){
+
+                Route::controller(NoticeController::class)->group(function () {
+
+                    Route::get('/', 'index')->middleware(['checkRoleAndPermission:admin,view_notice']);
+                    Route::get('/{notice}','show')->middleware(['checkRoleAndPermission:admin,view_notice']);
+                    Route::get('/{notice}/restore','restore')->middleware(['checkRoleAndPermission:admin,restore_data']);
+                    Route::post('/create', 'create')->middleware(['checkRoleAndPermission:admin,create_notice']);
+                    Route::post('/{notice}', 'update')->middleware(['checkRoleAndPermission:admin,edit_notice']);
+                    Route::delete('/{notice}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_notice']);
+                });
+            });
+
+            //donlowad category routes
+            Route::prefix('/download-category')->group(function (){
+
+                Route::controller(DownloadCategoryController::class)->group(function () {
+
+                    Route::get('/', 'index')->middleware(['checkRoleAndPermission:admin,view_download_category']);
+                    Route::get('/{downloadCategory}','show')->middleware(['checkRoleAndPermission:admin,view_download_category']);
+                    Route::get('/{downloadCategory}/restore','restore')->middleware(['checkRoleAndPermission:admin,restore_data']);
+                    Route::post('/create', 'create')->middleware(['checkRoleAndPermission:admin,create_download_category']);
+                    Route::post('/{downloadCategory}', 'update')->middleware(['checkRoleAndPermission:admin,edit_download_category']);
+                    Route::delete('/{downloadCategory}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_download_category']);
+                });
+            });
+            
+            //donlowad routes
+            Route::prefix('/download')->group(function (){
+
+                Route::controller(DownloadController::class)->group(function (){
+
+                    Route::get('/', 'index')->middleware(['checkRoleAndPermission:admin,view_download']);
+                    Route::get('/{download}','show')->middleware(['checkRoleAndPermission:admin,view_download']);
+                    Route::get('/{download}/restore','restore')->middleware(['checkRoleAndPermission:admin,restore_data']);
+                    Route::post('/create', 'create')->middleware(['checkRoleAndPermission:admin,create_download']);
+                    Route::post('/{download}', 'update')->middleware(['checkRoleAndPermission:admin,edit_download']);
+                    Route::delete('/{download}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_download']);
+                });
+            });
+
+            //blog category routes
+            Route::prefix('/blog-category')->group(function (){
+
+                Route::controller(BlogCategoryController::class)->group(function(){
+
+                    Route::get('/', 'index')->middleware(['checkRoleAndPermission:admin,view_blog_category']);
+                    Route::get('/{blogCategory}','show')->middleware(['checkRoleAndPermission:admin,view_blog_category']);
+                    Route::get('/{blogCategory}/restore','restore')->middleware(['checkRoleAndPermission:admin,restore_data']);
+                    Route::post('/create', 'create')->middleware(['checkRoleAndPermission:admin,create_blog_category']);
+                    Route::post('/{blogCategory}', 'update')->middleware(['checkRoleAndPermission:admin,edit_blog_category']);
+                    Route::delete('/{blogCategory}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_blog_category']);
+                });
+            });
+
+            //blog routes
+            Route::prefix('/blog')->group(function (){
+
+                Route::controller(BlogController::class)->group(function(){
+
+                    Route::get('/', 'index')->middleware(['checkRoleAndPermission:admin,view_blog']);
+                    Route::get('/{blog}','show')->middleware(['checkRoleAndPermission:admin,view_blog']);
+                    Route::get('/{blog}/restore','restore')->middleware(['checkRoleAndPermission:admin,restore_data']);
+                    Route::post('/create', 'create')->middleware(['checkRoleAndPermission:admin,create_blog']);
+                    Route::post('/{blog}', 'update')->middleware(['checkRoleAndPermission:admin,edit_blog']);
+                    Route::delete('/{blog}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_blog']);
+                });
+            });
+
         });
 
         //Client accessble routes
