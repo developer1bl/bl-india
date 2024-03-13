@@ -50,4 +50,9 @@ class Service extends Model
     {
         return $this->hasMany(Notice::class, 'service_id', 'service_id');
     }
+
+    public function image()
+    {
+        return $this->belongsTo(Media::class, 'service_image_id');
+    }
 }

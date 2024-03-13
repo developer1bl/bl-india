@@ -18,6 +18,8 @@ use App\Http\Controllers\Api\DownloadCategoryController;
 use App\Http\Controllers\Api\DownloadController;
 use App\Http\Controllers\Api\BlogController;
 use Illuminate\Http\Request;
+use App\Helpers\MediaHelper;
+use App\Helpers\DocumentHelper;
 
 /*
 |--------------------------------------------------------------------------
@@ -236,6 +238,50 @@ Route::prefix('v1')->group(function () {
                 });
             });
 
+            //media
+            Route::prefix('/media')->group(function(){
+
+                Route::post('/upload', function (Request $request){
+                    return MediaHelper::uploadImage($request);
+                });
+
+                Route::get('/get', function (){
+                    return MediaHelper::getAllImages();
+                });
+
+                Route::delete('/destroy/{media}', function ($id){
+                    return MediaHelper::deleteMedia($id);
+                });
+
+                Route::Post('/update/{media}', function(Request $request, string $name){
+                    return MediaHelper::updateImage($request, $name);
+                });
+            });
+
+            //Document
+            Route::prefix('/document')->group(function(){
+
+                Route::post('/upload', function (Request $request){
+                    return DocumentHelper::uploadeDocument($request);
+                });
+
+                Route::get('/get', function (){
+                    return DocumentHelper::getAllDocuments();
+                });
+
+                Route::delete('/destroy/{document}', function ($id){
+                    return DocumentHelper::deleteDocument($id);
+                });
+
+                Route::Post('/update/{document}', function(Request $request, string $name){
+                    return DocumentHelper::updateDocument($request, $name);
+                });
+
+                Route::get('/download/{document}', function (string $id){
+                    return DocumentHelper::downloadDocument($id);
+                });
+            });
+           
         });
 
         //Client accessble routes

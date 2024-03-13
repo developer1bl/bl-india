@@ -1723,6 +1723,8 @@ var require_module_cjs = __commonJS({
         Object.entries(Object.getOwnPropertyDescriptors(obj)).forEach(([key, { value, enumerable }]) => {
           if (enumerable === false || value === void 0)
             return;
+          if (typeof value === "object" && value !== null && value.__v_skip)
+            return;
           let path = basePath === "" ? key : `${basePath}.${key}`;
           if (typeof value === "object" && value !== null && value._x_interceptor) {
             obj[key] = value.initialize(data2, path, key);
@@ -2846,7 +2848,7 @@ ${expression ? 'Expression: "' + expression + '"\n\n' : ""}`, el);
       get raw() {
         return raw;
       },
-      version: "3.13.5",
+      version: "3.13.6",
       flushAndStopDeferringMutations,
       dontAutoEvaluateFunctions,
       disableEffectScheduling,
@@ -4798,7 +4800,7 @@ var require_module_cjs3 = __commonJS({
             setTimeout(() => {
               if (!el2.hasAttribute("tabindex"))
                 el2.setAttribute("tabindex", "0");
-              el2.focus({ preventScroll: this._noscroll });
+              el2.focus({ preventScroll: this.__noscroll });
             });
           }
         };
@@ -7932,7 +7934,20 @@ async function sendRequest(pool) {
     succeed: (i) => succeedCallbacks.push(i),
     fail: (i) => failCallbacks.push(i)
   });
-  let response = await fetch(updateUri, options);
+  let response;
+  try {
+    response = await fetch(updateUri, options);
+  } catch (e) {
+    finishProfile({ content: "{}", failed: true });
+    handleFailure();
+    fail({
+      status: 503,
+      content: null,
+      preventDefault: () => {
+      }
+    });
+    return;
+  }
   let mutableObject = {
     status: response.status,
     response
@@ -8790,7 +8805,8 @@ function injectStyles() {
 // js/plugins/navigate/page.js
 var oldBodyScriptTagHashes = [];
 var attributesExemptFromScriptTagHashing = [
-  "data-csrf"
+  "data-csrf",
+  "aria-hidden"
 ];
 function swapCurrentPageWithNewHtml(html, andThen) {
   let newDocument = new DOMParser().parseFromString(html, "text/html");
@@ -8912,6 +8928,7 @@ function ignoreAttributes(subject, attributesToRemove) {
     const regex = new RegExp(`${attr}="[^"]*"|${attr}='[^']*'`, "g");
     result = result.replace(regex, "");
   });
+  result = result.replaceAll(" ", "");
   return result.trim();
 }
 
@@ -8964,8 +8981,8 @@ function navigate_default(Alpine19) {
             unPackPersistedTeleports(persistedEl);
           });
           restoreScrollPositionOrScrollToTop();
-          fireEventForOtherLibariesToHookInto("alpine:navigated");
           updateUrlAndStoreLatestHtmlForFutureBackButtons(html, finalDestination);
+          fireEventForOtherLibariesToHookInto("alpine:navigated");
           afterNewScriptsAreDoneLoading(() => {
             andAfterAllThis(() => {
               setTimeout(() => {
@@ -9243,6 +9260,7 @@ var import_morph = __toESM(require_module_cjs7());
 var import_mask = __toESM(require_module_cjs8());
 var import_alpinejs5 = __toESM(require_module_cjs());
 function start() {
+  setTimeout(() => ensureLivewireScriptIsntMisplaced());
   dispatch(document, "livewire:init");
   dispatch(document, "livewire:initializing");
   import_alpinejs5.default.plugin(import_morph.default);
@@ -9294,6 +9312,15 @@ function start() {
   setTimeout(() => window.Livewire.initialRenderIsFinished = true);
   dispatch(document, "livewire:initialized");
 }
+function ensureLivewireScriptIsntMisplaced() {
+  let el = document.querySelector("script[data-update-uri][data-csrf]");
+  if (!el)
+    return;
+  let livewireEl = el.closest("[wire\\:id]");
+  if (livewireEl) {
+    console.warn("Livewire: missing closing tags found. Ensure your template elements contain matching closing tags.", livewireEl);
+  }
+}
 
 // js/index.js
 var import_alpinejs17 = __toESM(require_module_cjs());
@@ -9301,7 +9328,7 @@ var import_alpinejs17 = __toESM(require_module_cjs());
 // js/features/supportDisablingFormsDuringRequest.js
 var import_alpinejs6 = __toESM(require_module_cjs());
 var cleanupStackByComponentId = {};
-on("element.init", ({ el, component }) => {
+on("element.init", ({ el, component }) => setTimeout(() => {
   let directives = getDirectives(el);
   if (directives.missing("submit"))
     return;
@@ -9323,7 +9350,7 @@ on("element.init", ({ el, component }) => {
       }
     });
   });
-});
+}));
 on("commit", ({ component, respond }) => {
   respond(() => {
     cleanup(component);
@@ -9925,6 +9952,8 @@ on("directive.init", ({ el, directive: directive2, cleanup: cleanup2, component 
       if (el.__livewire_confirm) {
         el.__livewire_confirm(() => {
           execute();
+        }, () => {
+          e.stopImmediatePropagation();
         });
       } else {
         execute();
@@ -9958,7 +9987,7 @@ directive("confirm", ({ el, directive: directive2 }) => {
   message = message.replaceAll("\\n", "\n");
   if (message === "")
     message = "Are you sure?";
-  el.__livewire_confirm = (action) => {
+  el.__livewire_confirm = (action, instead) => {
     if (shouldPrompt) {
       let [question, expected] = message.split("|");
       if (!expected) {
@@ -9967,11 +9996,15 @@ directive("confirm", ({ el, directive: directive2 }) => {
         let input = prompt(question);
         if (input === expected) {
           action();
+        } else {
+          instead();
         }
       }
     } else {
       if (confirm(message))
         action();
+      else
+        instead();
     }
   };
 });
@@ -10468,6 +10501,7 @@ var Livewire2 = {
   all,
   hook: on,
   trigger,
+  triggerAsync,
   dispatch: dispatchGlobal,
   on: on2,
   get navigate() {

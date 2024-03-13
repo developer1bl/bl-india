@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('seo_title')->nullable();
             $table->text('seo_description')->nullable();
             $table->text('seo_keywords')->nullable();
-            $table->unsignedBigInteger('notice_document_id')->default(0);
+            $table->unsignedBigInteger('notice_document_id')->nullable();
             $table->boolean('notice_status')->default(true);
             $table->json('products_tag')->nullable();
             $table->longText('seo_other_details')->nullable();

@@ -16,7 +16,7 @@ class ProductCatrgoryController extends Controller
      */
     public function index()
     {
-        $product_category = ProductCategories::All();
+        $product_category = ProductCategories::orderByDesc('product_category_id')->get();
 
         return response()->json([
                                 'data'=> $product_category,
@@ -138,6 +138,16 @@ class ProductCatrgoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        $productCategory = ProductCategories::find($id);
+
+        if (!$productCategory) {
+            
+            return response()->json([
+                                    'message' => 'No such product category found',
+                                    'success' => false
+                                    ],404);
+        }
+
         $validator = Validator::make($request->all(),[
             'product_category_name' => ['required', 'string', 'max:150', Rule::unique('product_categories', 'product_category_name')->ignore($id, 'product_category_id')],
             'product_category_slug' => ['required', 'string', 'max:255', Rule::unique('product_categories', 'product_category_slug')->ignore($id, 'product_category_id')],
@@ -158,8 +168,6 @@ class ProductCatrgoryController extends Controller
                                     ], 403);
         }
 
-        $productCategory = ProductCategories::find($id);
-
         if ($productCategory) {
 
             $productCategory->update($request->all());
@@ -172,7 +180,7 @@ class ProductCatrgoryController extends Controller
 
             return response()->json([
                                     'success' => false,
-                                    'message' => 'Something went wrong'
+                                    'message' => 'Something went wrong, please try again later'
                                     ], 500);
         }
     }
@@ -184,6 +192,7 @@ class ProductCatrgoryController extends Controller
     {
         $productCategory = ProductCategories::find($id);
 
+        
         if ($productCategory) {
 
             $productCategory->delete();
@@ -192,11 +201,18 @@ class ProductCatrgoryController extends Controller
                                    'success' => true,
                                    'message' => 'Product Category deleted successfully'
                                     ], 202);
-        }else{
+                                    
+        } elseif (!$productCategory) {
+
+            return response()->json([
+                                   'message' => 'No such product category found',
+                                   'success' => false
+                                    ],404);
+        } else {
 
             return response()->json([
                                    'success' => false,
-                                   'message' => 'Something went wrong'
+                                   'message' => 'Something went wrong, please try again later'
                                     ], 500);
         }
     }

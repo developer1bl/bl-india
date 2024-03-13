@@ -18,7 +18,7 @@ class NoticeController extends Controller
      */
     public function index()
     {
-        $notice = Notice::with('services')->get();
+        $notice = Notice::with('services', 'image', 'documents')->orderByDesc('notice_id')->get();
 
         return response()->json([
                                 'data' => $notice ?? [],
@@ -38,17 +38,16 @@ class NoticeController extends Controller
             'notice_title' => 'required|string|max:255',
             'notice_slug' => ['required', 'string', 'max:255', Rule::unique('notices', 'notice_slug')->whereNull('deleted_at')],
             'notice_content' => 'nullable|string',
-            'service_id' => 'nullable|exists:services,service_id',
-            'notice_image_id' => 'nullable|integer',
+            'service_id' => 'integer|exists:services,service_id',
             'notice_img_alt' => 'nullable|string',
             'seo_title' => 'nullable|string|max:255',
             'seo_description' => 'nullable|string',
             'seo_keywords' => 'nullable|string',
-            'notice_document_id' => 'integer',
             'notice_status' => 'boolean',
             'seo_other_details' => 'nullable|string',
+            'notice_image_id' => 'integer|exists:media,media_id',
+            'notice_document_id' => 'integer|exists:documents,document_id',
         ]);
-
 
         //if the request have some validation errors
         if ($validator->fails()) {
@@ -63,20 +62,37 @@ class NoticeController extends Controller
             
             throw new UserExistPreviouslyException('this Notice was deleted previously, did you want to restore it?');
         }
-    
-        $notice = Notice::create($request->all());
+        
+        $product_tags = explode(',', $request->products_tag);
+
+        $data = [
+            "notice_title" => $request->notice_title,
+            "notice_slug" => $request->notice_slug,
+            "notice_content" => $request->notice_content,
+            "service_id" => $request->service_id,
+            "notice_image_id" => $request->notice_image_id,
+            "notice_img_alt" => $request->notice_img_alt,
+            "seo_title" => $request->seo_title,
+            "seo_description" => $request->seo_description,
+            "seo_keywords" => $request->seo_keywords,
+            "notice_document_id" => $request->notice_document_id,
+            "products_tag" => json_encode($product_tags),
+            "seo_other_details" => $request->seo_other_details,
+        ];
+
+        $notice = Notice::create($data);
      
         if ($notice) {
             
             return response()->json([
-                                  'success' => true,
-                                  'message' => 'Notice created successfully'
+                                    'success' => true,
+                                    'message' => 'Notice created successfully'
                                     ], 202);
         } else {
             
             return response()->json([
-                                 'success' => false,
-                                 'message' => 'Something went wrong, please try again later'
+                                    'success' => false,
+                                    'message' => 'Something went wrong, please try again later'
                                     ], 422);
         }
     }
@@ -170,13 +186,13 @@ class NoticeController extends Controller
             'notice_title' => 'required|string|max:255',
             'notice_slug' => ['required', 'string', 'max:255', Rule::unique('notices', 'notice_slug')->ignore($id, 'notice_id')],
             'notice_content' => 'nullable|string',
-            'service_id' => 'nullable|exists:services,service_id',
-            'notice_image_id' => 'nullable|integer',
+            'service_id' => 'integer|exists:services,service_id',
+            'notice_image_id' => 'integer|exists:media,media_id',
             'notice_img_alt' => 'nullable|string',
             'seo_title' => 'nullable|string|max:255',
             'seo_description' => 'nullable|string',
             'seo_keywords' => 'nullable|string',
-            'notice_document_id' => 'integer',
+            'notice_document_id' => 'integer|exists:documents,document_id',
             'notice_status' => 'boolean',
             'seo_other_details' => 'nullable|string',
         ]);

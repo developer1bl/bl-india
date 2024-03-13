@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Service;
+use App\Models\Document;
 
 class Notice extends Model
 {
@@ -42,5 +43,15 @@ class Notice extends Model
     public function services()
     {
         return $this->belongsTo(Service::class, 'service_id', 'service_id');
+    }
+
+    public function image()
+    {
+        return $this->belongsTo(Media::class, 'notice_image_id');
+    }
+
+    public function documents()
+    {
+        return $this->hasOne(Document::class, 'document_id');
     }
 }
