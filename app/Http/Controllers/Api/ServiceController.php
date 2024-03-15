@@ -16,7 +16,9 @@ class ServiceController extends Controller
      */
     public function index()
     {
-        $service = Service::with(['notices', 'image'])->orderByDesc('service_id')->get();
+        $service = Service::with(['notices', 'image', 'service_section'])
+                            ->orderByDesc('service_id')
+                            ->get();
 
         return response()->json([
                                 'success' => true,   
@@ -44,9 +46,12 @@ class ServiceController extends Controller
                                     ], 403);
         }
 
-        if (Service::withTrashed(true)->whereService_name($request->service_name)->exists()) {
-
-            throw new UserExistPreviouslyException('this service was deleted previously, did you want to restore it?');
+        if (Service::withTrashed(true)
+                     ->whereService_name($request->service_name)
+                     ->whereService_slug($request->service_slug)
+                     ->exists())
+        {
+            throw new UserExistPreviouslyException('Oops! It appears that the chosen Service Name or slug is already in use. Please select a different one and try again.');
         }
 
         $question = explode(',' , $request->question); 
@@ -105,7 +110,9 @@ class ServiceController extends Controller
      */
     public function restore(string $request)
     {
-        $service = Service::withTrashed(true)->whereService_name($request)->first();
+        $service = Service::withTrashed(true)
+                            ->whereService_name($request)
+                            ->first();
         
         if ($service) {
             
@@ -223,22 +230,22 @@ class ServiceController extends Controller
             if ($result) {
                 
                 return response()->json([
-                                       'success' => true,
-                                       'message' => 'Service updated successfully'
+                                        'success' => true,
+                                        'message' => 'Service updated successfully'
                                         ], 202);
             } else {
                 
                 return response()->json([
-                                       'success' => false,
-                                       'message' => 'Something went wrong, please try again later'
+                                        'success' => false,
+                                        'message' => 'Something went wrong, please try again later'
                                         ], 422);
             }
 
         }else{
 
             return response()->json([
-                                   'success' => false,
-                                   'message' => 'Service not found'
+                                    'success' => false,
+                                    'message' => 'Service not found'
                                     ], 404);
         }
     }

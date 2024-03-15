@@ -18,7 +18,7 @@ class BlogController extends Controller
      */
     public function index()
     {
-        $blog = Blog::with('blogcategory')->get();
+        $blog = Blog::with('blogcategory', 'image')->get();
 
         return response()->json([
                                 'data' => $blog ?? [],
@@ -37,8 +37,8 @@ class BlogController extends Controller
         $validator = Validator::make($request->all(), [
             'blog_title' => ['required', 'string', Rule::unique('blogs', 'blog_title')->whereNull('deleted_at')],
             'blog_slug' => ['required', 'string', Rule::unique('blogs', 'blog_slug')->whereNull('deleted_at')],
-            'blog_category_id' => 'nullable|exists:blog_categories,blog_category_id',
-            // 'blog_image_id' => 'nullable|exists:blog_images,blog_image_id',
+            'blog_category_id' => 'integer|exists:blog_categories,blog_category_id',
+            'blog_image_id' => 'integer|exists:media,media_id',
             'blog_img_alt' => 'nullable|string',
             'blog_content' => 'nullable|string',
             'seo_title' => 'nullable|string',
@@ -57,9 +57,12 @@ class BlogController extends Controller
                                     ], 403);
         }
 
-        if (Blog::withTrashed()->where('blog_title', $request->blog_title)->exists()) {
-            
-            throw new UserExistPreviouslyException('this Blog was deleted previously, did you want to restore it?');
+        if (Blog::withTrashed()
+                  ->where('blog_title', $request->blog_title)
+                  ->orWhere('blog_slug', $request->blog_slug)
+                  ->exists())
+        {
+            throw new UserExistPreviouslyException('Oops! It appears that the chosen Blog title or slug is already in use. Please select a different one and try again.');
         }
 
         $data = [
@@ -106,8 +109,8 @@ class BlogController extends Controller
         if (!$blog) {
             
             return response()->json([
-                                  'success' => false,
-                                  'message' => 'Blog not found'
+                                    'success' => false,
+                                    'message' => 'Blog not found'
                                     ], 404);
         }
 
@@ -116,14 +119,14 @@ class BlogController extends Controller
         if ($result) {
 
             return response()->json([
-                                  'success' => true,
-                                  'message' => 'Blog restored successfully'
+                                    'success' => true,
+                                    'message' => 'Blog restored successfully'
                                     ], 201);
         } else {
 
             return response()->json([
-                                  'success' => false,
-                                  'message' => 'Something went wrong, please try again later'
+                                    'success' => false,
+                                    'message' => 'Something went wrong, please try again later'
                                     ], 422);
         }
     }
@@ -185,8 +188,8 @@ class BlogController extends Controller
         $validator = Validator::make($request->all(), [
             'blog_title' => ['required', 'string', Rule::unique('blogs', 'blog_title')->ignore($id, 'blog_id')],
             'blog_slug' => ['required', 'string', Rule::unique('blogs', 'blog_slug')->ignore($id, 'blog_id')],
-            'blog_category_id' => 'nullable|exists:blog_categories,blog_category_id',
-            // 'blog_image_id' => 'nullable|exists:blog_images,blog_image_id',
+            'blog_category_id' => 'integer|exists:blog_categories,blog_category_id',
+            'blog_image_id' => 'integer|exists:media,media_id',
             'blog_img_alt' => 'nullable|string',
             'blog_content' => 'nullable|string',
             'seo_title' => 'nullable|string',

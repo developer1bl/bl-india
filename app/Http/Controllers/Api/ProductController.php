@@ -37,7 +37,7 @@ class ProductController extends Controller
             'product_name' => ['required','string','max:150', Rule::unique('products', 'product_name')->whereNull('deleted_at')],
             'product_slug' => ['required','string','max:150', Rule::unique('products', 'product_slug')->whereNull('deleted_at')],
             'product_category_id' => 'exists:product_categories,product_category_id',
-            'product_image_id' => 'exists:media,media_id',
+            'product_image_id' => 'integer|exists:media,media_id',
             'product_technical_name' => 'nullable|string',
             'product_img_alt' => 'nullable|string',
             'product_content' => 'nullable|string',

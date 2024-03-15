@@ -18,7 +18,7 @@ class DownloadCategoryController extends Controller
      */
     public function index()
     {
-        $donwloadCategory = DownloadCategory::get();
+        $donwloadCategory = DownloadCategory::with('downloads')->orderByDesc('download_category_id')->get();
 
         return response()->json([
                                 'data' => $donwloadCategory ?? [],
@@ -48,9 +48,12 @@ class DownloadCategoryController extends Controller
                                     ], 403);
         }
 
-        if (DownloadCategory::withTrashed()->whereDownload_category($request->download_category)->exists()) {
-            
-            throw new UserExistPreviouslyException('this Download Category was deleted previously, did you want to restore it?');
+        if (DownloadCategory::withTrashed()
+                              ->whereDownload_category($request->download_category)
+                              ->whereDownload_category_slug($request->download_category_slug)
+                              ->exists())
+        {
+            throw new UserExistPreviouslyException('Oops! It appears that the chosen Download Category Name or slug is already in use. Please select a different one and try again');
         }
 
         $downloadCategory = DownloadCategory::create($request->all());

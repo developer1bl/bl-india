@@ -37,4 +37,9 @@ class Media extends Model
 
         return $this->hasMany(Notice::class,'notice_image_id');
     }
+
+    public function blogs()
+    {
+        return $this->hasOne(Blog::class, 'blog_image_id', 'media_id');
+    }
 }

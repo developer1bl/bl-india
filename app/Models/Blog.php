@@ -39,4 +39,9 @@ class Blog extends Model
     {
         return $this->belongsTo(BlogCategory::class, 'blog_category_id');
     }
+
+    public function image()
+    {
+        return $this->belongsTo(Media::class, 'blog_image_id', 'media_id');
+    }
 }

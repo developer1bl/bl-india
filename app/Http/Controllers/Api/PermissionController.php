@@ -43,27 +43,29 @@ class PermissionController extends Controller
             ], 403);
         }
 
-        try {
+        if (Permission::withTrashed()
+                      ->whereName($request->name)
+                      ->exists()) 
+        {    
+            throw new UserExistPreviouslyException('Oops! It appears that the chosen Permission Name is already in use. Please select a different one and try again');
+        }
 
-            $result = Permission::create([ 'name' => $request->name, 'permissions_description' => $request->permissions_description]);
+    
+        $result = Permission::create([ 'name' => $request->name, 'permissions_description' => $request->permissions_description]);
 
-            if ($result) {
+        if ($result) {
 
-                return response()->json([
-                                        'success' => true,
-                                        'message' => 'Permission created successfully'
-                                        ], 201);
-                
-            } else {
-
-                return response()->json([
-                                        'success' => false,
-                                        'message' => 'Something went wrong'
-                                        ], 500);
-            }
-        } catch (\Exception $th) {
+            return response()->json([
+                                    'success' => true,
+                                    'message' => 'Permission created successfully'
+                                    ], 201);
             
-            throw new UserExistPreviouslyException('this permission was deleted previously, did you want to restore it?');
+        } else {
+
+            return response()->json([
+                                    'success' => false,
+                                    'message' => 'Something went wrong'
+                                    ], 500);
         }
     }
 
@@ -133,7 +135,7 @@ class PermissionController extends Controller
     public function update(Request $request, string $id)
     {
         $validator = Validator::make($request->all(), [
-            'name' => ['required','string','max:255', Rule::unique('permissions', 'product_category_name')->ignore($id)],
+            'name' => ['required','string','max:255', Rule::unique('permissions', 'product_category_name')->ignore($id)->whereNull('deleted_at')],
             'permissions_description' => 'required|string|max:255',
             'is_active' => 'boolean',
         ]);

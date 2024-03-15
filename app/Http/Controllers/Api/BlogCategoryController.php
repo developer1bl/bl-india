@@ -51,9 +51,12 @@ class BlogCategoryController extends Controller
                                     ], 403);
         }
 
-        if (BlogCategory::withTrashed()->where('blog_category_name', $request->blog_category_name)->exists()) {
-            
-            throw new UserExistPreviouslyException('this Blog Category was deleted previously, did you want to restore it?');
+        if (BlogCategory::withTrashed()
+                          ->where('blog_category_name', $request->blog_category_name)
+                          ->OrWhere('blog_category_slug', $request->blog_category_slug)
+                          ->exists()) 
+        {    
+            throw new UserExistPreviouslyException('Oops! It appears that the chosen Blog Category Name or slug is already in use. Please select a different one and try again');
         }
 
         $result = BlogCategory::create($request->all());

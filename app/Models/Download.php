@@ -17,18 +17,23 @@ class Download extends Model
     protected $fillable = [
         'download_name',
         'download_slug',
-        'download_documnets',
         'download_status',
         'download_category_id',
     ];
 
     protected $casts = [
         'download_status' => 'boolean',
-        'download_documnets' => 'array'
     ];
 
     public function downloadCategories()
     {
         return $this->belongsTo(DownloadCategory::class, 'download_category_id', 'download_category_id');
     }
+
+    public function documents()
+    {
+        return $this->belongsToMany(Document::class, 'document_download', 'download_id', 'document_id')
+                    ->withPivot('download_type');
+    }
+    
 }

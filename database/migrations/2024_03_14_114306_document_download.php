@@ -11,14 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('downloads', function (Blueprint $table) {
-            $table->id('download_id');
-            $table->string('download_name');
-            $table->string('download_slug');
-            $table->boolean('download_status')->default(true);
-            $table->unsignedBigInteger('download_category_id');
+        Schema::create('document_download', function(Blueprint $table){
+            $table->id();
+            $table->unsignedBigInteger('document_id');
+            $table->unsignedBigInteger('download_id');
+            $table->string('download_type')->nullable()->comment('either INFOMATION or GUIDELINES');
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
@@ -27,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('downloads');
+        Schema::dropIfExists('document_download');
     }
 };

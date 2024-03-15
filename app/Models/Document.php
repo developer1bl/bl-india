@@ -26,4 +26,10 @@ class Document extends Model
     {
         return $this->belongsTo(Notice::class, 'notice_document_id', 'notice_id');
     }
+
+    public function downloads()
+    {
+        return $this->belongsToMany(Download::class, 'document_download', 'document_id', 'download_id')
+                    ->withPivot('download_type');
+    }
 }

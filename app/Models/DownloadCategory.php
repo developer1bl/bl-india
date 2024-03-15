@@ -19,7 +19,7 @@ class DownloadCategory extends Model
         'download_category_slug',
     ];
 
-    public function donwloads(){
+    public function downloads(){
 
         return $this->hasMany(Download::class, 'download_category_id', 'download_category_id');
     }

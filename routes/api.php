@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\NoticeController;
 use App\Http\Controllers\Api\DownloadCategoryController;
 use App\Http\Controllers\Api\DownloadController;
 use App\Http\Controllers\Api\BlogController;
+use App\Http\Controllers\Api\ServiceSectionController;
 use Illuminate\Http\Request;
 use App\Helpers\MediaHelper;
 use App\Helpers\DocumentHelper;
@@ -139,6 +140,21 @@ Route::prefix('v1')->group(function () {
                     Route::delete('/{service}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_service']);
                 });
             });
+
+            //service section
+            Route::prefix('/service-section')->group(function () {
+
+                Route::controller(ServiceSectionController::class)->group(function () {
+
+                    Route::get('/', 'index')->middleware(['checkRoleAndPermission:admin,view_service_section']);
+                    Route::get('/{service_section}','show')->middleware(['checkRoleAndPermission:admin,view_service_section']);
+                    Route::get('/{service_section}/restore','restore')->middleware(['checkRoleAndPermission:admin,restore_data']);
+                    Route::post('/create', 'create')->middleware(['checkRoleAndPermission:admin,create_service_section']);
+                    Route::post('/{service_section}', 'update')->middleware(['checkRoleAndPermission:admin,edit_service_section']);
+                    Route::delete('/{service_section}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_service_section']);
+                });
+            });
+        
 
             //product routes
             Route::prefix('/product')->group(function () {

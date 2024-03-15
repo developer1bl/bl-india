@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Product;
+use App\Models\ServiceSection;
 
 class Service extends Model
 {
@@ -54,5 +55,10 @@ class Service extends Model
     public function image()
     {
         return $this->belongsTo(Media::class, 'service_image_id');
+    }
+
+    public function service_section()
+    {
+        return $this->hasMany(ServiceSection::class,'service_id','service_id');
     }
 }

@@ -18,7 +18,20 @@ class DocumentHelper{
      */
     public static function uploadeDocument(Request  $request)
     {
-        $uploaded_document_ids = [];
+        $validator = Validator::make($request->all(), [
+            'document_file' => 'required|file|mimes:pdf',
+        ],[
+            'document_file.mimes' => 'The document file field must be a file of type pdf.'
+        ]);
+
+        //if the request have some validation errors
+        if ($validator->fails()) {
+
+            return response()->json([
+                                    'success' => false,
+                                    'message' => $validator->messages()
+                                    ], 403);
+        }
 
         // Check if there are files uploaded
         if ($request->hasFile('document_file')) {
@@ -28,21 +41,22 @@ class DocumentHelper{
             $extension = $file->getClientOriginalExtension();
             $onlyName = explode('.'.$extension, $fullName);
             $fileName = str_replace(" ","-",$onlyName[0]).'-'.time().'.'.$file->getClientOriginalExtension();
+
             $document = Document::create([
                     'document_name' => $file->getClientOriginalName(),
                     'document_path' => 'documents/'.$fileName,
                     'document_type' => $file->getMimeType(),
                     'document_size' => $file->getSize(),
-            ]);
+                ]);
             $store = Storage::disk('public')->put('documents/' . $fileName, File::get($file));
-        }
 
-        if ($document && $store) {
+            if ($document && $store) {
 
-            return true;
-        } else {
-
-            return false;
+                return true;
+            } else {
+    
+                return false;
+            }
         }
     }
 
@@ -61,7 +75,7 @@ class DocumentHelper{
 
         return response()->json([
                                 'data' => $documents?? [],
-                               'status' => true,    
+                                'status' => true,    
                                 ],200);
     }
 
