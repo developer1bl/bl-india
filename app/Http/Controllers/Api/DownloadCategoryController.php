@@ -18,7 +18,9 @@ class DownloadCategoryController extends Controller
      */
     public function index()
     {
-        $donwloadCategory = DownloadCategory::with('downloads')->orderByDesc('download_category_id')->get();
+        $donwloadCategory = DownloadCategory::with('downloads')
+                                             ->orderByDesc('download_category_id')
+                                             ->get();
 
         return response()->json([
                                 'data' => $donwloadCategory ?? [],
@@ -78,7 +80,9 @@ class DownloadCategoryController extends Controller
      */
     public function restore(string $request)
     {
-        $downloadCategory = DownloadCategory::withTrashed()->wheredownload_category($request)->first();
+        $downloadCategory = DownloadCategory::withTrashed()
+                                              ->wheredownload_category($request)
+                                              ->first();
 
         if ($downloadCategory) {
             

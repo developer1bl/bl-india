@@ -69,14 +69,14 @@ class ServiceSectionController extends Controller
         if ($result) {
             
             return response()->json([
-                                   'success' => true,
-                                  'message' => 'Service section created successfully'
+                                    'success' => true,
+                                    'message' => 'Service section created successfully'
                                     ], 201);
         } else {
             
             return response()->json([
-                                  'success' => false,
-                                 'message' => 'Something went wrong, please try again later'
+                                    'success' => false,
+                                    'message' => 'Something went wrong, please try again later'
                                     ], 422);
         }
     }
@@ -96,8 +96,8 @@ class ServiceSectionController extends Controller
             $serviceSection->restore();
 
             return response()->json([
-                                   'success' => true,
-                                   'message' => 'Service Section restored successfully'
+                                    'success' => true,
+                                    'message' => 'Service Section restored successfully'
                                     ], 202);
         } else {
             

@@ -128,7 +128,9 @@ class DownloadController extends Controller
      */
     public function restore(string $request)
     {
-        $download = Download::withTrashed()->whereDownload_name($request)->first();
+        $download = Download::withTrashed()
+                             ->whereDownload_name($request)
+                             ->first();
 
         if ($download) {
             

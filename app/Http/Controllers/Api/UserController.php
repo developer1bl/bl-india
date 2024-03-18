@@ -218,16 +218,16 @@ class UserController extends Controller
             }else{
 
                 return response()->json([
-                                       'success' => false,
-                                       'message' => 'Something went wrong'
+                                        'success' => false,
+                                        'message' => 'Something went wrong'
                                         ], 500);
             }
 
         }else{
 
             return response()->json([
-                                   'success' => false,
-                                   'message' => 'User not found'
+                                    'success' => false,
+                                    'message' => 'User not found'
                                     ], 404);
         }
     }

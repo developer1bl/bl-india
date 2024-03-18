@@ -142,9 +142,9 @@ class RoleController extends Controller
         if ($validator->fails()) {
 
             return response()->json([
-                'success' => false,
-                'message' => $validator->messages()
-            ], 403);
+                                    'success' => false,
+                                    'message' => $validator->messages()
+                                    ], 403);
         }
 
         $role = Role::find($id);

@@ -84,7 +84,9 @@ class CustomFormController extends Controller
      */
     public function restore(string $name)
     {
-        $customForm = CustomForm::withTrashed()->whereForm_slug($name)->first();
+        $customForm = CustomForm::withTrashed()
+                                 ->whereForm_slug($name)
+                                 ->first();
 
         if (!$customForm) {
 
@@ -152,9 +154,9 @@ class CustomFormController extends Controller
         if (!$customForm) {
 
             return response()->json([
-                'success' => false,
-                'message' => 'Custom form not found'
-            ], 404);
+                                    'success' => false,
+                                    'message' => 'Custom form not found'
+                                    ], 404);
         }
 
         $validator = Validator::make($request->all(), [
@@ -274,7 +276,7 @@ class CustomFormController extends Controller
                     'form_data_response' => 'success',
                 ];
             
-                $formdata =  FormData::create($formData);
+                FormData::create($formData);
 
                 return response()->json([
                                         'success' => true,

@@ -42,7 +42,7 @@ class Notice extends Model
 
     public function services()
     {
-        return $this->belongsTo(Service::class, 'service_id', 'service_id');
+        return $this->belongsTo(Service::class, 'service_id', 'service_id')->with('products');
     }
 
     public function image()
@@ -53,5 +53,5 @@ class Notice extends Model
     public function documents()
     {
         return $this->hasOne(Document::class, 'document_id');
-    }
+    }   
 }

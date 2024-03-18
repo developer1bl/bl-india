@@ -38,9 +38,9 @@ class PermissionController extends Controller
         if ($validator->fails()) {
 
             return response()->json([
-                'success' => false,
-                'message' => $validator->messages()
-            ], 403);
+                                    'success' => false,
+                                    'message' => $validator->messages()
+                                    ], 403);
         }
 
         if (Permission::withTrashed()
@@ -144,9 +144,9 @@ class PermissionController extends Controller
          if ($validator->fails()) {
 
             return response()->json([
-                'success' => false,
-                'message' => $validator->messages()
-            ], 403);
+                                    'success' => false,
+                                    'message' => $validator->messages()
+                                    ], 403);
         }
 
         $permission = Permission::find($id);

@@ -105,7 +105,7 @@ class EmailVerifyController extends Controller
                         'email_verify_till_valid' => Carbon::now()->addMinutes(5)
                     ]);
             
-                    //return $user;
+                
                     Mail::to($client->email)->send(new SendMails($data));
 
                     return response()->json([
@@ -114,7 +114,7 @@ class EmailVerifyController extends Controller
                     ], 201);
 
                 } else {
-                    // dd($client->is_email_verified );
+
                     return response()->json([
                         'success' => false,
                         'message' => 'email already verified'

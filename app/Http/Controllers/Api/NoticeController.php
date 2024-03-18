@@ -18,7 +18,9 @@ class NoticeController extends Controller
      */
     public function index()
     {
-        $notice = Notice::with('services', 'image', 'documents')->orderByDesc('notice_id')->get();
+        $notice = Notice::with('services', 'image', 'documents')
+                          ->orderByDesc('notice_id')
+                          ->get();
 
         return response()->json([
                                 'data' => $notice ?? [],
@@ -63,7 +65,6 @@ class NoticeController extends Controller
                     ->orWhere('notice_slug', $request->notice_slug)
                     ->exists()) 
         {
-            
             throw new UserExistPreviouslyException('Oops! It appears that the chosen Notice Title Name or slug is already in use. Please select a different one and try again');
         }
         
@@ -222,8 +223,8 @@ class NoticeController extends Controller
         } else {
            
             return response()->json([
-                                   'success' => false,
-                                   'message' => 'Something went wrong, please try again later'
+                                    'success' => false,
+                                    'message' => 'Something went wrong, please try again later'
                                     ], 422);
         }   
     }
