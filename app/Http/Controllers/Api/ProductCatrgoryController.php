@@ -48,28 +48,29 @@ class ProductCatrgoryController extends Controller
                                     'message' => $validator->messages()
                                     ], 403);
         }
+        
+        if (ProductCategories::withTrashed()
+                                ->where('product_category_name',$request->product_category_name)
+                                ->orWhere('product_category_slug', $request->product_category_slug)
+                                ->exists()) 
+        {
+            throw new UserExistPreviouslyException('Oops! It appears that the chosen Product Category Name or slug is already in use. Please select a different one and try again');
+        }
 
-        try {
+        $product_category = ProductCategories::create($request->all());
 
-            $product_category = ProductCategories::create($request->all());
+        if ($product_category) {
 
-            if ($product_category) {
-
-                return response()->json([
-                                        'success' => true,
-                                        'message' => 'Product Category created successfully'
-                                        ], 201);
-            } else {
-            
-                return response()->json([
+            return response()->json([
+                                    'success' => true,
+                                    'message' => 'Product Category created successfully'
+                                    ], 201);
+        } else {
+        
+            return response()->json([
                                     'success' => false,
                                     'message' => 'Something went wrong'
-                                        ], 500);
-            }
-            
-        } catch (\Exception $th) {
-            
-            throw new UserExistPreviouslyException('this Product category was deleted previously, did you want to restore it?');
+                                    ], 500);
         }
     }
 

@@ -82,7 +82,7 @@ class ProductController extends Controller
                                 return;
                             }
                             }
-                         ],
+                        ],
         ]);
         
         //if the request have some validation errors
@@ -108,52 +108,45 @@ class ProductController extends Controller
             'product_order' => 0,
         ];
         
-        if(Product::withTrashed(true)->whereProduct_name($request->product_name)->exists()){
-
+        if(Product::withTrashed(true)
+                    ->whereProduct_name($request->product_name)
+                    ->orWhereProduct_slug($request->product_slug)
+                    ->exists())
+        {
             throw new UserExistPreviouslyException('this product was deleted previously, did you want to restore it?');
         }
 
-        try {
+        $product = Product::create($data);
 
-            $product = Product::create($data);
-    
-            //attach product category with product
-            $category = explode(',', $request->product_category_id);
-            $category = array_map('intval', $category); 
-            $product->productCategories()->sync($category);
-            
-            //attach services on product
-            $services = [];
-            $serviceData = json_decode($request->service);
-
-            foreach ($serviceData as $serviceData) {
-
-                $serviceId = $serviceData->service_id;
-                $serviceType = $serviceData->service_type;
-                $serviceCompliance = json_encode(explode(',', $serviceData->service_compliance));
+        //attach product category with product
+        $category = explode(',', $request->product_category_id);
+        $category = array_map('intval', $category); 
+        $product->productCategories()->sync($category);
         
-                $services[$serviceId] = [
-                    'service_type' => $serviceType,
-                    'service_compliance' => $serviceCompliance,
-                ];
-            };
-            $product->services()->sync($services);
+        //attach services on product
+        $services = [];
+        $serviceData = json_decode($request->service);
 
-            if ($product) {
-                return response()->json([
-                                        'success' => true,
-                                        'message' => 'Product created successfully'
-                                        ], 200);
-            }else{
+        foreach ($serviceData as $serviceData) {
 
-                return response()->json([
-                                        'success' => false,
-                                        'message' => 'Something went wrong, try again later'
-                                        ], 422);
-            }
+            $serviceId = $serviceData->service_id;
+            $serviceType = $serviceData->service_type;
+            $serviceCompliance = json_encode(explode(',', $serviceData->service_compliance));
+    
+            $services[$serviceId] = [
+                'service_type' => $serviceType,
+                'service_compliance' => $serviceCompliance,
+            ];
+        };
+        $product->services()->sync($services);
 
-        } catch (\Throwable $th) {
-            
+        if ($product) {
+            return response()->json([
+                                    'success' => true,
+                                    'message' => 'Product created successfully'
+                                    ], 200);
+        }else{
+
             return response()->json([
                                     'success' => false,
                                     'message' => 'Something went wrong, try again later'

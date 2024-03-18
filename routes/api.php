@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\DownloadCategoryController;
 use App\Http\Controllers\Api\DownloadController;
 use App\Http\Controllers\Api\BlogController;
 use App\Http\Controllers\Api\ServiceSectionController;
+use App\Http\Controllers\Api\CustomFormController;
 use Illuminate\Http\Request;
 use App\Helpers\MediaHelper;
 use App\Helpers\DocumentHelper;
@@ -251,6 +252,22 @@ Route::prefix('v1')->group(function () {
                     Route::post('/create', 'create')->middleware(['checkRoleAndPermission:admin,create_blog']);
                     Route::post('/{blog}', 'update')->middleware(['checkRoleAndPermission:admin,edit_blog']);
                     Route::delete('/{blog}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_blog']);
+                });
+            });
+
+            //custom form
+            Route::prefix('/custom-form')->group(function(){
+
+                Route::controller(CustomFormController::class)->group(function(){
+
+                    Route::get('/', 'index');
+                    Route::get('/{form}', 'show');
+                    Route::get('/{form}/restore', 'restore');
+                    Route::post('/create', 'create');
+                    Route::post('/{form}', 'update');
+                    Route::delete('/{form}', 'destroy');
+
+                    Route::post('/submit/{form}', 'submitFormStore');
                 });
             });
 

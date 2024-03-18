@@ -43,27 +43,28 @@ class RoleController extends Controller
                                     ], 403);
         }
 
-        try {
-            $result = Role::create([ 'name' => $request->name, 'role_description' => $request->role_description]);
+        if (Role::withTrashed()
+                  ->where('name', $request->name)
+                  ->exists()) 
+        {
+            throw new UserExistPreviouslyException('Oops! It appears that the chosen Rule Name is already in use. Please select a different one and try again');
+        }
 
-            if($result){
+        $result = Role::create([ 'name' => $request->name, 'role_description' => $request->role_description]);
 
-                return response()->json([
-                'success' => true,
-                'message' => 'Role created successfully'
-                ], 201);
+        if($result){
 
-            }else{
+            return response()->json([
+            'success' => true,
+            'message' => 'Role created successfully'
+            ], 201);
 
-                return response()->json([
-                'success' => false,
-                'message' => 'Something went wrong'
-                ], 422);
-            }
-            
-        } catch (\Exception $th) {
+        }else{
 
-            throw new UserExistPreviouslyException('this Role was deleted previously, did you want to restore it?');
+            return response()->json([
+            'success' => false,
+            'message' => 'Something went wrong'
+            ], 422);
         }
     }
 

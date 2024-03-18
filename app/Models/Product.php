@@ -47,7 +47,7 @@ class Product extends Model
     public function services()
     {
         return $this->belongsToMany(Service::class, 'product_services', 'product_id', 'service_id')
-                    ->withPivot('service_type', 'service_compliance');
+                     ->withPivot('service_type', 'service_compliance');
     }
 
     public function image()

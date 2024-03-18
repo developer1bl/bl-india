@@ -64,21 +64,20 @@ class ServiceSectionController extends Controller
             throw new UserExistPreviouslyException('Oops! It appears that the chosen Service section Name or slug is already in use. Please select a different one and try again.');
         }
 
-        try {
+        $result = ServiceSection::create($request->all());
 
-            ServiceSection::create($request->all());
-
-            return response()->json([
-                                    'success' => true,
-                                    'message' => 'Service Section created successfully'
-                                    ], 201);
-    
-        } catch (\Throwable $th) {
+        if ($result) {
             
             return response()->json([
-                                    'success' => false,
-                                    'message' => 'Something went wrong, please try again later',
-                                    ],422);
+                                   'success' => true,
+                                  'message' => 'Service section created successfully'
+                                    ], 201);
+        } else {
+            
+            return response()->json([
+                                  'success' => false,
+                                 'message' => 'Something went wrong, please try again later'
+                                    ], 422);
         }
     }
 

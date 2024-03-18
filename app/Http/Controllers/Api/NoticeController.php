@@ -35,7 +35,7 @@ class NoticeController extends Controller
     public function create(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'notice_title' => 'required|string|max:255',
+            'notice_title' => ['required', 'string', 'max:255', Rule::unique('notices', 'notice_title')->whereNull('deleted_at')],
             'notice_slug' => ['required', 'string', 'max:255', Rule::unique('notices', 'notice_slug')->whereNull('deleted_at')],
             'notice_content' => 'nullable|string',
             'service_id' => 'integer|exists:services,service_id',
@@ -58,9 +58,13 @@ class NoticeController extends Controller
                                     ], 403);
         }
 
-        if (Notice::withTrashed()->whereNotice_slug($request->notice_slug)->exists()) {
+        if (Notice::withTrashed()
+                    ->where('notice_title',$request->notice_title)
+                    ->orWhere('notice_slug', $request->notice_slug)
+                    ->exists()) 
+        {
             
-            throw new UserExistPreviouslyException('this Notice was deleted previously, did you want to restore it?');
+            throw new UserExistPreviouslyException('Oops! It appears that the chosen Notice Title Name or slug is already in use. Please select a different one and try again');
         }
         
         $product_tags = explode(',', $request->products_tag);
@@ -183,7 +187,7 @@ class NoticeController extends Controller
         }
         
         $validator = Validator::make($request->all(), [
-            'notice_title' => 'required|string|max:255',
+            'notice_title' => ['required', 'string', 'max:255', Rule::unique('notices', 'notice_title')->ignore($id, 'notice_id')],
             'notice_slug' => ['required', 'string', 'max:255', Rule::unique('notices', 'notice_slug')->ignore($id, 'notice_id')],
             'notice_content' => 'nullable|string',
             'service_id' => 'integer|exists:services,service_id',
