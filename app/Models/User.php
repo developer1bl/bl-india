@@ -84,9 +84,9 @@ class User extends Authenticatable
     }
 
     //get user assigne persmissions
-    public function permissions()
+    public function userPermissions()
     {
-        return $this->roles()->with('permissions')->get();
+        return $this->roles()->with('permissions');
     }
 
     public function hasRole($role)

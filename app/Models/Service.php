@@ -61,4 +61,10 @@ class Service extends Model
     {
         return $this->hasMany(ServiceSection::class,'service_id','service_id');
     }
+
+    public function notices_product()
+    {
+        return $this->belongsToMany(Notice::class, 'notice_service', 'service_id', 'notice_id')
+                    ->withPivot('product_id');
+    }
 }

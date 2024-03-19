@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Service;
 use App\Models\Document;
+use App\Models\ProductCategories;
 
 class Notice extends Model
 {
@@ -22,7 +23,6 @@ class Notice extends Model
         'notice_image_id',
         'notice_img_alt',
         'notice_content',
-        'service_id',
         'seo_title',
         'seo_description',
         'seo_keywords',
@@ -42,7 +42,8 @@ class Notice extends Model
 
     public function services()
     {
-        return $this->belongsTo(Service::class, 'service_id', 'service_id')->with('products');
+        return $this->belongsTo(Service::class, 'service_id', 'service_id')
+                    ->with('products');
     }
 
     public function image()
@@ -53,5 +54,17 @@ class Notice extends Model
     public function documents()
     {
         return $this->hasOne(Document::class, 'document_id');
-    }   
+    }
+
+    public function productCategories()
+    {
+        return $this->belongsToMany(ProductCategories::class, 'notice_product_categorie', 'notice_id', 'product_category_id')
+                    ->withPivot('product_id');
+    }
+
+    public function services_product()
+    {
+        return $this->belongsToMany(Service::class, 'notice_service', 'notice_id', 'service_id')
+                    ->withPivot('product_id');
+    }
 }

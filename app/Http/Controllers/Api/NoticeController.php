@@ -8,6 +8,9 @@ use App\Models\Notice;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use App\Exceptions\UserExistPreviouslyException;
+use App\Models\Service;
+use App\Models\ProductCategories;
+use App\Models\Product;
 
 class NoticeController extends Controller
 {
@@ -18,7 +21,7 @@ class NoticeController extends Controller
      */
     public function index()
     {
-        $notice = Notice::with('services', 'image', 'documents')
+        $notice = Notice::with('services', 'image', 'documents', 'productCategories', 'services_product')
                           ->orderByDesc('notice_id')
                           ->get();
 
@@ -40,7 +43,6 @@ class NoticeController extends Controller
             'notice_title' => ['required', 'string', 'max:255', Rule::unique('notices', 'notice_title')->whereNull('deleted_at')],
             'notice_slug' => ['required', 'string', 'max:255', Rule::unique('notices', 'notice_slug')->whereNull('deleted_at')],
             'notice_content' => 'nullable|string',
-            'service_id' => 'integer|exists:services,service_id',
             'notice_img_alt' => 'nullable|string',
             'seo_title' => 'nullable|string|max:255',
             'seo_description' => 'nullable|string',
@@ -49,6 +51,54 @@ class NoticeController extends Controller
             'seo_other_details' => 'nullable|string',
             'notice_image_id' => 'integer|exists:media,media_id',
             'notice_document_id' => 'integer|exists:documents,document_id',
+            'notice_category_options' => ['required','json',
+                                         function ($attribute, $value, $fail){
+                                            
+                                            $notice_option = json_decode($value);
+                                            
+                                            if(isset($notice_option[0]->option))
+                                            {
+                                                if(!in_array($notice_option[0]->option, ['service', 'product category'])){
+
+                                                    $fail('Invalid option name.');
+                                                }
+
+                                                if(isset($notice_option[0]->option_id)){
+
+                                                    if ($notice_option[0]->option === 'service') {
+
+                                                        $service = Service::find($notice_option[0]->option_id);
+
+                                                        if (!$service) {
+                                                            $fail('Selected service does not exist.');
+                                                        }
+
+                                                    } else if ($notice_option[0]->option === 'product category'){
+
+                                                        $product_category  = ProductCategories::find($notice_option[0]->option_id);
+
+                                                        if (!$product_category) {
+                                                            $fail('Selected product category does not exist.');
+                                                        }
+                                                    }
+                                                }
+
+                                                if (isset($notice_option[0]->product_id)) {
+                                                
+                                                    foreach ($notice_option[0]->product_id as $key => $value) {
+                                                           
+                                                        $product = Product::find($value);
+
+                                                        if ($product === null) {
+                                                            $fail('Selected product does not exist.');
+                                                        }
+                                                    } 
+                                                }
+                                            }
+
+                                            return;
+                                        }],
+
         ]);
 
         //if the request have some validation errors
@@ -74,7 +124,6 @@ class NoticeController extends Controller
             "notice_title" => $request->notice_title,
             "notice_slug" => $request->notice_slug,
             "notice_content" => $request->notice_content,
-            "service_id" => $request->service_id,
             "notice_image_id" => $request->notice_image_id,
             "notice_img_alt" => $request->notice_img_alt,
             "seo_title" => $request->seo_title,
@@ -86,7 +135,43 @@ class NoticeController extends Controller
         ];
 
         $notice = Notice::create($data);
-     
+
+        $noticeOptionData = json_decode($request->notice_category_options);
+
+        if (!empty($noticeOptionData[0])) {
+
+            $optionId = $noticeOptionData[0]->option_id; 
+
+            //for product category
+            if($noticeOptionData[0]->option === 'product category'){
+                
+                foreach ($noticeOptionData[0]->product_id as $key => $value) {
+                    $notice->productCategories()->attach($optionId, ['product_id' => $value]);           
+                }
+            }
+
+            //for service
+            if($noticeOptionData[0]->option === 'service'){
+                
+                foreach ($noticeOptionData[0]->product_id as $key => $value) {
+                    $notice->services_product()->attach($optionId, ['product_id' => $value]);           
+                }
+            }
+        }
+
+        if ($notice) {
+
+            return response()->json([
+                                 'success' => true,
+                                 'message' => 'Notice Created Successfully'
+                                    ], 200);
+        } else {
+
+            return response()->json([
+                                 'success' => false,
+                                 'message' => 'Something went wrong'
+                                    ], 403);
+        }
         if ($notice) {
             
             return response()->json([
@@ -100,6 +185,19 @@ class NoticeController extends Controller
                                     'message' => 'Something went wrong, please try again later'
                                     ], 422);
         }
+    }
+
+
+    /**
+     * store relation data.
+     * 
+     * @param string $request
+     * @param Notice $id
+     * @return response
+     */
+    public static function relationStore($request)
+    {
+
     }
 
     /**
@@ -173,6 +271,7 @@ class NoticeController extends Controller
 
     /**
      * Update the specified resource in storage.
+     * 
      */
     public function update(Request $request, string $id)
     {
