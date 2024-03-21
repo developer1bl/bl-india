@@ -19,9 +19,10 @@ use App\Http\Controllers\Api\DownloadController;
 use App\Http\Controllers\Api\BlogController;
 use App\Http\Controllers\Api\ServiceSectionController;
 use App\Http\Controllers\Api\CustomFormController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Api\HolidayController;
 use App\Helpers\MediaHelper;
 use App\Helpers\DocumentHelper;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -270,6 +271,25 @@ Route::prefix('v1')->group(function () {
                     Route::post('/submit/{form}', 'submitFormStore');
                 });
             });
+
+            //Holiday
+            Route::prefix('/holiday')->group(function(){
+
+                Route::controller(HolidayController::class)->group(function(){
+
+                    Route::get('/', 'index');
+                    Route::get('/{holiday}','show');
+                    Route::get('/{holiday}/restore','restore');
+                    Route::post('/create', 'create');
+                    Route::post('/{holiday}', 'update');
+                    Route::delete('/{holiday}', 'destroy');
+                });
+            });
+
+        //     Route::get('/{any}', function () {
+        //         return view('errors.404');
+        //     })->where('any', '.*');
+        // });
 
             //media
             Route::prefix('/media')->group(function(){
