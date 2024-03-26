@@ -24,17 +24,48 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        RateLimiter::for('api', function (Request $request) {
-            return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
-        });
+        $this->configureRateLimiting();
 
         $this->routes(function () {
             Route::middleware('api')
                 ->prefix('api')
                 ->group(base_path('routes/api.php'));
 
+            //for bakend operation
+            // Route::middleware('api')
+            //        ->prefix('api')
+            //        ->group(base_path('routes/v1/Api/api_backend.php'));
+
+            // //for frontend operation
+            // Route::middleware('api')
+            //        ->prefix('api/frontend')
+            //        ->group(base_path('routes/v1/Api/api_frontent.php'));
+
+            // //for client operation
+            // Route::middleware('api')
+            //        ->prefix('api/client')
+            //        ->group(base_path('routes/v1/Api/client.php'));
+
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));
         });
+    }
+
+    /**
+     * Configure the rate limiters for the application.
+     */
+    protected function configureRateLimiting(): void
+    {
+        RateLimiter::for('api', function (Request $request) {
+            return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
+        });
+
+        // RateLimiter::for('api/frontend', function (Request $request) {
+        //     return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
+        // });
+
+        // RateLimiter::for('api/client', function (Request $request) {
+        //     return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
+        // });
     }
 }

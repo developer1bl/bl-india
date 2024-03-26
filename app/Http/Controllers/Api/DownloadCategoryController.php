@@ -18,12 +18,12 @@ class DownloadCategoryController extends Controller
      */
     public function index()
     {
-        $donwloadCategory = DownloadCategory::with('downloads')
+        $downloadCategory = DownloadCategory::with('downloads')
                                              ->orderByDesc('download_category_id')
                                              ->get();
 
         return response()->json([
-                                'data' => $donwloadCategory ?? [],
+                                'data' => $downloadCategory ?? [],
                                 'success' => true,
                                 ], 200);
     }
@@ -106,12 +106,12 @@ class DownloadCategoryController extends Controller
      */
     public function show(string $id)
     {
-        $donwloadCategory = DownloadCategory::find($id);
+        $downloadCategory = DownloadCategory::find($id);
 
-        if ($donwloadCategory) {
+        if ($downloadCategory) {
             
             return response()->json([
-                                    'data' => $donwloadCategory,
+                                    'data' => $downloadCategory,
                                     'success' => true,
                                     'message' => ''
                                     ], 200);
@@ -138,9 +138,9 @@ class DownloadCategoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $donwloadCategory = DownloadCategory::find($id);
+        $downloadCategory = DownloadCategory::find($id);
 
-        if (!$donwloadCategory) {
+        if (!$downloadCategory) {
             
             return response()->json([
                                     'data' => [],
@@ -163,7 +163,7 @@ class DownloadCategoryController extends Controller
                                     ], 403);
         }
 
-        $result = $donwloadCategory->update($request->all());
+        $result = $downloadCategory->update($request->all());
 
         if ($result) {
             
@@ -185,11 +185,11 @@ class DownloadCategoryController extends Controller
      */
     public function destroy(string $id)
     {
-        $donwloadCategory = DownloadCategory::find($id);
+        $downloadCategory = DownloadCategory::find($id);
 
-        if ($donwloadCategory) {
+        if ($downloadCategory) {
             
-            $donwloadCategory->delete();
+            $downloadCategory->delete();
 
             return response()->json([
                                    'success' => true,

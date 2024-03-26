@@ -24,7 +24,6 @@ class HolidayController extends Controller
                                 'data' => $holidays?? [],
                                 'success' => true,
                                 ], 200);
-
     }
 
     /**

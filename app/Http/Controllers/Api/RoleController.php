@@ -55,16 +55,16 @@ class RoleController extends Controller
         if($result){
 
             return response()->json([
-            'success' => true,
-            'message' => 'Role created successfully'
-            ], 201);
+                                    'success' => true,
+                                    'message' => 'Role created successfully'
+                                    ], 201);
 
         }else{
 
             return response()->json([
-            'success' => false,
-            'message' => 'Something went wrong'
-            ], 422);
+                                    'success' => false,
+                                    'message' => 'Something went wrong'
+                                    ], 422);
         }
     }
 

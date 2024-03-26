@@ -264,9 +264,7 @@ class LoginController extends Controller
         $input = $request->all();
 
         $validator = Validator::make($input, [
-            'email' => 'required|email:rfc,dns|unique:password_reset_tokens,email',
-        ], [
-            'email.unique' => 'forgot password request already exists with this email address',
+            'email' => 'required|email:rfc,dns'
         ]);
 
         if ($validator->fails()) {
@@ -344,22 +342,22 @@ class LoginController extends Controller
 
                     return response()->json([
                                             'success' => false,
-                                            'message' => 'your request time expired'
-                                            ], 403);
+                                            'message' => 'your request time expired, please try again'
+                                            ], 408);
                 }
             } else {
 
                 return response()->json([
                                         'success' => false,
-                                        'message' => 'Please check your Cridentials, something is wrong.'
-                                        ], 400);
+                                        'message' => 'This Link already Expired. Please try again'
+                                        ], 408);
             }
         } else {
 
             return response()->json([
                                     'success' => false,
-                                    'message' => 'Please check your Cridentials, something is wrong.'
-                                    ], 404);
+                                    'message' => 'Some thing went wrong, please try again'
+                                    ], 422);
         }
     }
 

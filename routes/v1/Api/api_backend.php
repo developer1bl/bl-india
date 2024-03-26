@@ -46,10 +46,11 @@ Route::prefix('v1')->group(function () {
         //for client routes
         Route::post('/login', 'loginClient');
         //forgot password routes
-        Route::Post('/forgot-password', 'forgotPassword');
+        Route::Post('/forgot-password', 'forgotPassword')->name('auth.forgotPassword');
         //handle forgot password 
         Route::get('/reset-password/{token?}', 'resetPasswordPage')->name('password.forgot');
-        Route::post('/reset-password', 'authResetRequest')->name('auth.resetPassword');
+
+        
     });
 
     // public routes (register routes)
