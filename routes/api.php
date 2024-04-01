@@ -49,13 +49,9 @@ Route::prefix('v1')->group(function () {
         Route::Post('/forgot-password', 'forgotPassword');
         //handle forgot password 
         Route::get('/reset-password/{token?}', 'resetPasswordPage')->name('password.forgot');
-        // Route::post('/reset-password', 'authResetRequest')->name('auth.resetPassword');
+        Route::post('/reset-password', 'authResetRequest')->name('auth.resetPassword');
     });
     
-    Route::post('/reset-password', function (Request $request){
-        dd($request->all());
-    })->name('auth.resetPassword');
-
     // public routes (register routes)
     Route::controller(RegisterController::class)->group(function () {
 

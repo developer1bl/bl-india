@@ -40,7 +40,7 @@ class EmailVerifyController extends Controller
                     if (!empty($client->email_verify_till_valid) && 
                             Carbon::parse($client->email_verify_till_valid) >= Carbon::now()->format('Y-m-d H:i:s')) {
 
-                        if ($client->is_email_verified != 1) {
+                        if ($client->is_email_verified === 1) {
                             
                             return response()->json([
                                                     'success' => true,
@@ -58,11 +58,6 @@ class EmailVerifyController extends Controller
                                                 'message' => 'email verification done successfully'
                                                 ], 201);
                     } else {
-
-                        // $client->update([
-                        //     'email_verification_token' => null,
-                        //     'email_verify_till_valid' => null
-                        // ]);
                        
                         return response()->json([
                                                 'success' => false,
@@ -71,11 +66,6 @@ class EmailVerifyController extends Controller
                     }
                     
                 } else {
-
-                    // $client->update([
-                    //     'email_verification_token' => null,
-                    //     'email_verify_till_valid' => null
-                    // ]);
                 
                     return response()->json([
                                             'success' => false,
@@ -97,50 +87,6 @@ class EmailVerifyController extends Controller
                                     'message' => 'Something went wrong, please try again'
                                     ], 422);
         }
-      
-        // if (!empty($token)) {
-        //     $client = Client::whereEmail_verification_token($token)
-        //                     ->where('email_verify_till_valid', '>=', Carbon::now()->format('Y-m-d'))
-        //                     ->whereDeleted_at(null)
-        //                     ->first();
-
-        //     if (!empty($client)) {
-
-        //         // check if emaail is already verified
-        //         if ($client->is_email_verified !== 1) {
-
-        //             $client->update([
-        //                 // 'email_verification_token' => null,
-        //                 // 'email_verify_till_valid' => null,
-        //                 'is_email_verified' => 1,
-        //                 'email_verified_at' => now(),
-        //             ]);
-
-        //             return response()->json([
-        //                 'success' => true,
-        //                 'message' => 'email verified successfully'
-        //             ], 200);
-        //         } else {
-
-        //             return response()->json([
-        //                 'success' => false,
-        //                 'message' => 'email already verified'
-        //             ], 204);
-        //         }
-        //     } else {
-
-        //         return response()->json([
-        //             'success' => false,
-        //             'message' => 'Invalid token'
-        //         ], 404);
-        //     }
-        // } else {
-
-        //     return response()->json([
-        //         'success' => false,
-        //         'message' => 'Invalid or expired email verification request'
-        //     ], 401);
-        // }
     }
 
     /**
@@ -183,31 +129,31 @@ class EmailVerifyController extends Controller
                     Mail::to($client->email)->send(new SendMails($data));
 
                     return response()->json([
-                        'success' => true,
-                        'message' => 'email verifation link send successfully'
-                    ], 201);
+                                            'success' => true,
+                                            'message' => 'email verifation link send successfully'
+                                            ], 201);
 
                 } else {
 
                     return response()->json([
-                        'success' => false,
-                        'message' => 'email is already verified'
-                    ], 202);
+                                            'success' => false,
+                                            'message' => 'email is already verified'
+                                            ], 202);
                 }
 
             } else {
 
                 return response()->json([
-                    'success' => false,
-                    'message' => 'No User Exist with this email address'
-                ], 404);
+                                        'success' => false,
+                                        'message' => 'No User Exist with this email address'
+                                        ], 404);
             }
         } else {
 
             return response()->json([
-                'success' => false,
-                'message' => 'Something went wrong, try again'
-            ], 400);
+                                    'success' => false,
+                                    'message' => 'Something went wrong, try again'
+                                    ], 400);
         }
     }
 }
