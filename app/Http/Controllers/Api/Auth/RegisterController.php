@@ -14,6 +14,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Carbon;
 use App\Models\Role;
+// use Illuminate\Auth\Events\Registered;
 
 class RegisterController extends Controller
 {
@@ -106,7 +107,8 @@ class RegisterController extends Controller
         if (!empty($client)) {
 
             //send verification email to client email address
-            $this->sendVerificationMail($client);
+           $this->sendVerificationMail($client);
+            //event(new Registered($client));
 
             return response()->json([
                                     'success' => true,
@@ -133,7 +135,7 @@ class RegisterController extends Controller
     {
         $token = Str::random(40);
         $domain = URL::to('/');
-        $url = $domain . "/api/v1/verify-email/" . $token;
+        $url = $domain . "/api/v1/verify-email/" . $token."?signature=". encode($user->email);
 
         $data = [
             'user' => $user,

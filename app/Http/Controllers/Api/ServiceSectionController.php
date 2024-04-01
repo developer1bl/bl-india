@@ -57,7 +57,7 @@ class ServiceSectionController extends Controller
 
         if(ServiceSection::withTrashed(true)
                           ->where('service_section_name', $request->service_section_name)
-                          ->where('service_section_slug', $request->service_section_slug)
+                          ->orderByhere('service_section_slug', $request->service_section_slug)
                           ->exists())
         {
 

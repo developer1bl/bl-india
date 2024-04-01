@@ -185,7 +185,7 @@ class DocumentHelper{
 
         if ($document) {
             
-            return response()->download(storage_path('app/public/'.$document['document_path']));
+            return response()->download(storage_path('app/public/'.$document['document_path']), $document['document_name'], [], 'inline');
             
         } else {
             

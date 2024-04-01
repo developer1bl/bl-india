@@ -106,7 +106,6 @@
                 }
             },
             errorPlacement: function(error, element) {
-                // error.insertAfter(element);
                 if (element.attr("name") == "password"){
                     error.appendTo($('#passErr'));
                 }else if(element.attr("name") == "confirm_password" ){

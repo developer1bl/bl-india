@@ -51,7 +51,7 @@ class LoginController extends Controller
 
             return response()->json([
                                     'success' => false,
-                                    'message' => 'No user Foud with this email address'
+                                    'message' => 'No user Foud with this Email address'
                                     ], 404);
         }
     
@@ -68,7 +68,7 @@ class LoginController extends Controller
 
             return response()->json([
                                     'success' => true,
-                                    'message' => 'user Login Successfully',
+                                    'message' => 'User Login Successfully',
                                     'user' => $user,
                                     'token' => $user->createToken($request->email)->plainTextToken
                                     ], 200);
@@ -76,7 +76,7 @@ class LoginController extends Controller
 
             return response()->json([
                                     'success' => false,
-                                    'message' => 'User Login Failed, due to wrong  email or password',
+                                    'message' => 'User Login Failed, due to wrong Email or Password',
                                     ], 401);
         }
     }
@@ -109,7 +109,7 @@ class LoginController extends Controller
         if (!empty($requestArr)) {
 
             //authenticate with password
-            if ($authtype == 'password') {
+            if ($authtype == 'password' && $authtype !== null) {
 
                 $validator = Validator::make($request->all(), [
                     'email' => 'required|email:rfc,dns',
@@ -135,7 +135,7 @@ class LoginController extends Controller
 
                     return response()->json([
                                             'success' => false,
-                                            'message' => 'No Client Foud with this email address'
+                                            'message' => 'No Client Foud with this Email address'
                                             ], 404);
                 }
 
@@ -160,7 +160,7 @@ class LoginController extends Controller
 
                     return response()->json([
                                             'success' => false,
-                                            'message' => 'Client Authentication Failed, due to invalid email or password',
+                                            'message' => 'Client Authentication Failed, due to invalid Email or Password',
                                             ], 401);
                 }
 
@@ -242,13 +242,13 @@ class LoginController extends Controller
 
             return response()->json([
                                     'success' => true,
-                                    'message' => 'OTP has been sent to your email address'
+                                    'message' => 'OTP has been sent to your Email Address'
                                     ], 201);
         } else {
 
             return response()->json([
                                     'success' => false,
-                                    'message' => 'Please check your Cridentials, something is wrong.'
+                                    'message' => 'Please check your Cridentials, Something is Wrong.'
                                     ], 404);
         }
     }
@@ -306,12 +306,12 @@ class LoginController extends Controller
 
             return response()->json([
                                     'success' => true,
-                                    'message' => 'Forgot Password link send successfully'
+                                    'message' => 'Forgot Password link Send Successfully'
                                     ], 201);
         } else {
             return response()->json([
                                     'success' => false,
-                                    'message' => 'No Client Foud with this email address'
+                                    'message' => 'No such Client Foud with this Email Address'
                                     ], 404);
         }
     }
@@ -392,7 +392,7 @@ class LoginController extends Controller
 
                         return response()->json([
                                                 'success' => true,
-                                                'message' => 'Password reset successfully'
+                                                'message' => 'Password reset Successfully'
                                                 ], 201);
                     } else {
 
