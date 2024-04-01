@@ -20,6 +20,7 @@ use App\Http\Controllers\Api\BlogController;
 use App\Http\Controllers\Api\ServiceSectionController;
 use App\Http\Controllers\Api\CustomFormController;
 use App\Http\Controllers\Api\HolidayController;
+use App\Http\Controllers\Api\StaticPageConroller;
 use App\Helpers\MediaHelper;
 use App\Helpers\DocumentHelper;
 use Illuminate\Http\Request;
@@ -51,7 +52,7 @@ Route::prefix('v1')->group(function () {
         Route::get('/reset-password/{token?}', 'resetPasswordPage')->name('password.forgot');
         Route::post('/reset-password', 'authResetRequest')->name('auth.resetPassword');
     });
-    
+
     // public routes (register routes)
     Route::controller(RegisterController::class)->group(function () {
 
@@ -291,6 +292,21 @@ Route::prefix('v1')->group(function () {
         //         return view('errors.404');
         //     })->where('any', '.*');
         // });
+
+            //static pages
+            Route::prefix('/static-page')->group(function(){
+
+                Route::controller(StaticPageConroller::class)->group(function(){
+
+                    Route::get('/', 'index');
+                    Route::get('/{staticPage}','show');
+                    Route::get('/{staticPage}/restore','restore');
+                    Route::post('/create', 'create');
+                    Route::post('/{staticPage}', 'update');
+                    Route::delete('/{staticPage}', 'destroy');
+                });
+
+            });
 
             //media
             Route::prefix('/media')->group(function(){
