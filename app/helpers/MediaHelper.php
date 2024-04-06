@@ -12,7 +12,7 @@ class MediaHelper{
 
     /**
      * this function is used to store the media
-     * 
+     *
      * @param Request $request
      * @return Response
      */
@@ -32,7 +32,7 @@ class MediaHelper{
                                     'message' => $validator->messages()
                                     ], 403);
         }
-    
+
         $image = $request->file('media_image');
         $extension = $image->getClientOriginalExtension();
         $fullName = $image->getClientOriginalName();
@@ -47,7 +47,7 @@ class MediaHelper{
             'media_type' => 'webp',
             'media_size' => $imageSize,
         ];
-        
+
         $media = Media::create($data);
         $storage = Storage::disk('public')->put('media/' . $imageName, $imageWebp);
 
@@ -56,14 +56,14 @@ class MediaHelper{
             return true;
 
         } else {
-           
+
             return false;
         }
     }
 
     /**
      * this function is used to get all the images
-     * 
+     *
      * @return Response
      */
     public static function getAllImages(){
@@ -76,7 +76,7 @@ class MediaHelper{
 
         return response()->json([
                                 'data' => $media ?? [],
-                                'status' => true,    
+                                'status' => true,
                                 ],200);
     }
 
@@ -88,7 +88,7 @@ class MediaHelper{
      * @return \Illuminate\Http\Response
      */
     public static function updateImage(Request $request, string $name){
-        
+
         $media = Media::whereMedia_name($name)->first();
 
         if(!$media){
@@ -98,8 +98,6 @@ class MediaHelper{
 
         $validator = Validator::make($request->all(), [
             'media_image' => 'required|image|max:1024',
-        ],[
-            'media_image.max' => 'The media image field must not be greater than 1 MB.',
         ]);
 
         //if the request have some validation errors
@@ -138,7 +136,7 @@ class MediaHelper{
 
                 return true;
             } else {
-                
+
                 // Error in storing the updated image
                 return false;
             }
@@ -150,14 +148,14 @@ class MediaHelper{
 
     /**
      * this function is used to delete the media
-     * 
+     *
      * @param string $id
      * @return Response
      */
     public static function deleteMedia(string $id){
 
         $media = Media::find($id);
-      
+
         if ($media) {
 
             Storage::disk('public')->delete($media->media_path);

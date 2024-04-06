@@ -16,11 +16,11 @@ class StaticPageConroller extends Controller
      */
     public function index()
     {
-        $staticPage = StaticPage::with('image')->get();
+        $staticPage = StaticPage::with(['image', 'pageSection'])->get();
 
         return response()->json([
-                                 'data' => $staticPage,
-                                 'success' => true   
+                                 'data' => $staticPage ?? [],
+                                 'success' => true
                                 ], 200);
 
     }
@@ -59,22 +59,34 @@ class StaticPageConroller extends Controller
             throw new UserExistPreviouslyException('Oops! It appears that the chosen Page Name or slug is already in use. Please select a different one and try again');
         }
 
-        $result = StaticPage::create($request->all());
+        $data = [
+            'page_name' => $request->input('page_name'),
+            'page_slug' => $request->input('page_slug'),
+            'tagline' => $request->input('tagline'),
+            'page_image_id' => $request->input('page_image_id'),
+            'page_image_alt' => $request->input('page_image_alt'),
+            'seo_title' => $request->input('seo_title'),
+            'seo_keywords' => $request->input('seo_keywords'),
+            'seo_description' => $request->input('seo_description'),
+            'page_status' => true,
+        ];
+
+        $result = StaticPage::create($data);
 
         if ($result) {
-            
+
             return response()->json([
                                     'success' => true,
                                     'message' => 'Page created successfully'
                                     ], 201);
         } else {
-            
+
             return response()->json([
                                     'success' => false,
                                     'message' => 'Something went wrong, please try again later'
                                     ], 422);
         }
-        
+
     }
 
     /**
@@ -85,7 +97,7 @@ class StaticPageConroller extends Controller
         $staticPage = StaticPage::withTrashed()->where('page_name', $request)->orwhere('page_slug', $request)->first();
 
         if ($staticPage) {
-            
+
             $staticPage->restore();
 
             return response()->json([
@@ -137,7 +149,7 @@ class StaticPageConroller extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
-    {   
+    {
         $staticPage = StaticPage::find($id);
 
         if (!$staticPage) {
@@ -160,7 +172,6 @@ class StaticPageConroller extends Controller
             'page_status' => 'boolean|nullable',
         ]);
 
-    
         //if the request have some validation errors
         if ($validator->fails()) {
 
@@ -173,13 +184,13 @@ class StaticPageConroller extends Controller
         $result = $staticPage->update($request->all());
 
         if ($result) {
-            
+
             return response()->json([
                                     'success' => true,
                                     'message' => 'Page updated successfully'
                                     ], 201);
         } else {
-            
+
             return response()->json([
                                     'success' => false,
                                     'message' => 'Something went wrong, please try again later'
@@ -205,13 +216,13 @@ class StaticPageConroller extends Controller
         $result = $staticPage->delete();
 
         if ($result) {
-            
+
             return response()->json([
                                     'success' => true,
                                     'message' => 'Page deleted successfully'
                                     ], 201);
         } else {
-            
+
             return response()->json([
                                     'success' => false,
                                     'message' => 'Something went wrong, please try again later'

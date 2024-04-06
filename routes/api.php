@@ -21,6 +21,7 @@ use App\Http\Controllers\Api\ServiceSectionController;
 use App\Http\Controllers\Api\CustomFormController;
 use App\Http\Controllers\Api\HolidayController;
 use App\Http\Controllers\Api\StaticPageConroller;
+use App\Http\Controllers\Api\StaticPageSectionController;
 use App\Helpers\MediaHelper;
 use App\Helpers\DocumentHelper;
 use Illuminate\Http\Request;
@@ -48,7 +49,7 @@ Route::prefix('v1')->group(function () {
         Route::post('/login', 'loginClient');
         //forgot password routes
         Route::Post('/forgot-password', 'forgotPassword');
-        //handle forgot password 
+        //handle forgot password
         Route::get('/reset-password/{token?}', 'resetPasswordPage')->name('password.forgot');
         Route::post('/reset-password', 'authResetRequest')->name('auth.resetPassword');
     });
@@ -73,11 +74,11 @@ Route::prefix('v1')->group(function () {
 
         //verify client Otp based login
         Route::post('/verify-client', 'authClientByOTP');
-        //resend Otp 
+        //resend Otp
         Route::post('/resend-otp', 'resendOTP');
     });
 
-    //protected routes (autherized user can access)
+    //protected routes (authorized user can access)
     Route::middleware('auth:sanctum')->group(function () {
 
         //for user routes
@@ -100,7 +101,7 @@ Route::prefix('v1')->group(function () {
         //logout user routes
         Route::Post('/logout', [LoginController::class, 'logout']);
 
-        //User accessble routes
+        //User accessible routes
         Route::middleware('UserRoute')->group(function () {
 
             //Roles routes
@@ -158,7 +159,7 @@ Route::prefix('v1')->group(function () {
                     Route::delete('/{service_section}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_service_section']);
                 });
             });
-        
+
 
             //product routes
             Route::prefix('/product')->group(function () {
@@ -202,7 +203,7 @@ Route::prefix('v1')->group(function () {
                 });
             });
 
-            //donlowad category routes
+            //download category routes
             Route::prefix('/download-category')->group(function (){
 
                 Route::controller(DownloadCategoryController::class)->group(function () {
@@ -215,8 +216,8 @@ Route::prefix('v1')->group(function () {
                     Route::delete('/{downloadCategory}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_download_category']);
                 });
             });
-            
-            //donlowad routes
+
+            //download routes
             Route::prefix('/download')->group(function (){
 
                 Route::controller(DownloadController::class)->group(function (){
@@ -308,6 +309,23 @@ Route::prefix('v1')->group(function () {
 
             });
 
+            //static page sections
+            Route::prefix('/static-page-section')->group(function(){
+
+                Route::controller(StaticPageSectionController::class)->group(function(){
+
+                    Route::get('/', 'index');
+                    Route::get('/{staticPageSection}','show');
+                    Route::get('/{staticPageSection}/restore','restore');
+                    Route::post('/create', 'create');
+                    Route::post('/{staticPageSection}', 'update');
+                    Route::delete('/{staticPageSection}', 'destroy');
+                });
+
+            });
+
+            //static page section items
+
             //media
             Route::prefix('/media')->group(function(){
 
@@ -332,7 +350,7 @@ Route::prefix('v1')->group(function () {
             Route::prefix('/document')->group(function(){
 
                 Route::post('/upload', function (Request $request){
-                    return DocumentHelper::uploadeDocument($request);
+                    return DocumentHelper::uploadDocument($request);
                 });
 
                 Route::get('/get', function (){
@@ -351,14 +369,14 @@ Route::prefix('v1')->group(function () {
                     return DocumentHelper::downloadDocument($id);
                 });
             });
-           
+
         });
 
-        //Client accessble routes
+        //Client accessible routes
         Route::middleware('verified')->group(function () {
 
             Route::prefix('/client')->group(function (){
-                
+
                 Route::controller(ClientController::class)->group(function () {
 
                     Route::get('/', 'index')->middleware(['checkRoleAndPermission:admin,view_client']);

@@ -12,11 +12,11 @@ class DocumentHelper{
 
     /**
      * this function is used to store the media
-     * 
+     *
      * @param Request  $request
      * @return Response
      */
-    public static function uploadeDocument(Request  $request)
+    public static function uploadDocument(Request  $request)
     {
         $validator = Validator::make($request->all(), [
             'document_file' => 'required|file|mimes:pdf',
@@ -54,7 +54,7 @@ class DocumentHelper{
 
                 return true;
             } else {
-    
+
                 return false;
             }
         }
@@ -62,7 +62,7 @@ class DocumentHelper{
 
      /**
      * this function is used to get all the images
-     * 
+     *
      * @return Response
      */
     public static function getAllDocuments(){
@@ -75,7 +75,7 @@ class DocumentHelper{
 
         return response()->json([
                                 'data' => $documents?? [],
-                                'status' => true,    
+                                'status' => true,
                                 ],200);
     }
 
@@ -111,7 +111,7 @@ class DocumentHelper{
 
         // Handle file update
         if ($request->hasFile('document_file')) {
-            
+
             $file = $request->file('document_file');
             $fullName = $file->getClientOriginalName();
             $extension = $file->getClientOriginalExtension();
@@ -147,7 +147,7 @@ class DocumentHelper{
 
     /**
      * this function is used to delete the media
-     * 
+     *
      * @param string $id
      * @return Response
      */
@@ -156,7 +156,7 @@ class DocumentHelper{
         $document = Document::find($id);
 
         if ($document) {
-            
+
             Storage::disk('public')->delete($document['document_path']);
             $document->delete();
 
@@ -165,30 +165,30 @@ class DocumentHelper{
                                     'message' => 'Document deleted successfully.',
                                     ], 200);
         } else {
-            
+
             return response()->json([
                                     'success' => false,
                                     'message' => 'Document not found.',
                                     ], 404);
-        }   
+        }
     }
 
     /**
      * this function is used to download the document
-     * 
+     *
      * @param string $id
      * @return Response
      */
     public static function downloadDocument(string $id){
-        
+
         $document = Document::find($id);
 
         if ($document) {
-            
+
             return response()->download(storage_path('app/public/'.$document['document_path']), $document['document_name'], [], 'inline');
-            
+
         } else {
-            
+
             return response()->json([
                                    'success' => false,
                                    'message' => 'Document not found.',

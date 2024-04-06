@@ -33,4 +33,8 @@ class StaticPage extends Model
     {
         return $this->belongsTo(Media::class, 'page_image_id');
     }
+
+    public function pageSection(){
+        return $this->hasMany(StaticPageSection::class,'static_page_id','static_page_id');
+    }
 }
