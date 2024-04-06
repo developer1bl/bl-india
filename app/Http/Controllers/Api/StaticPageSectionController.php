@@ -52,9 +52,9 @@ class StaticPageSectionController extends Controller
         if ($validator->fails()) {
 
             return response()->json([
-                                        'success' => false,
-                                        'message' => $validator->messages()
-                                        ], 403);
+                                    'success' => false,
+                                    'message' => $validator->messages()
+                                    ], 403);
         }
 
         if (StaticPageSection::withTrashed()
@@ -159,9 +159,9 @@ class StaticPageSectionController extends Controller
         if (!$staticPageSection) {
 
             return response()->json([
-                                       'success' => false,
-                                       'message' => 'Static Page Section Not Found'
-                                        ], 403);
+                                    'success' => false,
+                                    'message' => 'Static Page Section Not Found'
+                                    ], 403);
         }
 
         $validator = Validator::make($request->all(), [
@@ -182,6 +182,7 @@ class StaticPageSectionController extends Controller
 
         // If the request has validation errors
         if ($validator->fails()) {
+            
             return response()->json([
                                     'success' => false,
                                     'message' => $validator->messages()
