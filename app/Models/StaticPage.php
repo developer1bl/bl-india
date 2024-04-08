@@ -17,7 +17,7 @@ class StaticPage extends Model
         'page_name',
         'page_slug',
         'tagline',
-        'page_image_id',
+        'page_img_url',
         'page_image_alt',
         'seo_title',
         'seo_keywords',
@@ -29,12 +29,7 @@ class StaticPage extends Model
         'page_status' => 'boolean'
     ];
 
-    public function image()
-    {
-        return $this->belongsTo(Media::class, 'page_image_id');
-    }
-
     public function pageSection(){
-        return $this->hasMany(StaticPageSection::class,'static_page_id','static_page_id');
+        return $this->hasMany(StaticPageSection::class,'static_page_id','static_page_id')->with('image');
     }
 }

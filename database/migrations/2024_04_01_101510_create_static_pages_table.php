@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('page_name')->unique();
             $table->string('page_slug')->unique()->nullable();
             $table->string('tagline')->nullable();
-            $table->unsignedBigInteger('page_image_id')->nullable();
+            $table->string('page_img_url')->nullable();
             $table->string('page_image_alt')->nullable();
             $table->string('seo_title')->nullable();
             $table->text('seo_keywords')->nullable();

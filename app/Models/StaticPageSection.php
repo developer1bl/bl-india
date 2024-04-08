@@ -15,9 +15,10 @@ class StaticPageSection extends Model
 
     protected $fillable = [
         'static_page_id',
-        'section_media_id',
+        'section_img_url',
         'section_img_alt',
         'section_name',
+        'section_slug',
         'section_tagline',
         'section_description',
         'section_content',
@@ -31,9 +32,5 @@ class StaticPageSection extends Model
 
     public function staticPage(){
         return $this->belongsTo(StaticPage::class, 'static_page_id');
-    }
-
-    public function image(){
-        return $this->belongsTo(Media::class,'section_media_id');
     }
 }

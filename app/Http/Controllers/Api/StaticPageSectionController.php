@@ -8,6 +8,7 @@ use App\Models\StaticPageSection;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
 use App\Exceptions\UserExistPreviouslyException;
+use App\Helpers\MediaHelper;
 
 class StaticPageSectionController extends Controller
 {
@@ -18,7 +19,7 @@ class StaticPageSectionController extends Controller
      */
     public function index()
     {
-        $staticPageSection = StaticPageSection::with(['staticPage', 'Image'])
+        $staticPageSection = StaticPageSection::with('staticPage')
                                                 ->orderByDesc('static_page_section_id')
                                                 ->get();
 
@@ -41,11 +42,10 @@ class StaticPageSectionController extends Controller
             'section_media_id' => 'integer|exists:media,media_id',
             'section_img_alt' => 'nullable|string',
             'section_name' => ['required','string','max:150', Rule::unique('static_page_sections', 'section_name')->whereNull('deleted_at')],
+            'section_slug' => ['required','string','max:150', Rule::unique('static_page_sections', 'section_slug')->whereNull('deleted_at')],
             'section_tagline' => 'nullable|string',
             'section_description' => 'nullable|string',
             'section_content' => 'nullable|string',
-            'section_status' => 'boolean',
-            'section_order' => 'integer',
         ]);
 
         //if the request have some validation errors
@@ -59,12 +59,28 @@ class StaticPageSectionController extends Controller
 
         if (StaticPageSection::withTrashed()
                                ->where('section_name', $request->section_name)
+                               ->orWhere('section_slug', $request->section_slug)
                                ->first()) {
 
             throw new UserExistPreviouslyException('Oops! It appears that the chosen Section name is already in use. Please select a different one and try again');
         }
 
-        $staticPageSection = StaticPageSection::create($request->all());
+        $sectionImagePath = MediaHelper::getMediaPath($request->section_media_id ?? null);
+
+        $data = [
+            'static_page_id' => $request->static_page_id,
+            'section_img_url' => $sectionImagePath,
+            'section_img_alt' => $request->section_img_alt,
+            'section_name' => $request->section_name,
+            'section_slug' => $request->section_slug,
+            'section_tagline' => $request->section_tagline,
+            'section_description' => $request->section_description,
+            'section_content' => $request->section_content,
+            'section_status' => true,
+            'section_order' => 0
+        ];
+
+        $staticPageSection = StaticPageSection::create($data);
 
         if ($staticPageSection) {
 
@@ -118,7 +134,7 @@ class StaticPageSectionController extends Controller
      */
     public function show(string $id)
     {
-        $staticPageSection = StaticPageSection::with(['staticPage', 'Image'])->find($id);
+        $staticPageSection = StaticPageSection::with('staticPage')->find($id);
 
         if ($staticPageSection) {
 
@@ -182,20 +198,44 @@ class StaticPageSectionController extends Controller
 
         // If the request has validation errors
         if ($validator->fails()) {
-            
+
             return response()->json([
                                     'success' => false,
                                     'message' => $validator->messages()
                                     ], 403);
         }
 
-        // Update the StaticPageSection
-        $staticPageSection->update($request->all());
+        $sectionImagePath = MediaHelper::getMediaPath($request->section_media_id ?? null);
 
-        return response()->json([
-                                'success' => true,
-                                'message' => 'Static Page Section Updated Successfully'
-                                ], 200);
+        $data = [
+            'static_page_id' => $request->static_page_id,
+            'section_img_url' => $sectionImagePath,
+            'section_img_alt' => $request->section_img_alt,
+            'section_name' => $request->section_name,
+            'section_slug' => $request->section_slug,
+            'section_tagline' => $request->section_tagline,
+            'section_description' => $request->section_description,
+            'section_content' => $request->section_content,
+            'section_status' => $request->section_status,
+            'section_order' => $request->section_order
+        ];
+
+        // Update the StaticPageSection
+        $result = $staticPageSection->update($data);
+
+        if ($result) {
+
+            return response()->json([
+                                    'success' => true,
+                                    'message' => 'Static Page Section Updated Successfully'
+                                    ], 200);
+        } else {
+
+            return response()->json([
+                                    'success' => false,
+                                    'message' => 'Something went wrong'
+                                    ], 422);
+        }
     }
 
     /**

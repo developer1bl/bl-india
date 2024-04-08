@@ -14,9 +14,10 @@ return new class extends Migration
         Schema::create('static_page_sections', function (Blueprint $table) {
             $table->id('static_page_section_id');
             $table->unsignedBigInteger('static_page_id');
-            $table->unsignedBigInteger('section_media_id')->nullable();
+            $table->string('section_img_url')->nullable();
             $table->string('section_img_alt')->nullable();
             $table->string('section_name')->unique();
+            $table->string('section_slug')->unique();
             $table->string('section_tagline')->nullable();
             $table->text('section_description')->nullable();
             $table->string('section_content')->nullable();

@@ -167,5 +167,24 @@ class MediaHelper{
             return false;
         }
     }
+
+     /**
+     * this function is used to return the media path
+     *
+     * @param string $id
+     * @return Response
+     */
+    public static function getMediaPath(string $id){
+
+        $media = Media::find($id);
+
+        if ($media) {
+
+            return $media->media_path;
+        }else{
+
+            return null;
+        }
+    }
 }
 ?>

@@ -8,6 +8,7 @@ use App\Models\StaticPage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use App\Exceptions\UserExistPreviouslyException;
+use App\Helpers\MediaHelper;
 
 class StaticPageConroller extends Controller
 {
@@ -16,7 +17,9 @@ class StaticPageConroller extends Controller
      */
     public function index()
     {
-        $staticPage = StaticPage::with(['image', 'pageSection'])->get();
+        $staticPage = StaticPage::with('pageSection')
+                                  ->orderByDesc('static_page_id')
+                                  ->get();
 
         return response()->json([
                                  'data' => $staticPage ?? [],
@@ -59,11 +62,13 @@ class StaticPageConroller extends Controller
             throw new UserExistPreviouslyException('Oops! It appears that the chosen Page Name or slug is already in use. Please select a different one and try again');
         }
 
+        $PageImagePath = MediaHelper::getMediaPath($request->page_image_id ?? null);
+
         $data = [
             'page_name' => $request->input('page_name'),
             'page_slug' => $request->input('page_slug'),
             'tagline' => $request->input('tagline'),
-            'page_image_id' => $request->input('page_image_id'),
+            'page_img_url' => $PageImagePath,
             'page_image_alt' => $request->input('page_image_alt'),
             'seo_title' => $request->input('seo_title'),
             'seo_keywords' => $request->input('seo_keywords'),
@@ -115,10 +120,13 @@ class StaticPageConroller extends Controller
 
     /**
      * Display the specified resource.
+     *
+     * @param string $id
+     * @return Response
      */
     public function show(string $id)
     {
-        $staticPage = StaticPage::find($id);
+        $staticPage = StaticPage::with('pageSection')->find($id);
 
         if ($staticPage) {
 
@@ -147,6 +155,10 @@ class StaticPageConroller extends Controller
 
     /**
      * Update the specified resource in storage.
+     *
+     * @param string $id
+     * @param Request $request
+     * @return Response
      */
     public function update(Request $request, string $id)
     {
@@ -181,7 +193,21 @@ class StaticPageConroller extends Controller
                                     ], 403);
         }
 
-        $result = $staticPage->update($request->all());
+        $PageImagePath = MediaHelper::getMediaPath($request->page_image_id ?? null);
+
+        $data = [
+            'page_name' => $request->input('page_name'),
+            'page_slug' => $request->input('page_slug'),
+            'tagline' => $request->input('tagline'),
+            'page_img_url' => $PageImagePath,
+            'page_image_alt' => $request->input('page_image_alt'),
+            'seo_title' => $request->input('seo_title'),
+            'seo_keywords' => $request->input('seo_keywords'),
+            'seo_description' => $request->input('seo_description'),
+            'page_status' => $request->input('page_status'),
+        ];
+
+        $result = $staticPage->update($data);
 
         if ($result) {
 
