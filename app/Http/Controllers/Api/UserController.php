@@ -16,7 +16,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $user = User::with('roles')->get();
+        $user = User::with('roles', 'userPermissions')->get();
 
         return response()->json(['data'=> $user],200);
     }
@@ -218,16 +218,16 @@ class UserController extends Controller
             }else{
 
                 return response()->json([
-                                       'success' => false,
-                                       'message' => 'Something went wrong'
+                                        'success' => false,
+                                        'message' => 'Something went wrong'
                                         ], 500);
             }
 
         }else{
 
             return response()->json([
-                                   'success' => false,
-                                   'message' => 'User not found'
+                                    'success' => false,
+                                    'message' => 'User not found'
                                     ], 404);
         }
     }

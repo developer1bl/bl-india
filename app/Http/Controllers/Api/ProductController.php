@@ -8,6 +8,7 @@ use App\Models\Product;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use App\Exceptions\UserExistPreviouslyException;
+use App\Models\Service;
 
 class ProductController extends Controller
 {
@@ -16,7 +17,9 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $product = Product::with(['productCategories', 'services'])->get();
+        $product = Product::with(['productCategories', 'services', 'image'])
+                            ->orderByDesc('product_id')
+                            ->get();
 
         return response()->json([
                                 'data'=> $product ?? [],
@@ -36,10 +39,52 @@ class ProductController extends Controller
             'product_name' => ['required','string','max:150', Rule::unique('products', 'product_name')->whereNull('deleted_at')],
             'product_slug' => ['required','string','max:150', Rule::unique('products', 'product_slug')->whereNull('deleted_at')],
             'product_category_id' => 'exists:product_categories,product_category_id',
-            'service_id' => 'exists:services,service_id',
-            'service_type' => 'in:1,2',
-            'service_compliance' => 'array',
-            'product_image_id' => 'integer'
+            'product_image_id' => 'integer|exists:media,media_id',
+            'product_technical_name' => 'nullable|string',
+            'product_img_alt' => 'nullable|string',
+            'product_content' => 'nullable|string',
+            'service' => [
+                        'required',
+                        'json',
+                        function ($attribute, $value, $fail) {
+
+                            $services = json_decode($value, true);
+
+                            foreach ($services as $service) {
+
+                                $serviceExists = Service::find($service['service_id']);
+
+                                if (!$serviceExists) {
+                                    $fail('Selected services do not exist.');
+                                }
+
+                                if(isset($service['service_type']))
+                                {
+                                    if(!in_array($service['service_type'], [1, 2]))
+                                    {
+                                        $fail('Invalid service type.');
+                                    }
+                                }
+            
+                                // If service compliance is provided, check if it's valid
+                                if (isset($service['service_compliance'])) {
+
+                                    $validCompliance = Service::where('service_id', $service['service_id'])
+                                                                ->pluck('service_compliance')
+                                                                ->toArray();
+                                                                
+                                    $provided_compliance_array = explode(',', $service['service_compliance']);
+                                    
+                                    $intersect_array = array_intersect($provided_compliance_array, array_map('trim', json_decode($validCompliance[0])));
+                                      
+                                    if (count($intersect_array) != count($provided_compliance_array)) {
+                                        $fail('Selected service compliances are invalid.');
+                                    }
+                                }
+                                return;
+                            }
+                            }
+                        ],
         ]);
         
         //if the request have some validation errors
@@ -50,7 +95,7 @@ class ProductController extends Controller
                                     'message' => $validator->messages()
                                     ], 403);
         }
-
+      
         $data = [
             'product_name' => $request->product_name,
             'product_slug' => $request->product_slug,
@@ -58,57 +103,56 @@ class ProductController extends Controller
             'product_image_id' => $request->product_image_id,
             'product_img_alt' => $request->product_img_alt,
             'product_content' => $request->product_content,
-            'product_information' => $request->product_information,
-            'product_guidelines' => $request->product_guidelines,
             'seo_title' => $request->seo_title,
             'seo_description' => $request->seo_description,
             'seo_keywords' => $request->seo_keywords,
             'product_status' => 1,
             'product_order' => 0,
         ];
-
-        try {
-            $product = Product::create($data);
-                
-            //attach product category with product
-            $category = explode(',', $request->product_category_id);
-            $category = array_map('intval', $category); 
-            $product->productCategories()->sync($category);
-            
-            //attach services on product
-            $services = [];
-            $serviceData = json_decode($request->service);
-
-            foreach ($serviceData as $serviceData) {
-
-                $serviceId = $serviceData->service_id;
-                $serviceType = $serviceData->service_type;
-                $serviceCompliance = json_encode(explode(',', $serviceData->service_compliance));
-
-                $services[$serviceId] = [
-                    'service_type' => $serviceType,
-                    'service_compliance' => $serviceCompliance,
-                ];
-            }
-            $product->services()->sync($services);
-
         
-            if ($product) {
-                return response()->json([
-                                        'success' => true,
-                                        'message' => 'Product created successfully'
-                                        ], 200);
-            }else{
-
-                return response()->json([
-                                        'success' => false,
-                                        'message' => 'Something went wrong, try again later'
-                                        ], 422);
-            }
-            
-        } catch (\Exception $th) {
-
+        if(Product::withTrashed(true)
+                    ->whereProduct_name($request->product_name)
+                    ->orWhereProduct_slug($request->product_slug)
+                    ->exists())
+        {
             throw new UserExistPreviouslyException('this product was deleted previously, did you want to restore it?');
+        }
+
+        $product = Product::create($data);
+
+        //attach product category with product
+        $category = explode(',', $request->product_category_id);
+        $category = array_map('intval', $category); 
+        $product->productCategories()->sync($category);
+        
+        //attach services on product
+        $services = [];
+        $serviceData = json_decode($request->service);
+
+        foreach ($serviceData as $serviceData) {
+
+            $serviceId = $serviceData->service_id;
+            $serviceType = $serviceData->service_type;
+            $serviceCompliance = json_encode(explode(',', $serviceData->service_compliance));
+    
+            $services[$serviceId] = [
+                'service_type' => $serviceType,
+                'service_compliance' => $serviceCompliance,
+            ];
+        };
+        $product->services()->sync($services);
+
+        if ($product) {
+            return response()->json([
+                                    'success' => true,
+                                    'message' => 'Product created successfully'
+                                    ], 200);
+        }else{
+
+            return response()->json([
+                                    'success' => false,
+                                    'message' => 'Something went wrong, try again later'
+                                    ], 422);
         }
     }
 
@@ -149,7 +193,7 @@ class ProductController extends Controller
         if ($product) {
 
             return response()->json([
-                                    'data' => $product,
+                                    'data' => $product->with(['productCategories', 'services', 'image'])->get(),
                                     'success' => true,
                                     'message' =>''
                                     ],200);
@@ -176,14 +220,68 @@ class ProductController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        $product = Product::find($id);
+        
+        if (!$product) {
+
+            return response()->json([
+                                    'success' => false,
+                                    'message' => 'Product not found'
+                                    ], 404);
+        }
+        
         $validator = Validator::make($request->all(), [
             'product_name' => ['required','string','max:150', Rule::unique('products', 'product_name')->ignore($id, 'product_id')],
             'product_slug' => ['required','string','max:150', Rule::unique('products', 'product_slug')->ignore($id, 'product_id')],
             'product_category_id' => 'exists:product_categories,product_category_id',
-            'service_id' => 'exists:services,service_id',
-            'service_type' => 'in:1,2',
-            'service_compliance' => 'array',
-            'product_image_id' => 'integer'
+            'product_image_id' => 'exists:media,media_id',
+            'product_technical_name' => 'nullable|string',
+            'product_img_alt' => 'nullable|string',
+            'product_content' => 'nullable|string',
+            'service' => [
+                    'required',
+                    'json',
+                    function ($attribute, $value, $fail) {
+
+                        $services = json_decode($value, true);
+
+                        foreach ($services as $service) {
+
+                            $serviceExists = Service::find($service['service_id']);
+
+                            if (!$serviceExists) {
+                                $fail('Selected services do not exist.');
+                            }
+
+                            if(isset($service['service_type']))
+                            {
+                                if(!in_array($service['service_type'], [1, 2]))
+                                {
+                                    $fail('Invalid service type.');
+                                }
+                            }
+
+                            // If service compliance is provided, check if it's valid
+                            if (isset($service['service_compliance'])) {
+
+                                $validCompliance = Service::where('service_id', $service['service_id'])
+                                                            ->pluck('service_compliance')
+                                                            ->toArray();
+                                                            
+                                $provided_compliance_array = explode(',', $service['service_compliance']);
+                                
+                                $intersect_array = array_intersect($provided_compliance_array, array_map('trim', json_decode($validCompliance[0])));
+                                
+                                if (count($intersect_array) != count($provided_compliance_array)) {
+                                    $fail('Selected service compliances are invalid.');
+                                }
+                            }
+                            
+                            return;
+                        }
+                        }
+                    ],
+
         ]);
         
         //if the request have some validation errors
@@ -194,70 +292,57 @@ class ProductController extends Controller
                                     'message' => $validator->messages()
                                     ], 403);
         }
+         
+        $data = [
+            'product_name' => $request->product_name,
+            'product_slug' => $request->product_slug,
+            'product_technical_name' => $request->product_technical_name,
+            'product_image_id' => $request->product_image_id,
+            'product_img_alt' => $request->product_img_alt,
+            'product_content' => $request->product_content,
+            'seo_title' => $request->seo_title,
+            'seo_description' => $request->seo_description,
+            'seo_keywords' => $request->seo_keywords,
+            'product_status' => $request->product_status,
+            'product_order' => $request->product_order,
+        ];
+  
+        //attach product category with product
+        $category = explode(',', $request->product_category_id);
+        $category = array_map('intval', $category);
+        $product->productCategories()->sync($category);
+        
+        //attach services on product
+        $services = [];
+        $serviceData = json_decode($request->service);
 
-        $product = Product::find($id);
+        foreach ($serviceData as $serviceData) {
 
-        if ($product) {
-            
-            $data = [
-                'product_name' => $request->product_name,
-                'product_slug' => $request->product_slug,
-                'product_technical_name' => $request->product_technical_name,
-                'product_image_id' => $request->product_image_id,
-                'product_img_alt' => $request->product_img_alt,
-                'product_content' => $request->product_content,
-                'product_information' => $request->product_information,
-                'product_guidelines' => $request->product_guidelines,
-                'seo_title' => $request->seo_title,
-                'seo_description' => $request->seo_description,
-                'seo_keywords' => $request->seo_keywords,
-                'product_status' => $request->product_status,
-                'product_order' => $request->product_order,
+            $serviceId = $serviceData->service_id;
+            $serviceType = $serviceData->service_type;
+            $serviceCompliance = json_encode(explode(',', $serviceData->service_compliance));
+
+            $services[$serviceId] = [
+                'service_type' => $serviceType,
+                'service_compliance' => $serviceCompliance,
             ];
+        }
+        $product->services()->sync($services);
+
+        $result = $product->update($data);
+
+        if ($result) {
             
-            //attach product category with product
-            $category = explode(',', $request->product_category_id);
-            $category = array_map('intval', $category);
-            $product->productCategories()->sync($category);
-            
-            //attach services on product
-            $services = [];
-            $serviceData = json_decode($request->service);
-
-            foreach ($serviceData as $serviceData) {
-
-                $serviceId = $serviceData->service_id;
-                $serviceType = $serviceData->service_type;
-                $serviceCompliance = json_encode(explode(',', $serviceData->service_compliance));
-
-                $services[$serviceId] = [
-                    'service_type' => $serviceType,
-                    'service_compliance' => $serviceCompliance,
-                ];
-            }
-            $product->services()->sync($services);
-
-            $result = $product->update($data);
-
-            if ($result) {
-                
-                return response()->json([
-                                        'sucess' => true, 
-                                        'message' => 'product update sucessfully '
-                                        ], 201);
-            } else {
-                
-                return response()->json([
-                                     'success' => false,
-                                     'message' => 'Something went wrong, try again later'
-                                        ], 422);
-            }
+            return response()->json([
+                                    'sucess' => true, 
+                                    'message' => 'product update sucessfully '
+                                    ], 201);
         } else {
-
+            
             return response()->json([
                                     'success' => false,
-                                    'message' => 'Product not found',
-                                    ],404);   
+                                    'message' => 'Something went wrong, try again later'
+                                    ], 422);
         }
     }
 

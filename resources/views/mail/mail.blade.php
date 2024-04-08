@@ -13,7 +13,7 @@
     <h1>{!! $user->name !!}</h1>
     <p>{!! $body !!}</p>
     @if (!empty($url))
-        <a href="{{$url}}"> click here to verify </a>
+        <a href="{{$url}}"> click here </a>
     @elseif(!empty($otp))
         <h4>{{$otp}}</h4>
     @else

@@ -35,4 +35,9 @@ class ProductCategories extends Model
     {
         return $this->belongsToMany(Product::class , 'product_product_category', 'product_category_id', 'product_id');
     }
+
+    public function notices()
+    {
+        return $this->belongsToMany(Notice::class, 'notice_product_categorie', 'product_category_id', 'notice_id')->withPivot('product_id');
+    }
 }

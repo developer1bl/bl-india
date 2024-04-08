@@ -16,7 +16,9 @@ class ServiceController extends Controller
      */
     public function index()
     {
-        $service = Service::All();
+        $service = Service::with(['notices', 'image', 'service_section'])
+                            ->orderByDesc('service_id')
+                            ->get();
 
         return response()->json([
                                 'success' => true,   
@@ -32,7 +34,7 @@ class ServiceController extends Controller
         $validator = Validator::make($request->all(),[
             'service_name' => ['required', 'string', 'max:150', Rule::unique('services', 'service_name')->whereNull('deleted_at')],
             'service_slug' => ['required' ,'string', 'max:255', Rule::unique('services', 'service_slug')->whereNull('deleted_at')],
-            'service_image_id' => 'required|numeric',
+            'service_image_id' => 'required|exists:media,media_id', 
         ]);
 
         //if the request have some validation errors
@@ -42,6 +44,14 @@ class ServiceController extends Controller
                                     'success' => false,
                                     'message' => $validator->messages()
                                     ], 403);
+        }
+
+        if (Service::withTrashed(true)
+                     ->whereService_name($request->service_name)
+                     ->whereService_slug($request->service_slug)
+                     ->exists())
+        {
+            throw new UserExistPreviouslyException('Oops! It appears that the chosen Service Name or slug is already in use. Please select a different one and try again.');
         }
 
         $question = explode(',' , $request->question); 
@@ -68,7 +78,6 @@ class ServiceController extends Controller
         ];
 
         try {
-
             $result = Service::create($data);
 
             if ($result) {
@@ -84,11 +93,13 @@ class ServiceController extends Controller
                                         'message' => 'Something went wrong, please try again later'
                                         ], 422);
             }
-            
-        } catch (\Exception $th) {
-            
-            throw new UserExistPreviouslyException('this service was deleted previously, did you want to restore it?');
-        }
+        } catch (\Throwable $th) {
+
+            return response()->json([
+                                    'success' => false,
+                                    'message' => 'Something went wrong, please try again later'
+                                    ], 422);
+       }
     }
 
     /**
@@ -99,7 +110,9 @@ class ServiceController extends Controller
      */
     public function restore(string $request)
     {
-        $service = Service::withTrashed(true)->whereService_name($request)->first();
+        $service = Service::withTrashed(true)
+                            ->whereService_name($request)
+                            ->first();
         
         if ($service) {
             
@@ -131,7 +144,7 @@ class ServiceController extends Controller
         if ($service) {
             
             return response()->json([
-                                    'data' => $service,
+                                    'data' => $service->with(['notices', 'image'])->get(),
                                     'success' => true,
                                     'message' => ''
                                     ], 200);
@@ -160,10 +173,20 @@ class ServiceController extends Controller
      */
     public function update(Request $request,  $id)
     {
+        $service  = Service::find($id);
+
+        if (!$service) {
+
+            return response()->json([
+                                    'success' => false,
+                                    'message' => 'Service not found'
+                                    ], 404);
+        }
+
         $validator = Validator::make($request->all(),[
             'service_name' => ['required', 'string', 'max:150', Rule::unique('services', 'service_name')->ignore($id, 'service_id')],
             'service_slug' => ['required' ,'string', 'max:255', Rule::unique('services', 'service_slug')->ignore($id, 'service_id')],
-            'service_image_id' => 'required|numeric',
+            'service_image_id' => 'required|exists:media,media_id',
         ]);
 
         //if the request have some validation errors
@@ -174,7 +197,7 @@ class ServiceController extends Controller
                                     'message' => $validator->messages()
                                     ], 403);
         }
-
+        
         $question = explode(',' , $request->question); 
         $answer = explode(',', $request->answer);
         $faq = array_combine($question, $answer);
@@ -207,22 +230,22 @@ class ServiceController extends Controller
             if ($result) {
                 
                 return response()->json([
-                                       'success' => true,
-                                       'message' => 'Service updated successfully'
+                                        'success' => true,
+                                        'message' => 'Service updated successfully'
                                         ], 202);
             } else {
                 
                 return response()->json([
-                                       'success' => false,
-                                       'message' => 'Something went wrong, please try again later'
+                                        'success' => false,
+                                        'message' => 'Something went wrong, please try again later'
                                         ], 422);
             }
 
         }else{
 
             return response()->json([
-                                   'success' => false,
-                                   'message' => 'Service not found'
+                                    'success' => false,
+                                    'message' => 'Service not found'
                                     ], 404);
         }
     }
@@ -242,14 +265,14 @@ class ServiceController extends Controller
             $service->delete();
 
             return response()->json([
-                                  'success' => true,
-                                  'message' => 'Service deleted successfully'
+                                    'success' => true,
+                                    'message' => 'Service deleted successfully'
                                     ], 202);
         } else {
             
             return response()->json([
-                                  'success' => false,
-                                  'message' => 'Service not found'
+                                    'success' => false,
+                                    'message' => 'Service not found'
                                     ], 404);
         }
     }
