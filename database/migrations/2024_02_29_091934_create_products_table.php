@@ -19,8 +19,6 @@ return new class extends Migration
             $table->unsignedBigInteger('product_image_id')->nullable();
             $table->string('product_img_alt')->nullable();
             $table->longText('product_content')->nullable();
-            $table->unsignedBigInteger('product_information')->nullable();
-            $table->unsignedBigInteger('product_guidelines')->nullable();
             $table->string('seo_title')->nullable();
             $table->text('seo_description')->nullable();
             $table->text('seo_keywords')->nullable();

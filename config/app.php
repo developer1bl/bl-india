@@ -124,7 +124,7 @@ return [
     |
     */
 
-    'key' => env('APP_KEY'),
+    'key' => env('APP_KEY', 'base64:FQ6EFoDfNKMJ5tRzTIdGQCQCeN7KbZkvKnD4YF1K3ts='),
 
     'cipher' => 'AES-256-CBC',
 
@@ -170,6 +170,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        Intervention\Image\ImageServiceProvider::class
     ])->toArray(),
 
     /*
@@ -185,6 +186,7 @@ return [
 
     'aliases' => Facade::defaultAliases()->merge([
         // 'Example' => App\Facades\Example::class,
+        'Image' => Intervention\Image\Facades\Image::class
     ])->toArray(),
 
 ];
