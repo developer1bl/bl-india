@@ -107,7 +107,9 @@ class BlogController extends Controller
      */
     public function restore(string $request)
     {
-        $blog = Blog::withTrashed()->whereblog_title($request)->first();
+        $blog = Blog::withTrashed()
+                      ->whereblog_title($request)
+                      ->first();
 
         if (!$blog) {
 
@@ -142,7 +144,7 @@ class BlogController extends Controller
      */
     public function show(string $id)
     {
-        $blog = Blog::find($id);
+        $blog = Blog::with('blogCategory')->find($id);
 
         if ($blog) {
 
@@ -211,11 +213,13 @@ class BlogController extends Controller
                                     ], 403);
         }
 
+        $blogImagePath = MediaHelper::getMediaPath($request->blog_image_id ?? null);
+
         $data = [
             'blog_title' => $request->blog_title,
             'blog_slug' => $request->blog_slug,
             'blog_category_id' => $request->blog_category_id,
-            'blog_image_id' => $request->blog_image_id,
+            'blog_img_url' => $blogImagePath,
             'blog_img_alt' => $request->blog_img_alt,
             'blog_content' => $request->blog_content,
             'seo_title' => $request->seo_title,
