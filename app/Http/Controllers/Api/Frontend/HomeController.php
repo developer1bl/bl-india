@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Models\Blog;
 use App\Models\Service;
 use Illuminate\Http\Request;
 use App\Models\StaticPage;
@@ -48,10 +49,10 @@ class HomeController extends Controller
 
     public function getHomeBlogData(){
 
-        $homeService = Service::LatestService();
+        $homeBlogs = Blog::LatestBlogs();
 
         return response()->json([
-                                'data' => $homeService ?? [],
+                                'data' => $homeBlogs ?? [],
                                 'success' => true,
                                 ], 200);
     }

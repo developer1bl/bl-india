@@ -40,8 +40,10 @@ class Blog extends Model
         return $this->belongsTo(BlogCategory::class, 'blog_category_id');
     }
 
-    public function image()
+    // Define the attributes and relationships
+    public function scopeLatestBlogs($query, $limit = 4)
     {
-        return $this->belongsTo(Media::class, 'blog_image_id', 'media_id');
+        return $query->orderBy('created_at', 'desc')->take($limit)->get();
     }
+
 }
