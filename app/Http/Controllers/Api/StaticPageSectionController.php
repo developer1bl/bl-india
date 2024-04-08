@@ -41,7 +41,7 @@ class StaticPageSectionController extends Controller
             'static_page_id' => 'required|integer|exists:static_pages,static_page_id',
             'section_media_id' => 'integer|exists:media,media_id',
             'section_img_alt' => 'nullable|string',
-            'section_name' => ['required','string','max:150', Rule::unique('static_page_sections', 'section_name')->whereNull('deleted_at')],
+            'section_name' => ['required','string','max:150'],
             'section_slug' => ['required','string','max:150', Rule::unique('static_page_sections', 'section_slug')->whereNull('deleted_at')],
             'section_tagline' => 'nullable|string',
             'section_description' => 'nullable|string',
@@ -58,8 +58,7 @@ class StaticPageSectionController extends Controller
         }
 
         if (StaticPageSection::withTrashed()
-                               ->where('section_name', $request->section_name)
-                               ->orWhere('section_slug', $request->section_slug)
+                               ->Where('section_slug', $request->section_slug)
                                ->first()) {
 
             throw new UserExistPreviouslyException('Oops! It appears that the chosen Section name is already in use. Please select a different one and try again');

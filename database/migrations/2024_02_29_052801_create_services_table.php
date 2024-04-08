@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id('service_id');
             $table->string('service_name', 150);
             $table->string('service_slug')->unique();
-            $table->unsignedBigInteger('service_image_id')->nullable();
+            $table->string('service_img_url')->nullable();
             $table->string('service_img_alt')->nullable();
             $table->longText('service_description')->nullable();
             $table->json('service_compliance')->nullable();

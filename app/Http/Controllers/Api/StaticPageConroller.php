@@ -99,7 +99,10 @@ class StaticPageConroller extends Controller
      */
     public function restore(string $request)
     {
-        $staticPage = StaticPage::withTrashed()->where('page_name', $request)->orwhere('page_slug', $request)->first();
+        $staticPage = StaticPage::withTrashed()
+                                  ->where('page_name', $request)
+                                  ->orwhere('page_slug', $request)
+                                  ->first();
 
         if ($staticPage) {
 

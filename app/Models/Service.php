@@ -19,7 +19,7 @@ class Service extends Model
     protected $fillable = [
         'service_name',
         'service_slug',
-        'service_image_id',
+        'service_img_url',
         'service_img_alt',
         'service_compliance',
         'service_description',
@@ -52,11 +52,6 @@ class Service extends Model
         return $this->hasMany(Notice::class, 'service_id', 'service_id');
     }
 
-    public function image()
-    {
-        return $this->belongsTo(Media::class, 'service_image_id');
-    }
-
     public function service_section()
     {
         return $this->hasMany(ServiceSection::class,'service_id','service_id');
@@ -66,5 +61,11 @@ class Service extends Model
     {
         return $this->belongsToMany(Notice::class, 'notice_service', 'service_id', 'notice_id')
                     ->withPivot('product_id');
+    }
+
+    // Define the attributes and relationships
+    public function scopeLatestService($query, $limit = 4)
+    {
+        return $query->orderBy('created_at', 'desc')->take($limit)->get();
     }
 }

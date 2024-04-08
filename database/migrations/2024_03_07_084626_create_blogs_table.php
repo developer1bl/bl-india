@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('blog_title')->unique();
             $table->string('blog_slug')->unique();
             $table->unsignedBigInteger('blog_category_id')->nullable();
-            $table->unsignedBigInteger('blog_image_id')->nullable();
+            $table->string('blog_img_url')->nullable();
             $table->string('blog_img_alt')->nullable();
             $table->text('blog_content')->nullable();
             $table->string('seo_title')->nullable();

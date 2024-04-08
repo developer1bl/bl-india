@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('static_page_id');
             $table->string('section_img_url')->nullable();
             $table->string('section_img_alt')->nullable();
-            $table->string('section_name')->unique();
+            $table->string('section_name');
             $table->string('section_slug')->unique();
             $table->string('section_tagline')->nullable();
             $table->text('section_description')->nullable();

@@ -8,6 +8,7 @@ use App\Models\Service;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use App\Exceptions\UserExistPreviouslyException;
+use App\Helpers\MediaHelper;
 
 class ServiceController extends Controller
 {
@@ -16,12 +17,12 @@ class ServiceController extends Controller
      */
     public function index()
     {
-        $service = Service::with(['notices', 'image', 'service_section'])
+        $service = Service::with(['notices', 'service_section'])
                             ->orderByDesc('service_id')
                             ->get();
 
         return response()->json([
-                                'success' => true,   
+                                'success' => true,
                                 'data' => $service ?? []
                                 ],200);
     }
@@ -34,7 +35,7 @@ class ServiceController extends Controller
         $validator = Validator::make($request->all(),[
             'service_name' => ['required', 'string', 'max:150', Rule::unique('services', 'service_name')->whereNull('deleted_at')],
             'service_slug' => ['required' ,'string', 'max:255', Rule::unique('services', 'service_slug')->whereNull('deleted_at')],
-            'service_image_id' => 'required|exists:media,media_id', 
+            'service_image_id' => 'required|exists:media,media_id',
         ]);
 
         //if the request have some validation errors
@@ -54,16 +55,18 @@ class ServiceController extends Controller
             throw new UserExistPreviouslyException('Oops! It appears that the chosen Service Name or slug is already in use. Please select a different one and try again.');
         }
 
-        $question = explode(',' , $request->question); 
+        $question = explode(',' , $request->question);
         $answer = explode(',', $request->answer);
         $faq = array_combine($question, $answer);
 
         $compliance = explode(',', $request->service_compliance);
 
+        $PageImagePath = MediaHelper::getMediaPath($request->service_image_id ?? null);
+
         $data = [
             'service_name' => $request->service_name,
             'service_slug' => $request->service_slug,
-            'service_image_id' => $request->service_image_id,
+            'service_img_url' => $PageImagePath,
             'service_img_alt' => $request->service_img_alt,
             'service_compliance' => json_encode($compliance),
             'service_description' => $request->service_description,
@@ -87,7 +90,7 @@ class ServiceController extends Controller
                                         'message' => 'Service created successfully'
                                         ], 201);
             } else {
-                
+
                 return response()->json([
                                         'success' => false,
                                         'message' => 'Something went wrong, please try again later'
@@ -104,7 +107,7 @@ class ServiceController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     * 
+     *
      * @param string $request
      * @return response
      */
@@ -113,9 +116,9 @@ class ServiceController extends Controller
         $service = Service::withTrashed(true)
                             ->whereService_name($request)
                             ->first();
-        
+
         if ($service) {
-            
+
             $service->restore();
 
             return response()->json([
@@ -123,33 +126,33 @@ class ServiceController extends Controller
                                     'message' => 'Service restored successfully'
                                     ], 200);
         } else {
-            
+
             return response()->json([
                                     'success' => false,
                                     'message' => 'Service not found'
                                     ], 404);
-        }   
+        }
     }
 
     /**
      * Display the specified resource.
-     * 
+     *
      * @param string $id
      * @return Response
      */
     public function show(string $id)
     {
-        $service = Service::find($id);
-        
+        $service = Service::with(['notices', 'service_section'])->find($id);
+
         if ($service) {
-            
+
             return response()->json([
-                                    'data' => $service->with(['notices', 'image'])->get(),
+                                    'data' => $service,
                                     'success' => true,
                                     'message' => ''
                                     ], 200);
         } else {
-            
+
             return response()->json([
                                     'data' => [],
                                     'success' => false,
@@ -167,7 +170,7 @@ class ServiceController extends Controller
 
     /**
      * Update the specified resource in storage.
-     * 
+     *
      * @param $id, Request $request
      * @return Response
      */
@@ -197,17 +200,19 @@ class ServiceController extends Controller
                                     'message' => $validator->messages()
                                     ], 403);
         }
-        
-        $question = explode(',' , $request->question); 
+
+        $question = explode(',' , $request->question);
         $answer = explode(',', $request->answer);
         $faq = array_combine($question, $answer);
 
         $compliance = explode(',', $request->service_compliance);
 
+        $serviceImagePath = MediaHelper::getMediaPath($request->service_image_id ?? null);
+
         $data = [
             'service_name' => $request->service_name,
             'service_slug' => $request->service_slug,
-            'service_image_id' => $request->service_image_id,
+            'service_img_url' => $serviceImagePath,
             'service_img_alt' => $request->service_img_alt,
             'service_compliance' => json_encode($compliance),
             'service_description' => $request->service_description,
@@ -220,7 +225,7 @@ class ServiceController extends Controller
             'service_order' => $request->service_order,
             'service_status' => $request->service_status,
         ];
-       
+
         $service = Service::find($id);
 
         if ($service) {
@@ -228,13 +233,13 @@ class ServiceController extends Controller
             $result = $service->update($data);
 
             if ($result) {
-                
+
                 return response()->json([
                                         'success' => true,
                                         'message' => 'Service updated successfully'
                                         ], 202);
             } else {
-                
+
                 return response()->json([
                                         'success' => false,
                                         'message' => 'Something went wrong, please try again later'
@@ -252,9 +257,9 @@ class ServiceController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     * 
+     *
      * @param string $id
-     * @return response 
+     * @return response
      */
     public function destroy(string $id)
     {
@@ -269,7 +274,7 @@ class ServiceController extends Controller
                                     'message' => 'Service deleted successfully'
                                     ], 202);
         } else {
-            
+
             return response()->json([
                                     'success' => false,
                                     'message' => 'Service not found'

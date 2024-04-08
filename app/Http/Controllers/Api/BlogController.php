@@ -8,17 +8,18 @@ use App\Models\Blog;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use App\Exceptions\UserExistPreviouslyException;
+use App\Helpers\MediaHelper;
 
 class BlogController extends Controller
 {
     /**
      * Display a listing of the resource.
-     * 
+     *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        $blog = Blog::with('blogcategory', 'image')->get();
+        $blog = Blog::with('blogCategory')->get();
 
         return response()->json([
                                 'data' => $blog ?? [],
@@ -28,7 +29,7 @@ class BlogController extends Controller
 
     /**
      * Show the form for creating a new resource.
-     * 
+     *
      * @param Request $request
      * @return Response
      */
@@ -65,11 +66,13 @@ class BlogController extends Controller
             throw new UserExistPreviouslyException('Oops! It appears that the chosen Blog title or slug is already in use. Please select a different one and try again.');
         }
 
+        $blogImagePath = MediaHelper::getMediaPath($request->blog_image_id ?? null);
+
         $data = [
             'blog_title' => $request->blog_title,
             'blog_slug' => $request->blog_slug,
             'blog_category_id' => $request->blog_category_id,
-            'blog_image_id' => $request->blog_image_id,
+            'blog_img_url' => $blogImagePath,
             'blog_img_alt' => $request->blog_img_alt,
             'blog_content' => $request->blog_content,
             'seo_title' => $request->seo_title,
@@ -82,13 +85,13 @@ class BlogController extends Controller
         $result = Blog::create($data);
 
         if ($result) {
-            
+
             return response()->json([
                                     'success' => true,
                                     'message' => 'Blog created successfully',
                                     ],200);
         } else {
-            
+
             return response()->json([
                                     'success' => false,
                                     'message' => 'Something went wrong, please try again later',
@@ -98,7 +101,7 @@ class BlogController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     * 
+     *
      * @param string $request
      * @return response
      */
@@ -107,7 +110,7 @@ class BlogController extends Controller
         $blog = Blog::withTrashed()->whereblog_title($request)->first();
 
         if (!$blog) {
-            
+
             return response()->json([
                                     'success' => false,
                                     'message' => 'Blog not found'
@@ -133,7 +136,7 @@ class BlogController extends Controller
 
     /**
      * Display the specified resource.
-     * 
+     *
      * @param string $id
      * @return Response
      */
@@ -142,7 +145,7 @@ class BlogController extends Controller
         $blog = Blog::find($id);
 
         if ($blog) {
-           
+
             return response()->json([
                                     'data' => $blog,
                                     'success' => true,
@@ -168,7 +171,7 @@ class BlogController extends Controller
 
     /**
      * Update the specified resource in storage.
-     * 
+     *
      * @param string $id
      * @param request $request
      * @return Response
@@ -225,13 +228,13 @@ class BlogController extends Controller
         $result = $blog->update($data);
 
         if ($result) {
-            
+
             return response()->json([
                                     'success' => true,
                                     'message' => 'Blog updated successfully',
                                     ],200);
         } else {
-            
+
             return response()->json([
                                     'success' => false,
                                     'message' => 'Something went wrong, please try again later',
@@ -241,7 +244,7 @@ class BlogController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     * 
+     *
      * @param string $id
      * @return response
      */
@@ -260,13 +263,13 @@ class BlogController extends Controller
         $result = $blog->delete();
 
         if ($result) {
-            
+
             return response()->json([
                                    'success' => true,
                                    'message' => 'Blog deleted successfully',
                                     ],200);
         } else {
-            
+
             return response()->json([
                                    'success' => false,
                                    'message' => 'Something went wrong, please try again later',

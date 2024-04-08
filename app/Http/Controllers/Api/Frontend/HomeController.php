@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Api\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Models\Service;
 use Illuminate\Http\Request;
 use App\Models\StaticPage;
+use App\Models\StaticPageSection;
 
 class HomeController extends Controller
 {
@@ -21,8 +23,38 @@ class HomeController extends Controller
                                 ], 200);
     }
 
-    public function getHomeSectionData($id){
+    public function getHomeSectionData($id ,string $slug){
 
-        // $pageSection =
+        $pageSection = StaticPageSection::where('section_slug', $slug)
+                                          ->where('section_status', 1)
+                                          ->where('static_page_id', $id)
+                                          ->first();
+
+        return response()->json([
+                                'data' => $pageSection ?? [],
+                                'success' => true,
+                                ], 200);
     }
+
+    public function getHomeServiceData(){
+
+        $homeService = Service::LatestService();
+
+        return response()->json([
+                                'data' => $homeService ?? [],
+                                'success' => true,
+                                ], 200);
+    }
+
+    public function getHomeBlogData(){
+
+        $homeService = Service::LatestService();
+
+        return response()->json([
+                                'data' => $homeService ?? [],
+                                'success' => true,
+                                ], 200);
+    }
+
+
 }

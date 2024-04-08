@@ -19,7 +19,7 @@ class Blog extends Model
         'blog_title',
         'blog_slug',
         'blog_category_id',
-        'blog_image_id',
+        'blog_img_url',
         'blog_img_alt',
         'blog_content',
         'seo_title',
@@ -35,7 +35,7 @@ class Blog extends Model
         'blog_tags' => 'array',
     ];
 
-    public function blogcategory()
+    public function blogCategory()
     {
         return $this->belongsTo(BlogCategory::class, 'blog_category_id');
     }
