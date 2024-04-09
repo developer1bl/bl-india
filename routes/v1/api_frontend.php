@@ -22,4 +22,14 @@ Route::prefix('about')->group(function(){
 });
 
 
+//for unknown routes
+Route::get('/{any}', function () {
+
+    return response()->json([
+                            'success' => false,
+                            'message' => '404, Page Not found, please try again',
+                            ], 404);
+
+})->where('any', '.*');
+
 ?>
