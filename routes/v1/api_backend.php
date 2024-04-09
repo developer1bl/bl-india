@@ -22,6 +22,7 @@ use App\Http\Controllers\Api\CustomFormController;
 use App\Http\Controllers\Api\HolidayController;
 use App\Http\Controllers\Api\StaticPageConroller;
 use App\Http\Controllers\Api\StaticPageSectionController;
+use App\Http\Controllers\Api\WorkFlowController;
 use App\Helpers\MediaHelper;
 use App\Helpers\DocumentHelper;
 use Illuminate\Http\Request;
@@ -324,7 +325,20 @@ Route::prefix('v1')->group(function () {
 
             });
 
-            //static page section items
+            //workflow
+            Route::prefix('/workflow')->group(function(){
+
+                Route::controller(WorkflowController::class)->group(function(){
+
+                    Route::get('/', 'index');
+                    Route::get('/{workflow}','show');
+                    Route::get('/{workflow}/restore','restore');
+                    Route::post('/create', 'create');
+                    Route::post('/{workflow}', 'update');
+                    Route::delete('/{workflow}', 'destroy');
+                });
+
+            });
 
             //media
             Route::prefix('/media')->group(function(){

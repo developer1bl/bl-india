@@ -8,6 +8,7 @@ use App\Models\Service;
 use Illuminate\Http\Request;
 use App\Models\StaticPage;
 use App\Models\StaticPageSection;
+use App\Models\WorkFlow;
 
 class HomeController extends Controller
 {
@@ -56,6 +57,4 @@ class HomeController extends Controller
                                 'success' => true,
                                 ], 200);
     }
-
-
 }

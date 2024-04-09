@@ -9,6 +9,7 @@ Route::prefix('home')->group(function(){
     Route::get('{page}/section/{slug}', [HomeController::class, 'getHomeSectionData']);
     Route::get('/section/services', [HomeController::class, 'getHomeServiceData']);
     Route::get('/section/blogs', [HomeController::class, 'getHomeBlogData']);
+    
 });
 
 Route::prefix('about')->group(function(){

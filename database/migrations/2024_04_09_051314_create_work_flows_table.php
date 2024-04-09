@@ -13,7 +13,14 @@ return new class extends Migration
     {
         Schema::create('work_flows', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->text('description');
+            $table->string('step_img_url')->nullable();
+            $table->string('step_img_alt')->nullable();
+            $table->integer('flow_order')->default(0);
+            $table->boolean('flow_status')->default(true);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
