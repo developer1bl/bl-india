@@ -72,14 +72,12 @@ class WorkFlowController extends Controller
         if ($workFlow) {
 
             return response()->json([
-                                    'data' => $workFlow,
                                     'success' => true,
                                     'message' => 'Work Flow Step created successfully'
                                     ], 201);
         } else {
 
             return response()->json([
-                                    'data' => [],
                                     'success' => false,
                                     'message' => 'Something went wrong'
                                     ], 422);
@@ -107,14 +105,12 @@ class WorkFlowController extends Controller
 
             $workFlow->restore();
             return response()->json([
-                                    'data' => $workFlow,
                                     'success' => true,
                                     'message' => 'work flow steps restored successfully'
                                     ], 200);
         } else {
 
             return response()->json([
-                                    'data' => [],
                                     'success' => false,
                                     'message' => 'Something went wrong'
                                     ], 403);
@@ -132,11 +128,13 @@ class WorkFlowController extends Controller
 
             return response()->json([
                                     'data' => $workFlow,
-                                    'success' => true
+                                    'success' => true,
+                                    'message' => 'WorkFlow not found'
                                     ], 200);
         } else {
 
             return response()->json([
+                                    'data' => [],
                                     'success' => false,
                                     'message' => 'WorkFlow not found'
                                     ], 403);

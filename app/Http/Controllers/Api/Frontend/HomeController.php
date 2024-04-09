@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use App\Models\StaticPage;
 use App\Models\StaticPageSection;
 use App\Models\WorkFlow;
+use App\Models\Testimonial;
+use App\Models\Associate;
 
 class HomeController extends Controller
 {
@@ -55,6 +57,36 @@ class HomeController extends Controller
         return response()->json([
                                 'data' => $homeBlogs ?? [],
                                 'success' => true,
+                                ], 200);
+    }
+
+    public function getHomeWorkFlowData(){
+
+        $workFlow = WorkFlow::orderByDesc('id')->take(5)->get();
+
+        return response()->json([
+                                'data' => $workFlow ?? [],
+                                'success' => true
+                                ], 200);
+    }
+
+    public function getHomeTestimonialsData(){
+
+        $testimonials = Testimonial::orderByDesc('testimonial_id')->take(3)->get();
+
+        return response()->json([
+                                'data' => $testimonials ?? [],
+                                'success' => true
+                                ], 200);
+    }
+
+    public function getHomeAssociateData(){
+
+        $associate = Associate::orderByDesc('associate_id')->get();
+
+        return response()->json([
+                                'data' => $associate ?? [],
+                                'success' => true
                                 ], 200);
     }
 }

@@ -23,6 +23,8 @@ use App\Http\Controllers\Api\HolidayController;
 use App\Http\Controllers\Api\StaticPageConroller;
 use App\Http\Controllers\Api\StaticPageSectionController;
 use App\Http\Controllers\Api\WorkFlowController;
+use App\Http\Controllers\Api\TestimonialController;
+use App\Http\Controllers\Api\AssociateController;
 use App\Helpers\MediaHelper;
 use App\Helpers\DocumentHelper;
 use Illuminate\Http\Request;
@@ -290,11 +292,6 @@ Route::prefix('v1')->group(function () {
                 });
             });
 
-        //     Route::get('/{any}', function () {
-        //         return view('errors.404');
-        //     })->where('any', '.*');
-        // });
-
             //static pages
             Route::prefix('/static-page')->group(function(){
 
@@ -336,6 +333,36 @@ Route::prefix('v1')->group(function () {
                     Route::post('/create', 'create');
                     Route::post('/{workflow}', 'update');
                     Route::delete('/{workflow}', 'destroy');
+                });
+
+            });
+
+            //testimonial
+            Route::prefix('/testimonial')->group(function(){
+
+                Route::controller(TestimonialController::class)->group(function(){
+
+                    Route::get('/', 'index');
+                    Route::get('/{testimonial}','show');
+                    Route::get('/{testimonial}/restore','restore');
+                    Route::post('/create', 'create');
+                    Route::post('/{testimonial}', 'update');
+                    Route::delete('/{testimonial}', 'destroy');
+                });
+
+            });
+
+            //associates routes
+            Route::prefix('/associate')->group(function(){
+
+                Route::controller(AssociateController::class)->group(function(){
+
+                    Route::get('/', 'index');
+                    Route::get('/{associates}','show');
+                    Route::get('/{associates}/restore','restore');
+                    Route::post('/create', 'create');
+                    Route::post('/{associates}', 'update');
+                    Route::delete('/{associates}', 'destroy');
                 });
 
             });
@@ -383,7 +410,6 @@ Route::prefix('v1')->group(function () {
                     return DocumentHelper::downloadDocument($id);
                 });
             });
-
         });
 
         //Client accessible routes
@@ -401,5 +427,14 @@ Route::prefix('v1')->group(function () {
             });
         });
 
+        //for unknown routes
+        Route::get('/{any}', function () {
+
+            return response()->json([
+                                    'success' => false,
+                                    'message' => '404, Page Not found, please try again',
+                                    ], 404);
+
+        })->where('any', '.*');
     });
 });
