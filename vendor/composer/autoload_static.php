@@ -34,6 +34,7 @@ class ComposerStaticInit9c491b8531eec05ba41a11d9276a5749
         'f0906e6318348a765ffb6eb24e0d0938' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Foundation/helpers.php',
         '58571171fd5812e6e447dce228f52f4d' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Support/helpers.php',
         '40275907c8566c390185147049ef6e5d' => __DIR__ . '/..' . '/livewire/livewire/src/helpers.php',
+        '5e8fe2a5ffaded85af682684fe3bbf5a' => __DIR__ . '/..' . '/mews/captcha/src/helpers.php',
         'c72349b1fe8d0deeedd3a52e8aa814d8' => __DIR__ . '/..' . '/mockery/mockery/library/helpers.php',
         'ce9671a430e4846b44e1c68c7611f9f5' => __DIR__ . '/..' . '/mockery/mockery/library/Mockery.php',
         'a1cfe24d14977df6878b9bf804af2d1c' => __DIR__ . '/..' . '/nunomaduro/collision/src/Adapters/Phpunit/Autoload.php',
@@ -119,6 +120,7 @@ class ComposerStaticInit9c491b8531eec05ba41a11d9276a5749
         array (
             'Monolog\\' => 8,
             'Mockery\\' => 8,
+            'Mews\\Captcha\\' => 13,
         ),
         'L' => 
         array (
@@ -399,6 +401,10 @@ class ComposerStaticInit9c491b8531eec05ba41a11d9276a5749
         array (
             0 => __DIR__ . '/..' . '/mockery/mockery/library/Mockery',
         ),
+        'Mews\\Captcha\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/mews/captcha/src',
+        ),
         'Livewire\\' => 
         array (
             0 => __DIR__ . '/..' . '/livewire/livewire/src',
@@ -556,6 +562,7 @@ class ComposerStaticInit9c491b8531eec05ba41a11d9276a5749
         'App\\Exceptions\\UserExistPreviouslyException' => __DIR__ . '/../..' . '/app/Exceptions/UserExistPreviouslyException.php',
         'App\\Helpers\\DocumentHelper' => __DIR__ . '/../..' . '/app/helpers/DocumentHelper.php',
         'App\\Helpers\\MediaHelper' => __DIR__ . '/../..' . '/app/helpers/MediaHelper.php',
+        'App\\Http\\Controllers\\Api\\AssociateController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/AssociateController.php',
         'App\\Http\\Controllers\\Api\\Auth\\EmailVerifyController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/Auth/EmailVerifyController.php',
         'App\\Http\\Controllers\\Api\\Auth\\LoginController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/Auth/LoginController.php',
         'App\\Http\\Controllers\\Api\\Auth\\OtpController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/Auth/OtpController.php',
@@ -566,6 +573,8 @@ class ComposerStaticInit9c491b8531eec05ba41a11d9276a5749
         'App\\Http\\Controllers\\Api\\CustomFormController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/CustomFormController.php',
         'App\\Http\\Controllers\\Api\\DownloadCategoryController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/DownloadCategoryController.php',
         'App\\Http\\Controllers\\Api\\DownloadController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/DownloadController.php',
+        'App\\Http\\Controllers\\Api\\Frontend\\CaptchaController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/Frontend/CaptchaController.php',
+        'App\\Http\\Controllers\\Api\\Frontend\\HomeController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/Frontend/HomeController.php',
         'App\\Http\\Controllers\\Api\\HolidayController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/HolidayController.php',
         'App\\Http\\Controllers\\Api\\NoticeController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/NoticeController.php',
         'App\\Http\\Controllers\\Api\\PermissionController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/PermissionController.php',
@@ -576,7 +585,9 @@ class ComposerStaticInit9c491b8531eec05ba41a11d9276a5749
         'App\\Http\\Controllers\\Api\\ServiceSectionController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/ServiceSectionController.php',
         'App\\Http\\Controllers\\Api\\StaticPageConroller' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/StaticPageConroller.php',
         'App\\Http\\Controllers\\Api\\StaticPageSectionController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/StaticPageSectionController.php',
+        'App\\Http\\Controllers\\Api\\TestimonialController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/TestimonialController.php',
         'App\\Http\\Controllers\\Api\\UserController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/UserController.php',
+        'App\\Http\\Controllers\\Api\\WorkFlowController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/WorkFlowController.php',
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
         'App\\Http\\Kernel' => __DIR__ . '/../..' . '/app/Http/Kernel.php',
         'App\\Http\\Middleware\\Authenticate' => __DIR__ . '/../..' . '/app/Http/Middleware/Authenticate.php',
@@ -593,6 +604,7 @@ class ComposerStaticInit9c491b8531eec05ba41a11d9276a5749
         'App\\Http\\Middleware\\VerifyCsrfToken' => __DIR__ . '/../..' . '/app/Http/Middleware/VerifyCsrfToken.php',
         'App\\Http\\Requests\\Auth\\LoginRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Auth/LoginRequest.php',
         'App\\Mail\\SendMails' => __DIR__ . '/../..' . '/app/Mail/SendMails.php',
+        'App\\Models\\Associate' => __DIR__ . '/../..' . '/app/Models/Associate.php',
         'App\\Models\\Blog' => __DIR__ . '/../..' . '/app/Models/Blog.php',
         'App\\Models\\BlogCategory' => __DIR__ . '/../..' . '/app/Models/BlogCategory.php',
         'App\\Models\\Client' => __DIR__ . '/../..' . '/app/Models/Client.php',
@@ -613,7 +625,9 @@ class ComposerStaticInit9c491b8531eec05ba41a11d9276a5749
         'App\\Models\\ServiceSection' => __DIR__ . '/../..' . '/app/Models/ServiceSection.php',
         'App\\Models\\StaticPage' => __DIR__ . '/../..' . '/app/Models/StaticPage.php',
         'App\\Models\\StaticPageSection' => __DIR__ . '/../..' . '/app/Models/StaticPageSection.php',
+        'App\\Models\\Testimonial' => __DIR__ . '/../..' . '/app/Models/Testimonial.php',
         'App\\Models\\User' => __DIR__ . '/../..' . '/app/Models/User.php',
+        'App\\Models\\WorkFlow' => __DIR__ . '/../..' . '/app/Models/WorkFlow.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',
         'App\\Providers\\AuthServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AuthServiceProvider.php',
         'App\\Providers\\BroadcastServiceProvider' => __DIR__ . '/../..' . '/app/Providers/BroadcastServiceProvider.php',
@@ -3656,6 +3670,11 @@ class ComposerStaticInit9c491b8531eec05ba41a11d9276a5749
         'Livewire\\WithPagination' => __DIR__ . '/..' . '/livewire/livewire/src/WithPagination.php',
         'Livewire\\WithoutUrlPagination' => __DIR__ . '/..' . '/livewire/livewire/src/WithoutUrlPagination.php',
         'Livewire\\Wrapped' => __DIR__ . '/..' . '/livewire/livewire/src/Wrapped.php',
+        'Mews\\Captcha\\Captcha' => __DIR__ . '/..' . '/mews/captcha/src/Captcha.php',
+        'Mews\\Captcha\\CaptchaController' => __DIR__ . '/..' . '/mews/captcha/src/CaptchaController.php',
+        'Mews\\Captcha\\CaptchaServiceProvider' => __DIR__ . '/..' . '/mews/captcha/src/CaptchaServiceProvider.php',
+        'Mews\\Captcha\\Facades\\Captcha' => __DIR__ . '/..' . '/mews/captcha/src/Facades/Captcha.php',
+        'Mews\\Captcha\\LumenCaptchaController' => __DIR__ . '/..' . '/mews/captcha/src/LumenCaptchaController.php',
         'Mockery\\Adapter\\Phpunit\\MockeryPHPUnitIntegration' => __DIR__ . '/..' . '/mockery/mockery/library/Mockery/Adapter/Phpunit/MockeryPHPUnitIntegration.php',
         'Mockery\\Adapter\\Phpunit\\MockeryPHPUnitIntegrationAssertPostConditions' => __DIR__ . '/..' . '/mockery/mockery/library/Mockery/Adapter/Phpunit/MockeryPHPUnitIntegrationAssertPostConditions.php',
         'Mockery\\Adapter\\Phpunit\\MockeryTestCase' => __DIR__ . '/..' . '/mockery/mockery/library/Mockery/Adapter/Phpunit/MockeryTestCase.php',

@@ -27,11 +27,15 @@ class HomeController extends Controller
                                 ], 200);
     }
 
-    public function getHomeSectionData($id ,string $slug){
+    public function getHomeSectionData(string $slug){
+
+        $page = StaticPage::wherePage_name('home')
+                            ->wherePage_status(1)
+                            ->first();
 
         $pageSection = StaticPageSection::where('section_slug', $slug)
                                           ->where('section_status', 1)
-                                          ->where('static_page_id', $id)
+                                          ->where('static_page_id', $page->static_page_id)
                                           ->first();
 
         return response()->json([
