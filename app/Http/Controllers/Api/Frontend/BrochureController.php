@@ -395,11 +395,11 @@ class BrochureController extends Controller
 
 
             // Mail it
-            // mail($to, $subject, $message, $headers);
-            // mail($data['email'], $subject1, $thanks, $headers);
+            mail($to, $subject, $message, $headers);
+            mail($data['email'], $subject1, $thanks, $headers);
         }
 
-        //create a new directory for store pdf files
+        //if directory is not exist then create a new directory for store pdf files
         $pdfDirectory = storage_path('app/public/PDF');
         if (!File::exists($pdfDirectory)) {
             File::makeDirectory($pdfDirectory, 0755, true);

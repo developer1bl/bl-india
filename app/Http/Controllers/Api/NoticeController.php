@@ -23,7 +23,7 @@ class NoticeController extends Controller
      */
     public function index()
     {
-        $notice = Notice::with('services', 'productCategories', 'services_product')
+        $notice = Notice::with('productCategories', 'notice_service')
                           ->orderByDesc('notice_id')
                           ->get();
 
@@ -160,7 +160,7 @@ class NoticeController extends Controller
             if($noticeOptionData[0]->option === 'service'){
 
                 foreach ($noticeOptionData[0]->product_id as $key => $value) {
-                    $notice->services_product()->attach($optionId, ['product_id' => $value]);
+                    $notice->notice_service()->attach($optionId, ['product_id' => $value]);
                 }
             }
         }

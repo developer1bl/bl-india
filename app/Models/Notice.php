@@ -40,29 +40,13 @@ class Notice extends Model
         'notice_order' => 'integer',
     ];
 
-    public function services()
-    {
-        return $this->belongsTo(Service::class, 'service_id', 'service_id')
-                    ->with('products');
-    }
-
-    public function image()
-    {
-        return $this->belongsTo(Media::class, 'notice_image_id');
-    }
-
-    public function documents()
-    {
-        return $this->hasOne(Document::class, 'document_id');
-    }
-
     public function productCategories()
     {
         return $this->belongsToMany(ProductCategories::class, 'notice_product_categorie', 'notice_id', 'product_category_id')
                     ->withPivot('product_id');
     }
 
-    public function services_product()
+    public function notice_service()
     {
         return $this->belongsToMany(Service::class, 'notice_service', 'notice_id', 'service_id')
                     ->withPivot('product_id');
