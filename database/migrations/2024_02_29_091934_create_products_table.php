@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('product_name');
             $table->string('product_technical_name')->nullable();
             $table->string('product_slug')->unique();
-            $table->unsignedBigInteger('product_image_id')->nullable();
+            $table->string('product_img_url')->nullable();
             $table->string('product_img_alt')->nullable();
             $table->longText('product_content')->nullable();
             $table->string('seo_title')->nullable();

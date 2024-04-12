@@ -20,13 +20,13 @@ class LoginController extends Controller
 {
     /**
      * loginUser() this function is used to register new user
-     * 
+     *
      * @param Request $request
      * @return Response
      */
     public function loginUser(Request $request)
     {
-        //set validation 
+        //set validation
         $validator = Validator::make($request->all(), [
             'email' => 'required',
             'password' => 'required',
@@ -46,15 +46,15 @@ class LoginController extends Controller
                       ->whereDeleted_at(null)
                       ->first();
 
-        //if first user is empty      
+        //if first user is empty
         if (empty($user)) {
 
             return response()->json([
                                     'success' => false,
-                                    'message' => 'No user Foud with this Email address'
+                                    'message' => 'No user Found with this Email address'
                                     ], 404);
         }
-    
+
         if (Hash::check($request->password, $user->password)) {
 
             //when user login successfully then update its is_active to true
@@ -83,14 +83,14 @@ class LoginController extends Controller
 
     /**
      * loginClient() this function is used to register new client user
-     * 
+     *
      * @param Request $request
      * @return Response
      */
     public function loginClient(Request $request)
     {
         $requestArr = $request->all() ?? [];
-        $authtype = $requestArr['option'] ?? null;
+        $authType = $requestArr['option'] ?? null;
 
         $validator = Validator::make($request->all(), [
             'option' => 'required'
@@ -100,16 +100,16 @@ class LoginController extends Controller
         if ($validator->fails()) {
 
             return response()->json([
-                'success' => false,
-                'message' => $validator->messages()
-            ], 403);
+                                    'success' => false,
+                                    'message' => $validator->messages()
+                                    ], 403);
         }
 
         //if the request array is not empty
         if (!empty($requestArr)) {
 
             //authenticate with password
-            if ($authtype == 'password' && $authtype !== null) {
+            if ($authType == 'password' && $authType !== null) {
 
                 $validator = Validator::make($request->all(), [
                     'email' => 'required|email:rfc,dns',
@@ -130,12 +130,12 @@ class LoginController extends Controller
                                   ->whereDeleted_at(null)
                                   ->first();
 
-                //if first user is empty      
+                //if first user is empty
                 if (empty($client)) {
 
                     return response()->json([
                                             'success' => false,
-                                            'message' => 'No Client Foud with this Email address'
+                                            'message' => 'No Client Found with this Email address'
                                             ], 404);
                 }
 
@@ -143,9 +143,9 @@ class LoginController extends Controller
 
                     //update client's login timestamp
                     $client->update([
-                        'login_at' => now(),
-                        'is_online' => true
-                    ]);
+                                    'login_at' => now(),
+                                    'is_online' => true
+                                    ]);
 
                     //remove all previous tokens
                     $client->tokens()->delete();
@@ -164,8 +164,8 @@ class LoginController extends Controller
                                             ], 401);
                 }
 
-                //authenticate with Otp    
-            } elseif ($authtype == 'otp') {
+                //authenticate with Otp
+            } elseif ($authType == 'otp') {
 
                 $validator = Validator::make($request->all(), [
                     'email' => 'required|email:rfc,dns',
@@ -194,23 +194,26 @@ class LoginController extends Controller
 
     /**
      * logOut() this function is used to logout the user/client
-     * 
+     *
      * @param Request $request
      * @return Response
      */
     public function logOut(Request $request)
-    {  
-       $user = $request->user();
-       $user->is_online = false;
-       $user->save();
-       $request->user()->currentAccessToken()->delete();
+    {
+        $user = $request->user();
+        $user->is_online = false;
+        $user->save();
+        $request->user()->currentAccessToken()->delete();
 
-       return response()->json(['success' => true, 'message' => 'Logged Out successfully'], 200);
+        return response()->json([
+                               'success' => true,
+                               'message' => 'Logged Out successfully'
+                               ], 200);
     }
 
     /**
      * createOTP() this function is used to create an OTP at the time of login/signup of client
-     * 
+     *
      * @param Request $request
      * @return Response
      */
@@ -220,7 +223,7 @@ class LoginController extends Controller
         $client = Client::where('email', $arr['email'])->first();
 
         if (!empty($client)) {
-            //create a random 4 digits intiger no. 
+            //create a random 4 digits integer no.
             $randomNumber = random_int(1000, 9999);
 
             $client->update([
@@ -248,14 +251,14 @@ class LoginController extends Controller
 
             return response()->json([
                                     'success' => false,
-                                    'message' => 'Please check your Cridentials, Something is Wrong.'
+                                    'message' => 'Please check your Credentials, Something is Wrong.'
                                     ], 404);
         }
     }
 
     /**
      * forgotPassword() this function is used to send request for forgot password
-     * 
+     *
      * @param Request $request
      * @return Response
      */
@@ -276,8 +279,8 @@ class LoginController extends Controller
         }
 
         $client = Client::where('email', $input['email'])
-                         ->whereDeleted_at(null)
-                         ->first();
+                          ->whereDeleted_at(null)
+                          ->first();
 
         if (!empty($client)) {
 
@@ -285,7 +288,7 @@ class LoginController extends Controller
             $domain = URL::to('/');
             $url = $domain . "/api/v1/reset-password/" . $token;
 
-            //store token and email 
+            //store token and email
             PasswordReset::updateOrCreate(
                 ['email' => $input['email']],
                 [
@@ -311,14 +314,14 @@ class LoginController extends Controller
         } else {
             return response()->json([
                                     'success' => false,
-                                    'message' => 'No such Client Foud with this Email Address'
+                                    'message' => 'No such Client Found with this Email Address'
                                     ], 404);
         }
     }
 
     /**
      * resetPasswordPage() this function is used to send a forgot password page
-     * 
+     *
      * @param Request $request
      * @return Response | view
      */
@@ -363,9 +366,9 @@ class LoginController extends Controller
 
     /**
      * authResetRequest() this function is used to update users password
-     * 
+     *
      * @param Request $request
-     * @return Response 
+     * @return Response
      */
     public function authResetRequest(Request $request)
     {
@@ -408,14 +411,14 @@ class LoginController extends Controller
 
                     return response()->json([
                                             'success' => false,
-                                            'message' => 'Please check your Cridentials, something is wrong.'
+                                            'message' => 'Please check your Credentials, something is wrong.'
                                             ], 400);
                 }
             } else {
 
                 return response()->json([
                                         'success' => false,
-                                        'message' => 'Please check your Cridentials, something is wrong.'
+                                        'message' => 'Please check your Credentials, something is wrong.'
                                         ], 404);
             }
         }

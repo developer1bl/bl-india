@@ -21,7 +21,7 @@ class Product extends Model
     protected $fillable = [
         'product_name',
         'product_slug',
-        'product_image_id',
+        'product_img_url',
         'product_technical_name',
         'product_img_alt',
         'product_compliance',
@@ -48,10 +48,5 @@ class Product extends Model
     {
         return $this->belongsToMany(Service::class, 'product_services', 'product_id', 'service_id')
                      ->withPivot('service_type', 'service_compliance');
-    }
-
-    public function image()
-    {
-        return $this->belongsTo(Media::class, 'product_image_id');
     }
 }

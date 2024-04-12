@@ -33,7 +33,7 @@ class RouteServiceProvider extends ServiceProvider
 
             //api routes for backend operations
             Route::middleware('api')
-                ->prefix('api/')
+                ->prefix('api/backend')
                 ->group(base_path('routes\v1\api_backend.php'));
 
             //api routes for backend operations

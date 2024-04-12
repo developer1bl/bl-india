@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use App\Exceptions\UserExistPreviouslyException;
 use App\Models\Service;
+use App\Helpers\MediaHelper;
 
 class ProductController extends Controller
 {
@@ -17,7 +18,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $product = Product::with(['productCategories', 'services', 'image'])
+        $product = Product::with(['productCategories', 'services'])
                             ->orderByDesc('product_id')
                             ->get();
 
@@ -29,7 +30,7 @@ class ProductController extends Controller
 
     /**
      * Show the form for creating a new resource.
-     * 
+     *
      * @param Request $request
      * @return Response
      */
@@ -55,7 +56,7 @@ class ProductController extends Controller
                                 $serviceExists = Service::find($service['service_id']);
 
                                 if (!$serviceExists) {
-                                    $fail('Selected services do not exist.');
+                                    return $fail('Selected services do not exist.');
                                 }
 
                                 if(isset($service['service_type']))
@@ -65,18 +66,20 @@ class ProductController extends Controller
                                         $fail('Invalid service type.');
                                     }
                                 }
-            
+
                                 // If service compliance is provided, check if it's valid
                                 if (isset($service['service_compliance'])) {
 
                                     $validCompliance = Service::where('service_id', $service['service_id'])
                                                                 ->pluck('service_compliance')
                                                                 ->toArray();
-                                                                
+
+                                    $validCompliance = $validCompliance[0] ?? null;
+
                                     $provided_compliance_array = explode(',', $service['service_compliance']);
-                                    
-                                    $intersect_array = array_intersect($provided_compliance_array, array_map('trim', json_decode($validCompliance[0])));
-                                      
+
+                                    $intersect_array = array_intersect($provided_compliance_array, array_map('trim', json_decode($validCompliance)));
+
                                     if (count($intersect_array) != count($provided_compliance_array)) {
                                         $fail('Selected service compliances are invalid.');
                                     }
@@ -86,7 +89,7 @@ class ProductController extends Controller
                             }
                         ],
         ]);
-        
+
         //if the request have some validation errors
         if ($validator->fails()) {
 
@@ -95,12 +98,22 @@ class ProductController extends Controller
                                     'message' => $validator->messages()
                                     ], 403);
         }
-      
+
+        if(Product::withTrashed(true)
+                    ->where('product_name', $request->product_name)
+                    ->orWhere('product_slug', $request->product_slug)
+                    ->exists())
+        {
+            throw new UserExistPreviouslyException('this product was deleted previously, did you want to restore it?');
+        }
+
+        $productImagePath = MediaHelper::getMediaPath($request->product_image_id ?? null);
+
         $data = [
             'product_name' => $request->product_name,
             'product_slug' => $request->product_slug,
             'product_technical_name' => $request->product_technical_name,
-            'product_image_id' => $request->product_image_id,
+            'product_img_url' => $productImagePath,
             'product_img_alt' => $request->product_img_alt,
             'product_content' => $request->product_content,
             'seo_title' => $request->seo_title,
@@ -109,22 +122,14 @@ class ProductController extends Controller
             'product_status' => 1,
             'product_order' => 0,
         ];
-        
-        if(Product::withTrashed(true)
-                    ->whereProduct_name($request->product_name)
-                    ->orWhereProduct_slug($request->product_slug)
-                    ->exists())
-        {
-            throw new UserExistPreviouslyException('this product was deleted previously, did you want to restore it?');
-        }
 
         $product = Product::create($data);
 
         //attach product category with product
         $category = explode(',', $request->product_category_id);
-        $category = array_map('intval', $category); 
+        $category = array_map('intval', $category);
         $product->productCategories()->sync($category);
-        
+
         //attach services on product
         $services = [];
         $serviceData = json_decode($request->service);
@@ -134,7 +139,7 @@ class ProductController extends Controller
             $serviceId = $serviceData->service_id;
             $serviceType = $serviceData->service_type;
             $serviceCompliance = json_encode(explode(',', $serviceData->service_compliance));
-    
+
             $services[$serviceId] = [
                 'service_type' => $serviceType,
                 'service_compliance' => $serviceCompliance,
@@ -158,14 +163,14 @@ class ProductController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     * 
+     *
      * @param string $request
      * @return response
      */
     public function restore(String $request)
     {
-        $product = Product::withTrashed(true)->where('product_name', $request)->first();   
-       
+        $product = Product::withTrashed(true)->where('product_name', $request)->first();
+
         if ($product) {
 
             $product->restore();
@@ -175,7 +180,7 @@ class ProductController extends Controller
                                     'message' => 'Product restored successfully'
                                     ], 202);
         } else {
-            
+
             return response()->json([
                                     'success' => false,
                                     'message' => 'Product not found'
@@ -221,7 +226,7 @@ class ProductController extends Controller
     public function update(Request $request, string $id)
     {
         $product = Product::find($id);
-        
+
         if (!$product) {
 
             return response()->json([
@@ -229,7 +234,7 @@ class ProductController extends Controller
                                     'message' => 'Product not found'
                                     ], 404);
         }
-        
+
         $validator = Validator::make($request->all(), [
             'product_name' => ['required','string','max:150', Rule::unique('products', 'product_name')->ignore($id, 'product_id')],
             'product_slug' => ['required','string','max:150', Rule::unique('products', 'product_slug')->ignore($id, 'product_id')],
@@ -267,23 +272,23 @@ class ProductController extends Controller
                                 $validCompliance = Service::where('service_id', $service['service_id'])
                                                             ->pluck('service_compliance')
                                                             ->toArray();
-                                                            
+
                                 $provided_compliance_array = explode(',', $service['service_compliance']);
-                                
+
                                 $intersect_array = array_intersect($provided_compliance_array, array_map('trim', json_decode($validCompliance[0])));
-                                
+
                                 if (count($intersect_array) != count($provided_compliance_array)) {
                                     $fail('Selected service compliances are invalid.');
                                 }
                             }
-                            
+
                             return;
                         }
                         }
                     ],
 
         ]);
-        
+
         //if the request have some validation errors
         if ($validator->fails()) {
 
@@ -292,12 +297,14 @@ class ProductController extends Controller
                                     'message' => $validator->messages()
                                     ], 403);
         }
-         
+
+        $productImagePath = MediaHelper::getMediaPath($request->product_image_id ?? null);
+
         $data = [
             'product_name' => $request->product_name,
             'product_slug' => $request->product_slug,
             'product_technical_name' => $request->product_technical_name,
-            'product_image_id' => $request->product_image_id,
+            'product_img_url' => $productImagePath,
             'product_img_alt' => $request->product_img_alt,
             'product_content' => $request->product_content,
             'seo_title' => $request->seo_title,
@@ -306,12 +313,12 @@ class ProductController extends Controller
             'product_status' => $request->product_status,
             'product_order' => $request->product_order,
         ];
-  
+
         //attach product category with product
         $category = explode(',', $request->product_category_id);
         $category = array_map('intval', $category);
         $product->productCategories()->sync($category);
-        
+
         //attach services on product
         $services = [];
         $serviceData = json_decode($request->service);
@@ -332,13 +339,13 @@ class ProductController extends Controller
         $result = $product->update($data);
 
         if ($result) {
-            
+
             return response()->json([
-                                    'sucess' => true, 
-                                    'message' => 'product update sucessfully '
+                                    'success' => true,
+                                    'message' => 'product update successfully '
                                     ], 201);
         } else {
-            
+
             return response()->json([
                                     'success' => false,
                                     'message' => 'Something went wrong, try again later'
@@ -354,7 +361,7 @@ class ProductController extends Controller
         $product = Product::find($id);
 
         if ($product) {
-            
+
             $result = $product->delete();
 
             if ($result) {
@@ -364,15 +371,15 @@ class ProductController extends Controller
                                         'message' => 'Product deleted successfully'
                                         ],202);
             } else {
-                
+
                 return response()->json([
                                        'success' => false,
                                        'message' => 'Something went wrong, try again later',
                                         ],422);
             }
-            
+
         } else {
-            
+
             return response()->json([
                                     'success' => false,
                                     'message' => 'Product not found',

@@ -41,6 +41,7 @@ class CaptchaController extends Controller
             ]);
 
         } else {
+            
             return 'success';
         }
     }

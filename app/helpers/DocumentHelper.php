@@ -195,5 +195,28 @@ class DocumentHelper{
                                     ], 404);
         }
     }
+
+    /**
+     * this function is used to get the document url
+     *
+     * @param string $id
+     * @return Response
+     */
+    public static function getDocUrl(string $id){
+
+        $document = Document::find($id);
+
+        if ($document) {
+
+            return $document->document_path;
+
+        } else {
+
+            return response()->json([
+                                   'success' => false,
+                                   'message' => 'Document not found.',
+                                    ], 404);
+        }
+    }
 }
 ?>

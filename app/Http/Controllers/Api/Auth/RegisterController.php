@@ -18,15 +18,15 @@ use App\Models\Role;
 
 class RegisterController extends Controller
 {
-    /** 
+    /**
      * registerUser() this function is used to register new user
-     * 
+     *
      * @param Request $request
      * @return Response
      */
     public function registerUser(Request $request)
     {
-        //set validation 
+        //set validation
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:150',
             'email' => 'required|email|unique:users',
@@ -42,7 +42,7 @@ class RegisterController extends Controller
                                     'message' => $validator->messages()
                                     ], 400);
         }
-       
+
         // create new user
         $user = User::create([
             'name' => $request->name,
@@ -73,9 +73,9 @@ class RegisterController extends Controller
 
     /**
      * registerClient() this function is used to register new client user
-     * 
+     *
      * @param Request $request
-     * @return Res;ponse
+     * @return Response
      */
     public function registerClient(Request $request)
     {
@@ -127,7 +127,7 @@ class RegisterController extends Controller
 
     /**
      * sendVerificationMail() this function is used to send verification mail
-     * 
+     *
      * @param Request $request
      * @return Response
      */
