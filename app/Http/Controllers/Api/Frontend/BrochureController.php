@@ -411,7 +411,7 @@ class BrochureController extends Controller
         // Store the PDF in the storage path
         $pdf->save($pdfDirectory . '/' . $filename);
 
-        return $pdfDirectory . '/' . $filename;
+        return $filename;
     }
 
     /**
