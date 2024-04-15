@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\Frontend\BrochureController;
 use App\Http\Controllers\Api\Frontend\HomeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Frontend\CaptchaController;
+use App\Http\Controllers\Api\Frontend\FormController;
 
 Route::prefix('v1')->group(function(){
 
@@ -30,7 +31,7 @@ Route::prefix('v1')->group(function(){
         Route::get('/credential', 'captchaCredentials');
     });
 
-    //brochures routes
+    //brochures form routes
     Route::group(['prefix' => 'brochures', 'controller' => BrochureController::class], function(){
 
         // submit from handling
@@ -38,6 +39,20 @@ Route::prefix('v1')->group(function(){
         //deleteBrochurePDf
         Route::delete('/{brochure}', 'deleteBrochurePDF');
     });
+
+    //all static form routes
+    Route::controller(FormController::class)->group(function(){
+
+        //this route handles the request to call from
+        Route::post('request-to-call', 'requestToCallSubmit');
+
+        //this route handles the Application form
+        Route::post('application-form', 'submitApplicationForm');
+
+        //this route handles the partner form routes
+        Route::post('partner-form', 'submitPartnerForm');
+    });
+
 
     Route::prefix('about')->group(function(){
 

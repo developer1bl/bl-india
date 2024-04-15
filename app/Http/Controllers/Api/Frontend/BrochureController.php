@@ -356,12 +356,9 @@ class BrochureController extends Controller
         $pdf = PDF::loadView('pdf.brochureDownload', compact(['service', 'data']));
 
         if($country != 'ZIMBABWE') {
-            $to  = 'info@bl-india.com';
 
             // Subject
-            $subject1 = "Thanks for downloading brochure";
-
-            $subject = $data['name'].' requested for '.$service['service_name'];
+            $subject = "Thanks for downloading brochure";
 
             // Message
             $thanks = "<p style='font-family: Arial, Helvetica, sans-serif; font-size: 18px; color: #000;'>Hello ".$data['name'].",<br/>".
@@ -375,17 +372,6 @@ class BrochureController extends Controller
             "Contact No: +91-9250056788, +91-8130615678<br>".
             "Email: info@bl-india.com</p>";
 
-            $message = '<table style="width:100%; font-family: Arial, Helvetica, sans-serif; font-size: 18px;">'.
-            '<tr><th colspan="2">Interest in '.$service['service_name'].' service brochure.</th></tr>'.
-            '<tr><th>Full Name</th><td>'.$data['name'].'</td></tr>'.
-            '<tr><th>Organisation</th><td>'.$data['organisation'].'</td></tr>'.
-            '<tr><th>Email</th><td>'.$data['email'].'</td></tr>'.
-            '<tr><th>Country</th><td>'.$data['country'].'</td></tr>'.
-            '<tr><th>Phone</th><td>'.$data['phone'].'</td></tr>'.
-            '<tr><th>Interested Service</th><td>'.$service['service_name'].'</td></tr>'.
-            '<tr><th>Source</th><td>'.$data['source'].'</td></tr>'.
-            '<tr><th>Message</th><td>'.$data['message'].'</td></tr></table>';
-
             // To send HTML mail, the Content-type header must be set
             $headers  = 'MIME-Version: 1.0' . "\r\n";
             $headers .= 'Content-type: text/html; charset=UTF-8' . "\r\n";
@@ -393,10 +379,7 @@ class BrochureController extends Controller
             // Additional headers
             $headers .= 'From: Team Export Approval <no-reply@exportapproval.com>' . "\r\n";
 
-
-            // Mail it
-            mail($to, $subject, $message, $headers);
-            mail($data['email'], $subject1, $thanks, $headers);
+            mail($data['email'], $subject, $thanks, $headers);
         }
 
         //if directory is not exist then create a new directory for store pdf files
