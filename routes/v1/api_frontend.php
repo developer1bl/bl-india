@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Frontend\AboutPageController;
 use App\Http\Controllers\Api\Frontend\BrochureController;
 use App\Http\Controllers\Api\Frontend\HomeController;
 use Illuminate\Support\Facades\Route;
@@ -45,19 +46,21 @@ Route::prefix('v1')->group(function(){
 
         //this route handles the request to call from
         Route::post('request-to-call', 'requestToCallSubmit');
-
         //this route handles the Application form
         Route::post('application-form', 'submitApplicationForm');
-
         //this route handles the partner form routes
         Route::post('partner-form', 'submitPartnerForm');
     });
 
 
-    Route::prefix('about')->group(function(){
+    //about page routes
+    Route::group(['prefix' => 'about', 'controller' => AboutPageController::class], function(){
 
-        // Route::get('/', [HomeController::class, 'index']);
-        // Route::get('{page}/section/{slug}', [HomeController::class, 'getHomeSectionData']);
+        Route::get('/', 'index'); //about main page
+        Route::get('section/{slug}', 'getAboutSectionData'); //get about sections
+        Route::get('team-section', 'getAboutTeamData'); //about team sections
+        Route::get('founder-voice-section', 'getFounderVoiceData'); //about founder voice sections
+        Route::get('our-client-section', 'getFounderVoiceData'); //about our client sections
     });
 
     //for unknown routes

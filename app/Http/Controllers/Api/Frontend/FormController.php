@@ -11,6 +11,10 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use App\Models\ApplicationForm;
 use App\Models\Leads;
+use App\Models\PartnerForm;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ThanksMail;
+use Illuminate\Validation\Rule;
 
 class FormController extends Controller
 {
@@ -22,10 +26,25 @@ class FormController extends Controller
      */
     public function requestToCallSubmit(Request $request){
 
+        if (!empty($request->country_code) && !empty($request->phone_number)) {
+
+            $phone = '+'.$request->country_code.'-'.$request->phone_number;
+        }
+
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'phone_number' => 'required|string|max:20',
             'country_code' => 'required|string|max:5',
+            'phone_number' => ['required', 'string','max:20',
+                                function ($attribute, $value, $fail) use ($phone) {
+                                    $lead = Leads::where('phone', $phone)
+                                                    ->where('status', 'open')
+                                                    ->first();
+
+                                    if ($lead) {
+                                        $fail('we have already scheduled a meeting with you, for re-scheduling please login in our site');
+                                    }
+                                }],
+            'message' => 'nullable|string',
             'schedule_time' => ['required','after_or_equal:now',
                                 function ($attribute, $value, $fail) {
 
@@ -60,13 +79,9 @@ class FormController extends Controller
 
         $data = [
             'name' => $request->name,
-            'organisation' => null,
-            'email' => null,
             'country' => $country[0],
             'phone' => '+'.$request->country_code.'-'.$request->phone_number,
-            'service' => null,
-            'source' => null,
-            'message' => null,
+            'message' => $request->message,
             'status' => 'open',
             'ip_address' => $request->ip(),
         ];
@@ -111,12 +126,12 @@ class FormController extends Controller
                'name' => $request->name,
                'phone_number' => $request->phone_number,
                'country_code' => $request->country_code,
+               'message' => $request->message,
                'schedule_time' => Carbon::parse($request->schedule_time)->setTimezone($timeZone),
                'timezone' => $timeZone
            ];
 
-           //save the request to call form
-
+           //save the request to call form data
            $result = RequestToCall::create($data);
 
         if ($result) {
@@ -199,8 +214,6 @@ class FormController extends Controller
         $result = ApplicationForm::create($data);
 
         //send mail notification to user
-        // Subject
-        $subject = "Thanks for Applying Job Here.";
 
         // Message
         $thanks = "<p style='font-family: Arial, Helvetica, sans-serif; font-size: 18px; color: #000;'>Hello ".$request->user_name.",<br/>".
@@ -213,14 +226,17 @@ class FormController extends Controller
                     "Email: <EMAIL><br/>".
                     "Phone: (+254) 724 111 111<br/>";
 
-        // To send HTML mail, the Content-type header must be set
-        $headers  = 'MIME-Version: 1.0' . "\r\n";
-        $headers .= 'Content-type: text/html; charset=UTF-8' . "\r\n";
+        $data = [
+            'subject' => 'Thanks for Applying Job Here.',
+            'formContent' => $thanks,
+            'user' => $request->contact_person_name,
+        ];
 
-        // Additional headers
-        $headers .= 'From: Team Export Approval <no-reply@exportapproval.com>' . "\r\n";
-
-        mail($request->email, $subject, $thanks, $headers);
+        //send mail to contact person
+        if(!empty($request->email))
+        {
+            Mail::to($request->email)->send(new ThanksMail($data));
+        }
 
         if ($result) {
 
@@ -245,18 +261,24 @@ class FormController extends Controller
      */
     public function submitPartnerForm(Request $request){
 
-       $validator = Validator::make($request->all(),[
-            'user_name' => 'required|string|max:255',
-            'org_name' => 'nullable|string|max:255',
-            'designation' => 'nullable|string|max:255',
-            'email' => 'required|email|max:255|unique:partner_forms',
-            'phone' => 'required|string|max:20|unique:partner_forms',
-            'country_code' => 'nullable|string|max:5',
-            'location' => 'nullable|string|max:255',
-            'ready_to_relocate' => 'nullable|boolean',
-            'website' => ['nullable','string','max:255'],
-            'user_message' => 'nullable|string',
-       ]);
+        $validator = Validator::make($request->all(),[
+            'partner_type' => 'required|string|in:1,2',
+            'contact_person_name' => 'required|string|max:255',
+            'designation_name' => 'required|string|max:255',
+            'organization_name' => 'nullable|string|max:255',
+            'industry_name' => 'nullable|string|max:255',
+            'address_street' => 'required|string|max:255',
+            'city' => 'required|string|max:255',
+            'state' => 'required|string|max:255',
+            'zip' => 'required|string|max:20',
+            'country' => 'required|string|max:255',
+            'country_code' => 'required|string|max:5',
+            'phone_number' => 'required|string|max:20',
+            'email' => 'required|email|max:255',
+            'website' => 'nullable|url|max:255',
+            'experience' => 'nullable|string',
+            'partner_details' => 'nullable|string',
+        ]);
 
         if ($validator->fails()) {
 
@@ -266,8 +288,74 @@ class FormController extends Controller
                                     ], 403);
         }
 
-        $data = [
+        $result = PartnerForm::create($request->all());
 
+        //send mail to partner
+        if ($request->partner_type == 1) {
+
+             // Message for Business Associate
+             $thanks = "<p style='font-family: Arial, Helvetica, sans-serif; font-size: 18px; color: #000;'>Hello ". $request->contact_person_name .",</p>".
+
+             "<p style='font-family: Arial, Helvetica, sans-serif; font-size: 18px; color: #000;'>Thank you for your interest in becoming a Business Associate Partner with Export Approval!</p>
+
+             <p style='font-family: Arial, Helvetica, sans-serif; font-size: 18px; color: #000;'>We recognize and value the time and effort you have invested in completing the form to initiate this partnership with Export Approval, powered by Brand Liaison - a compliance consultant company. We specialize in providing comprehensive assistance and support to foreign manufacturers for required Indian approvals and certifications to export their products to India. Our commitment to facilitating seamless export approval processes for our clients sets us apart in the industry.</p>
+
+             <p style='font-family: Arial, Helvetica, sans-serif; font-size: 18px; color: #000;'>We are thrilled about the prospect of having you as a valued Business Associate Partner, and we believe that your expertise will contribute significantly to the success of our collaborative efforts. Our team is currently reviewing the information you provided, and we will get back to you soon to discuss potential next steps and answer any questions you may have.</p>
+
+             <p style='font-family: Arial, Helvetica, sans-serif; font-size: 18px; color: #000;'>If you have any immediate inquiries or wish to reach out to us, please feel free to contact us at +91-9810363988.</p>
+
+             <p style='font-family: Arial, Helvetica, sans-serif; font-size: 18px; color: #000;'>We look forward to working together and creating mutually beneficial relationships. Wishing you a great day ahead!</p>
+
+             <p style='font-family: Arial, Helvetica, sans-serif; font-size: 18px; color: #000;'>Best regards,<br>
+             Team Brand Liaison<br>
+             Contact No: +91-9250056788, +91-8130615678<br>
+             Email: info@bl-india.com </p>";
+
+        } else if($request->partner_type == 2) {
+
+             // Message for Resident Executive
+             $thanks = "<p style='font-family: Arial, Helvetica, sans-serif; font-size: 18px; color: #000;'>Hello ". $request->contact_person_name .",</p>".
+
+             "<p style='font-family: Arial, Helvetica, sans-serif; font-size: 18px; color: #000;'>Thank you for your interest in becoming a Business Associate Partner with Export Approval!</p>
+
+             <p style='font-family: Arial, Helvetica, sans-serif; font-size: 18px; color: #000;'>We recognize and value the time and effort you have invested in completing the form to initiate this partnership with Export Approval, powered by Brand Liaison - a compliance consultant company. We specialize in providing comprehensive assistance and support to foreign manufacturers for required Indian approvals and certifications to export their products to India. Our commitment to facilitating seamless export approval processes for our clients sets us apart in the industry.</p>
+
+             <p style='font-family: Arial, Helvetica, sans-serif; font-size: 18px; color: #000;'>We are thrilled about the prospect of having you as a valued Business Associate Partner, and we believe that your expertise will contribute significantly to the success of our collaborative efforts. Our team is currently reviewing the information you provided, and we will get back to you soon to discuss potential next steps and answer any questions you may have.</p>
+
+             <p style='font-family: Arial, Helvetica, sans-serif; font-size: 18px; color: #000;'>If you have any immediate inquiries or wish to reach out to us, please feel free to contact us at +91-9810363988.</p>
+
+             <p style='font-family: Arial, Helvetica, sans-serif; font-size: 18px; color: #000;'>We look forward to working together and creating mutually beneficial relationships. Wishing you a great day ahead!</p>
+
+             <p style='font-family: Arial, Helvetica, sans-serif; font-size: 18px; color: #000;'>Best regards,<br>
+             Team Brand Liaison<br>
+             Contact No: +91-9250056788, +91-8130615678<br>
+             Email: info@bl-india.com </p>";
+        }
+
+        $data = [
+            'subject' => 'Your application is submitted',
+            'formContent' => $thanks,
+            'user' => $request->contact_person_name,
         ];
+
+        //send mail to contact person
+        if(!empty($request->email))
+        {
+            Mail::to($request->email)->send(new ThanksMail($data));
+        }
+
+        if ($result) {
+
+            return response()->json([
+                                    'success' => true,
+                                    'message' => 'Partner form submit successfully'
+                                    ], 202);
+        } else {
+
+            return response()->json([
+                                    'success' => false,
+                                    'message' => 'Something went wrong, please try again later'
+                                    ], 422);
+        }
     }
 }

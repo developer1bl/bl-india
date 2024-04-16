@@ -14,6 +14,11 @@ use App\Models\Associate;
 
 class HomeController extends Controller
 {
+    /**
+     * home page index
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function index(){
 
         //check data for the home page
@@ -27,6 +32,12 @@ class HomeController extends Controller
                                 ], 200);
     }
 
+    /**
+     * home page section
+     * 
+     * @param string $slug
+     * @return \Illuminate\Http\Response
+     */
     public function getHomeSectionData(string $slug){
 
         $page = StaticPage::wherePage_name('home')
@@ -44,6 +55,11 @@ class HomeController extends Controller
                                 ], 200);
     }
 
+    /**
+     * home page service section
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function getHomeServiceData(){
 
         $homeService = Service::LatestService();
@@ -54,6 +70,11 @@ class HomeController extends Controller
                                 ], 200);
     }
 
+    /**
+     * home page blog section
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function getHomeBlogData(){
 
         $homeBlogs = Blog::LatestBlogs();
@@ -64,6 +85,11 @@ class HomeController extends Controller
                                 ], 200);
     }
 
+    /**
+     * home page work-flow section
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function getHomeWorkFlowData(){
 
         $workFlow = WorkFlow::orderByDesc('id')->take(5)->get();
@@ -74,6 +100,11 @@ class HomeController extends Controller
                                 ], 200);
     }
 
+    /**
+     * home page testimonial section
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function getHomeTestimonialsData(){
 
         $testimonials = Testimonial::orderByDesc('testimonial_id')->take(3)->get();
@@ -84,6 +115,11 @@ class HomeController extends Controller
                                 ], 200);
     }
 
+    /**
+     * home page associate section
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function getHomeAssociateData(){
 
         $associate = Associate::orderByDesc('associate_id')->get();

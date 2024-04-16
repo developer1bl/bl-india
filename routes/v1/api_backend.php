@@ -25,6 +25,7 @@ use App\Http\Controllers\Api\StaticPageSectionController;
 use App\Http\Controllers\Api\WorkFlowController;
 use App\Http\Controllers\Api\TestimonialController;
 use App\Http\Controllers\Api\AssociateController;
+use App\Http\Controllers\Api\TeamController;
 use App\Helpers\MediaHelper;
 use App\Helpers\DocumentHelper;
 use Illuminate\Http\Request;
@@ -363,6 +364,20 @@ Route::prefix('v1')->group(function () {
                     Route::post('/create', 'create');
                     Route::post('/{associates}', 'update');
                     Route::delete('/{associates}', 'destroy');
+                });
+
+            });
+
+            //team routes
+            Route::prefix('/team')->group(function(){
+
+                Route::controller(TeamController::class)->group(function(){
+
+                    Route::get('/', 'index');
+                    Route::get('/{team}','show');
+                    Route::post('/create', 'create');
+                    Route::post('/{team}', 'update');
+                    Route::delete('/{team}', 'destroy');
                 });
 
             });

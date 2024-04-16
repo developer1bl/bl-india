@@ -14,6 +14,7 @@ class RequestToCall extends Model
         'name',
         'phone_number',
         'country_code',
+        'message',
         'schedule_time',
         'timezone',
     ];

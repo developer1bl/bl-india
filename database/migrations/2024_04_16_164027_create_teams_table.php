@@ -11,15 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('request_to_calls', function (Blueprint $table) {
+        Schema::create('teams', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('phone_number');
-            $table->string('country_code');
-            $table->dateTimeTz('schedule_time');
-            $table->string('timezone')->nullable();
-            $table->text('message')->nullable();
+            $table->string('designation');
+            $table->string('profile_url')->nullable();
+            $table->boolean('status')->default(false);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -28,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('request_to_calls');
+        Schema::dropIfExists('teams');
     }
 };

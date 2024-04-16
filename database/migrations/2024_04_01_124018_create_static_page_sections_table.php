@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('section_slug')->unique();
             $table->string('section_tagline')->nullable();
             $table->text('section_description')->nullable();
-            $table->string('section_content')->nullable();
+            $table->text('section_content')->nullable();
             $table->boolean('section_status')->default(true)->comment('default status is true');
             $table->integer('section_order')->default(0);
             $table->timestamps();
