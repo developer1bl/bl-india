@@ -28,6 +28,7 @@ use App\Http\Controllers\Api\AssociateController;
 use App\Http\Controllers\Api\TeamController;
 use App\Helpers\MediaHelper;
 use App\Helpers\DocumentHelper;
+use App\Http\Controllers\Api\ClientUserController;
 use Illuminate\Http\Request;
 
 /*
@@ -378,6 +379,21 @@ Route::prefix('v1')->group(function () {
                     Route::post('/create', 'create');
                     Route::post('/{team}', 'update');
                     Route::delete('/{team}', 'destroy');
+                });
+
+            });
+
+            //client routes
+            Route::prefix('/client-user')->group(function(){
+
+                Route::controller(ClientUserController::class)->group(function(){
+
+                    Route::get('/', 'index');
+                    Route::get('/{client}','show');
+                    Route::get('/{client}/restore','restore');
+                    Route::post('/create', 'create');
+                    Route::post('/{client}', 'update');
+                    Route::delete('/{client}', 'destroy');
                 });
 
             });

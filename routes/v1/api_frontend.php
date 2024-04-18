@@ -13,9 +13,15 @@ Route::prefix('v1')->group(function(){
     Route::prefix('home')->group(function(){
 
         Route::get('/', [HomeController::class, 'index']);
-        Route::get('/section/{slug}', [HomeController::class, 'getHomeSectionData']);
+        Route::get('/sections/{slug}', [HomeController::class, 'getHomeSectionData']);
+        //services routes
         Route::get('/section/services', [HomeController::class, 'getHomeServiceData']);
+        Route::get('/service/{service}', [HomeController::class, 'getHomeSingleServiceData']);
+        Route::get('/service-all', [HomeController::class, 'getHomeAllServiceData']);
+        //blogs routes
         Route::get('/section/blogs', [HomeController::class, 'getHomeBlogData']);
+        Route::get('/blog/{blog}', [HomeController::class, 'getHomeSingleBlogData']);
+
         Route::get('/section/workflow', [HomeController::class, 'getHomeWorkFlowData']);
         Route::get('/section/testimonials', [HomeController::class, 'getHomeTestimonialsData']);
         Route::get('/section/associate', [HomeController::class, 'getHomeAssociateData']);
@@ -60,7 +66,7 @@ Route::prefix('v1')->group(function(){
         Route::get('section/{slug}', 'getAboutSectionData'); //get about sections
         Route::get('team-section', 'getAboutTeamData'); //about team sections
         Route::get('founder-voice-section', 'getFounderVoiceData'); //about founder voice sections
-        Route::get('our-client-section', 'getFounderVoiceData'); //about our client sections
+        Route::get('our-client-section', 'getAboutClientData'); //about our client sections
     });
 
     //for unknown routes

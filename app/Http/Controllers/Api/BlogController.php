@@ -89,7 +89,7 @@ class BlogController extends Controller
             return response()->json([
                                     'success' => true,
                                     'message' => 'Blog created successfully',
-                                    ],200);
+                                    ],201);
         } else {
 
             return response()->json([
@@ -158,7 +158,7 @@ class BlogController extends Controller
             return response()->json([
                                     'data' => [],
                                     'success' => false,
-                                    'message' => 'Blog Category not found'
+                                    'message' => 'Blog not found'
                                     ], 404);
             }
     }
@@ -186,7 +186,7 @@ class BlogController extends Controller
 
             return response()->json([
                                     'success' => false,
-                                    'message' => 'Blog Category not found'
+                                    'message' => 'Blog not found'
                                     ], 404);
         }
 
@@ -236,7 +236,7 @@ class BlogController extends Controller
             return response()->json([
                                     'success' => true,
                                     'message' => 'Blog updated successfully',
-                                    ],200);
+                                    ],201);
         } else {
 
             return response()->json([
@@ -260,7 +260,7 @@ class BlogController extends Controller
 
             return response()->json([
                                    'success' => false,
-                                   'message' => 'Blog Category not found'
+                                   'message' => 'Blog not found'
                                     ], 404);
         }
 

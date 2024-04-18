@@ -13,10 +13,11 @@ return new class extends Migration
     {
         Schema::create('client_users', function (Blueprint $table) {
             $table->id('client_users_id');
-            $table->string('client_users_name')->unique();
+            $table->string('client_users_name');
+            $table->string('client_users_slug')->unique();
             $table->string('client_users_img_url')->nullable();
             $table->integer('client_users_order')->default(0);
-            $table->boolean('client_users_status')->default(true);
+            $table->boolean('status')->default(true);
             $table->timestamps();
             $table->softDeletes();
         });

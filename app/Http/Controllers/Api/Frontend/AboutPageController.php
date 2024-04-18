@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\StaticPage;
 use App\Models\StaticPageSection;
 use App\Models\Team;
+use App\Models\ClientUser;
 
 class AboutPageController extends Controller
 {
@@ -96,8 +97,13 @@ class AboutPageController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function getClientData(){
+    public function getAboutClientData(){
 
+        $clientUser = ClientUser::orderByDesc('client_users_id')->get();
 
+        return response()->json([
+                                'data' => $clientUser ?? [],
+                                'success' => true
+                                ], 200);
     }
 }

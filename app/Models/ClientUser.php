@@ -17,13 +17,12 @@ class ClientUser extends Model
         'client_users_name',
         'client_users_img_url',
         'client_users_order',
-        'client_users_status'
+        'client_users_slug',
+        'status'
     ];
 
     protected $casts = [
-        'client_users_status' => 'boolean',
+        'status' => 'boolean',
         'client_users_order' => 'integer'
     ];
-
-
 }
