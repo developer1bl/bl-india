@@ -49,8 +49,8 @@ class BlogController extends Controller
             'seo_other_details' => 'nullable|string'
         ]);
 
-         //if the request have some validation errors
-         if ($validator->fails()) {
+        //if the request have some validation errors
+        if ($validator->fails()) {
 
             return response()->json([
                                     'success' => false,

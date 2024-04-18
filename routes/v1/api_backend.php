@@ -26,10 +26,11 @@ use App\Http\Controllers\Api\WorkFlowController;
 use App\Http\Controllers\Api\TestimonialController;
 use App\Http\Controllers\Api\AssociateController;
 use App\Http\Controllers\Api\TeamController;
+use App\Http\Controllers\Api\ClientUserController;
+use App\Http\Controllers\Api\ContactUsController;
+use Illuminate\Http\Request;
 use App\Helpers\MediaHelper;
 use App\Helpers\DocumentHelper;
-use App\Http\Controllers\Api\ClientUserController;
-use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -396,6 +397,20 @@ Route::prefix('v1')->group(function () {
                     Route::delete('/{client}', 'destroy');
                 });
 
+            });
+
+            //contact us routes
+            Route::prefix('contact-us')->group(function(){
+
+                Route::controller(ContactUsController::class)->group(function(){
+
+                    //get contact us information
+                    Route::get('/details', 'getContactDetails');
+                    //create contact us information
+                    Route::post('/create', 'CreateContactDetails');
+                    //update contact us information
+                    Route::post('/update/{contact}', 'UpdateContactDetails');
+                });
             });
 
             //media

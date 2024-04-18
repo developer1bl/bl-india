@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Countries;
+use App\Models\Service;
 
 if (! function_exists('encode')) {
     function encode($string)
@@ -287,6 +288,12 @@ if (! function_exists('getTimeZoneByCountryName')){
 if (! function_exists('getCountryNameByCountryCode')) {
     function getCountryNameByCountryCode($countryCode){
         return Countries::wherePhonecode($countryCode)->get()->pluck('nicename');
+    }
+}
+
+if (! function_exists('getServiceNameById')) {
+    function getServiceNameById($id){
+        return Service::where('service_id', $id)->get()->pluck('service_name');
     }
 }
 ?>

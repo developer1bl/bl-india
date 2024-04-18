@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\ContactUsController;
 use App\Http\Controllers\Api\Frontend\AboutPageController;
 use App\Http\Controllers\Api\Frontend\BrochureController;
 use App\Http\Controllers\Api\Frontend\HomeController;
@@ -67,6 +68,13 @@ Route::prefix('v1')->group(function(){
         Route::get('team-section', 'getAboutTeamData'); //about team sections
         Route::get('founder-voice-section', 'getFounderVoiceData'); //about founder voice sections
         Route::get('our-client-section', 'getAboutClientData'); //about our client sections
+    });
+
+    //contact-us routes
+    Route::group(['prefix' => 'contact-us', 'controller' => ContactUsController::class], function(){
+
+        Route::get('/', 'getContactDetails'); //get contact details
+        Route::post('/submit', 'submitContactUsForm'); //submit contact us form
     });
 
     //for unknown routes
