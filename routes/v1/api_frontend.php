@@ -84,7 +84,6 @@ Route::prefix('v1')->group(function(){
                                 'success' => false,
                                 'message' => '404, Page Not found, please try again',
                                 ], 404);
-
     })->where('any', '.*');
 });
 ?>

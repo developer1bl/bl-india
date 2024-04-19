@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Product;
 use App\Models\ServiceSection;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Service extends Model
 {
@@ -38,8 +39,31 @@ class Service extends Model
         'service_featured' => 'boolean',
         'service_product_show' => 'boolean',
         'service_order' => 'integer',
-        'faqs' => 'array'
+        'service_compliance' => 'json',
+        'faqs' => 'json',
     ];
+
+    /**
+     * Interact with service_compliance
+     */
+    protected function serviceCompliance(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => json_decode($value),
+            set: fn ($value) => json_encode($value),
+        );
+    }
+
+     /**
+     * Interact with the faqs
+     */
+    protected function faqs(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => json_decode($value),
+            set: fn ($value) => json_encode($value),
+        );
+    }
 
     public function products()
     {

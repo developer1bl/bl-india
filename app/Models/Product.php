@@ -36,7 +36,6 @@ class Product extends Model
     protected $casts = [
         'product_status' => 'boolean',
         'product_order' => 'integer',
-        'product_image' => 'array',
     ];
 
     public function productCategories()
