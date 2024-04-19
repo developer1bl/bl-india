@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\ContactUsController;
 use App\Http\Controllers\Api\Frontend\AboutPageController;
+use App\Http\Controllers\Api\Frontend\BlogPageController;
 use App\Http\Controllers\Api\Frontend\BrochureController;
 use App\Http\Controllers\Api\Frontend\HomeController;
 use Illuminate\Support\Facades\Route;
@@ -21,8 +22,6 @@ Route::prefix('v1')->group(function(){
         Route::get('/service-all', [HomeController::class, 'getHomeAllServiceData']);
         //blogs routes
         Route::get('/section/blogs', [HomeController::class, 'getHomeBlogData']);
-        Route::get('/blog/{blog}', [HomeController::class, 'getHomeSingleBlogData']);
-
         Route::get('/section/workflow', [HomeController::class, 'getHomeWorkFlowData']);
         Route::get('/section/testimonials', [HomeController::class, 'getHomeTestimonialsData']);
         Route::get('/section/associate', [HomeController::class, 'getHomeAssociateData']);
@@ -70,11 +69,21 @@ Route::prefix('v1')->group(function(){
         Route::get('our-client-section', 'getAboutClientData'); //about our client sections
     });
 
-    //contact-us routes
+    //contact-us page routes
     Route::group(['prefix' => 'contact-us', 'controller' => ContactUsController::class], function(){
 
         Route::get('/', 'getContactDetails'); //get contact details
         Route::post('/submit', 'submitContactUsForm'); //submit contact us form
+    });
+
+    //blog page routes
+    Route::group(['prefix' => 'blog', 'controller' => BlogPageController::class], function(){
+
+        Route::get('/', 'getBlogs'); //blog list
+        Route::get('/category', 'getBlogsCategory'); //blog category list
+        Route::get('/category/{categorySlug}', 'getCategoryWiseBlogs'); //single blog category
+        Route::get('/get/{blog}', 'getSingleBlogData'); //single blog
+        Route::get('/latest','getLatestBlogData'); //Latest Blog
     });
 
     //for unknown routes

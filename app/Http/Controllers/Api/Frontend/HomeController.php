@@ -40,14 +40,13 @@ class HomeController extends Controller
      */
     public function getHomeSectionData(string $slug){
 
-        $page = StaticPage::wherePage_name('home')
-                            ->wherePage_status(1)
-                            ->first();
-
-        $pageSection = StaticPageSection::where('section_slug', $slug)
-                                          ->where('section_status', 1)
-                                          ->where('static_page_id', $page->static_page_id ?? null)
-                                          ->first();
+        $pageSection = StaticPage::Select('static_page_sections.*')
+                                   ->where('page_name', 'home')
+                                   ->where('page_status', 1)
+                                   ->leftJoin('static_page_sections', 'static_page_sections.static_page_id', '=', 'static_pages.static_page_id')
+                                   ->where('static_page_sections.section_slug', $slug)
+                                   ->where('static_page_sections.section_status', 1)
+                                   ->first();
 
         return response()->json([
                                 'data' => $pageSection ?? [],
@@ -126,33 +125,6 @@ class HomeController extends Controller
                                 'data' => $homeBlogs ?? [],
                                 'success' => true,
                                 ], 200);
-    }
-
-    /**
-     * home page single blog section
-     *
-     * @param string $blog
-     * @return \Illuminate\Http\Response
-     */
-    public function getHomeSingleBlogData(string $blog){
-
-        $blog = Blog::find($blog);
-
-        if ($blog) {
-
-            return response()->json([
-                                    'data' => $blog,
-                                    'success' => true,
-                                    'message' => ''
-                                    ], 200);
-        } else {
-
-            return response()->json([
-                                    'data' => [],
-                                    'success' => false,
-                                    'message' => 'Blog not found'
-                                    ], 404);
-            }
     }
 
     /**
