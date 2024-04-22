@@ -37,7 +37,7 @@ class ProductController extends Controller
     public function create(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'product_name' => ['required','string','max:150', Rule::unique('products', 'product_name')->whereNull('deleted_at')],
+            'product_name' => ['required','string','max:150'],
             'product_slug' => ['required','string','max:150', Rule::unique('products', 'product_slug')->whereNull('deleted_at')],
             'product_category_id' => 'exists:product_categories,product_category_id',
             'product_image_id' => 'integer|exists:media,media_id',
@@ -100,11 +100,10 @@ class ProductController extends Controller
         }
 
         if(Product::withTrashed(true)
-                    ->where('product_name', $request->product_name)
-                    ->orWhere('product_slug', $request->product_slug)
+                    ->Where('product_slug', $request->product_slug)
                     ->exists())
         {
-            throw new UserExistPreviouslyException('this product was deleted previously, did you want to restore it?');
+            throw new UserExistPreviouslyException('Oops! It appears that the chosen Product slug is already in use. Please select a different one and try again');
         }
 
         $productImagePath = MediaHelper::getMediaPath($request->product_image_id ?? null);
@@ -169,7 +168,7 @@ class ProductController extends Controller
      */
     public function restore(String $request)
     {
-        $product = Product::withTrashed(true)->where('product_name', $request)->first();
+        $product = Product::withTrashed(true)->where('product_slug', $request)->first();
 
         if ($product) {
 
@@ -236,8 +235,10 @@ class ProductController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'product_name' => ['required','string','max:150', Rule::unique('products', 'product_name')->ignore($id, 'product_id')],
-            'product_slug' => ['required','string','max:150', Rule::unique('products', 'product_slug')->ignore($id, 'product_id')],
+            'product_name' => ['required','string','max:150'],
+            'product_slug' => ['required','string','max:150', Rule::unique('products', 'product_slug')
+                                                                    ->ignore($id, 'product_id')
+                                                                    ->whereNull('deleted_at')],
             'product_category_id' => 'exists:product_categories,product_category_id',
             'product_image_id' => 'exists:media,media_id',
             'product_technical_name' => 'nullable|string',

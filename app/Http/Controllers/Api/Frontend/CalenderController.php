@@ -14,10 +14,10 @@ class CalenderController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param $month
+     * @param string $month
      * @return Response
      */
-    public function getHolidayListByMonth($month = null)
+    public function getHolidayListByMonth(string $month = null)
     {
        $holidayList = Holiday::select('holiday_id', 'holiday_name', 'holiday_date', 'holiday_type')
                                ->when( !empty($month) ,function($q) use($month){
