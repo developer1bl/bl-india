@@ -59,8 +59,6 @@ class CalenderController extends Controller
 
             // Store the PDF in the storage path
             $pdf->save($pdfDirectory);
-
-            return $filename;
         }
 
         return $filename;
