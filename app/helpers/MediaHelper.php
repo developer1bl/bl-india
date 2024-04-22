@@ -174,7 +174,7 @@ class MediaHelper{
      * @param string $id
      * @return Response
      */
-    public static function getMediaPath(string $id){
+    public static function getMediaPath(string $id = null){
 
         $media = Media::find($id);
 

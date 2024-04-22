@@ -20,6 +20,7 @@ class Service extends Model
     protected $fillable = [
         'service_name',
         'service_slug',
+        'service_category_id',
         'service_img_url',
         'service_img_alt',
         'service_compliance',
@@ -85,6 +86,10 @@ class Service extends Model
     {
         return $this->belongsToMany(Notice::class, 'notice_service', 'service_id', 'notice_id')
                     ->withPivot('product_id');
+    }
+
+    public function service_category(){
+        return $this->belongsTo(ServiceCategory::class,'service_category_id','id');
     }
 
     // Define the attributes and relationships

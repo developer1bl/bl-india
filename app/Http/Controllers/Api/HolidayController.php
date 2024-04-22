@@ -13,7 +13,7 @@ class HolidayController extends Controller
 {
     /**
      * Display a listing of the resource.
-     * 
+     *
      * @return Response
      */
     public function index()
@@ -28,7 +28,7 @@ class HolidayController extends Controller
 
     /**
      * Show the form for creating a new resource.
-     * 
+     *
      * @param Request $request
      * @return Response
      */
@@ -55,7 +55,7 @@ class HolidayController extends Controller
             'holiday_type' => $request->holiday_type,
         ];
 
-        if (Holiday::withTrashed()->where('holiday_name',$request->holiday_name)->exists()) 
+        if (Holiday::withTrashed()->where('holiday_name',$request->holiday_name)->exists())
         {
             throw new UserExistPreviouslyException('Oops! It appears that the chosen Holiday Name is already in use. Please select a different one and try again');
         }
@@ -63,13 +63,13 @@ class HolidayController extends Controller
         $holiday = Holiday::create($data);
 
         if ($holiday) {
-            
+
             return response()->json([
                                     'success' => true,
                                     'message' => 'Holiday created successfully'
                                     ], 202);
         } else {
-            
+
             return response()->json([
                                     'success' => false,
                                     'message' => 'Something went wrong, please try again later'
@@ -79,7 +79,7 @@ class HolidayController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     * 
+     *
      * @param string $request
      * @return Response
      */
@@ -88,7 +88,7 @@ class HolidayController extends Controller
         $holiday = Holiday::withTrashed()->where('holiday_name',$request)->first();
 
         if ($holiday) {
-            
+
             $holiday->restore();
 
             return response()->json([
@@ -96,10 +96,10 @@ class HolidayController extends Controller
                                    'message' => 'Holiday restored successfully'
                                     ], 202);
         } else {
-            
+
             return response()->json([
-                                   'success' => false,
-                                   'message' => 'Something went wrong, please try again later'
+                                    'success' => false,
+                                    'message' => 'Something went wrong, please try again later'
                                     ], 422);
         }
     }
@@ -112,7 +112,7 @@ class HolidayController extends Controller
         $holiday = Holiday::find($id);
 
         if ($holiday) {
-            
+
             return response()->json([
                                     'data' => $holiday,
                                     'success' => true,
@@ -138,7 +138,7 @@ class HolidayController extends Controller
 
     /**
      * Update the specified resource in storage.
-     * 
+     *
      * @param string $id,
      * @param Request $request
      * @return Response
@@ -148,7 +148,7 @@ class HolidayController extends Controller
         $holiday = Holiday::find($id);
 
         if (!$holiday) {
-             
+
             return response()->json([
                                     'success' => false,
                                     'message' => 'Holiday not found'
@@ -156,7 +156,9 @@ class HolidayController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'holiday_name' => ['required','string','max:255', Rule::unique('holidays', 'holiday_name')->ignore($id, 'holiday_id')->whereNull('deleted_at')],
+            'holiday_name' => ['required','string','max:255', Rule::unique('holidays', 'holiday_name')
+                                                                    ->ignore($id, 'holiday_id')
+                                                                    ->whereNull('deleted_at')],
             'holiday_date' => 'required|date',
             'holiday_type' => 'required|boolean',
         ]);
@@ -179,13 +181,13 @@ class HolidayController extends Controller
         $result = $holiday->update($data);
 
         if ($result) {
-            
+
             return response()->json([
                                     'success' => true,
                                     'message' => 'Holiday updated successfully'
                                     ], 202);
         } else {
-            
+
             return response()->json([
                                     'success' => false,
                                     'message' => 'Something went wrong, please try again later'
@@ -195,7 +197,7 @@ class HolidayController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     * 
+     *
      * @param string $id
      * @return Response
      */
@@ -204,26 +206,26 @@ class HolidayController extends Controller
         $holiday = Holiday::find($id);
 
         if (!$holiday) {
-             
+
             return response()->json([
-                                   'success' => false,
-                                   'message' => 'Holiday not found'
+                                    'success' => false,
+                                    'message' => 'Holiday not found'
                                     ],404);
         }
 
         $result = $holiday->delete();
 
         if ($result) {
-            
+
             return response()->json([
-                                   'success' => true,
-                                   'message' => 'Holiday deleted successfully'
+                                    'success' => true,
+                                    'message' => 'Holiday deleted successfully'
                                     ], 202);
         } else {
-            
+
             return response()->json([
-                                   'success' => false,
-                                   'message' => 'Something went wrong, please try again later'
+                                    'success' => false,
+                                    'message' => 'Something went wrong, please try again later'
                                     ], 422);
         }
     }

@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\Frontend\HomeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Frontend\CaptchaController;
 use App\Http\Controllers\Api\Frontend\FormController;
+use App\Http\Controllers\Api\Frontend\CalenderController;
 
 Route::prefix('v1')->group(function(){
 
@@ -85,6 +86,15 @@ Route::prefix('v1')->group(function(){
         Route::get('/get/{blog}', 'getSingleBlogData'); //single blog
         Route::get('/latest','getLatestBlogData'); //Latest Blog
     });
+
+    //calender page routes
+    Route::group(['prefix' => 'calender', 'controller' => CalenderController::class], function(){
+
+        Route::get('/holiday-list/{month?}', 'getHolidayListByMonth'); //get calender holiday list data
+        Route::get('/download/{year?}', 'downloadHolidayListOfYear'); //downloaded calender
+        Route::delete('/download/{calendar}', 'downloadHolidayListOfYear'); //delete calender PDF
+    });
+
 
     //for unknown routes
     Route::get('/{any}', function () {

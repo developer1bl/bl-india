@@ -28,6 +28,7 @@ use App\Http\Controllers\Api\AssociateController;
 use App\Http\Controllers\Api\TeamController;
 use App\Http\Controllers\Api\ClientUserController;
 use App\Http\Controllers\Api\ContactUsController;
+use App\Http\Controllers\Api\ServiceCategoryController;
 use Illuminate\Http\Request;
 use App\Helpers\MediaHelper;
 use App\Helpers\DocumentHelper;
@@ -136,6 +137,17 @@ Route::prefix('v1')->group(function () {
                     Route::post('/{permission}', 'update')->middleware(['checkRoleAndPermission:admin,edit_permission']);
                     Route::delete('/{permission}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_permission']);
                 });
+            });
+
+            //service category
+            Route::group(['prefix' => 'service-category', 'controller' => ServiceCategoryController::class], function(){
+
+                Route::get('/', 'index');
+                Route::get('/{category}','show');
+                Route::get('/{category}/restore','restore');
+                Route::post('/create', 'create');
+                Route::post('/{category}', 'update');
+                Route::delete('/{category}', 'destroy');
             });
 
             //services routes

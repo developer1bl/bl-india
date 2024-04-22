@@ -17,7 +17,7 @@ class ServiceController extends Controller
      */
     public function index()
     {
-        $service = Service::with(['notices', 'service_section'])
+        $service = Service::with(['notices', 'service_section', 'service_category'])
                             ->orderByDesc('service_id')
                             ->get();
 
@@ -36,6 +36,7 @@ class ServiceController extends Controller
             'service_name' => ['required', 'string', 'max:150', Rule::unique('services', 'service_name')->whereNull('deleted_at')],
             'service_slug' => ['required' ,'string', 'max:255', Rule::unique('services', 'service_slug')->whereNull('deleted_at')],
             'service_image_id' => 'required|exists:media,media_id',
+            'service_category_id' => 'required|exists:service_categories,id',
         ]);
 
         //if the request have some validation errors
@@ -66,6 +67,7 @@ class ServiceController extends Controller
         $data = [
             'service_name' => $request->service_name,
             'service_slug' => $request->service_slug,
+            'service_category_id' => $request->service_category_id,
             'service_img_url' => $PageImagePath,
             'service_img_alt' => $request->service_img_alt,
             'service_compliance' => $compliance,
@@ -190,6 +192,7 @@ class ServiceController extends Controller
             'service_name' => ['required', 'string', 'max:150', Rule::unique('services', 'service_name')->ignore($id, 'service_id')],
             'service_slug' => ['required' ,'string', 'max:255', Rule::unique('services', 'service_slug')->ignore($id, 'service_id')],
             'service_image_id' => 'required|exists:media,media_id',
+            'service_category_id' => 'required|exists:service_categories,id',
         ]);
 
         //if the request have some validation errors
@@ -212,6 +215,7 @@ class ServiceController extends Controller
         $data = [
             'service_name' => $request->service_name,
             'service_slug' => $request->service_slug,
+            'service_category_id' => $request->service_category_id,
             'service_img_url' => $serviceImagePath,
             'service_img_alt' => $request->service_img_alt,
             'service_compliance' => json_encode($compliance),

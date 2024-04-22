@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Models\ServiceCategory;
 
 return new class extends Migration
 {
@@ -27,6 +28,7 @@ return new class extends Migration
             $table->boolean('service_product_show')->default(true);
             $table->integer('service_order')->default(0);
             $table->boolean('service_status')->default(true);
+            $table->foreignIdFor(ServiceCategory::class)->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

@@ -11,6 +11,8 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use  Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ThanksMail;
 
 class BrochureController extends Controller
 {
@@ -70,13 +72,9 @@ class BrochureController extends Controller
             'ip_address' => $request->ip(),
         ];
 
-        //due to some all reason we are preventing leads from here
-        if($country != 'ZIMBABWE') {
-
-            //storing the lead
-            $lead = Leads::create($data);
-            $id = $lead->id;
-        }
+        //storing the lead
+        $lead = Leads::create($data);
+        $id = $lead->id;
 
         $service = Service::find($request->service)
                             ->select('services.service_name', 'services.service_description')
@@ -355,10 +353,7 @@ class BrochureController extends Controller
 
         $pdf = PDF::loadView('pdf.brochureDownload', compact(['service', 'data']));
 
-        if($country != 'ZIMBABWE') {
-
-            // Subject
-            $subject = "Thanks for downloading brochure";
+        if(!empty($data['email'])) {
 
             // Message
             $thanks = "<p style='font-family: Arial, Helvetica, sans-serif; font-size: 18px; color: #000;'>Hello ".$data['name'].",<br/>".
@@ -372,18 +367,18 @@ class BrochureController extends Controller
             "Contact No: +91-9250056788, +91-8130615678<br>".
             "Email: info@bl-india.com</p>";
 
-            // To send HTML mail, the Content-type header must be set
-            $headers  = 'MIME-Version: 1.0' . "\r\n";
-            $headers .= 'Content-type: text/html; charset=UTF-8' . "\r\n";
+            $data = [
+                'subject' => "Thanks for downloading brochure",
+                'formContent' => $thanks,
+                'user' => $data['name'],
+            ];
 
-            // Additional headers
-            $headers .= 'From: Team Export Approval <no-reply@exportapproval.com>' . "\r\n";
-
-            mail($data['email'], $subject, $thanks, $headers);
+            Mail::to($request->email)->send(new ThanksMail($data));
         }
 
         //if directory is not exist then create a new directory for store pdf files
         $pdfDirectory = storage_path('app/public/PDF');
+
         if (!File::exists($pdfDirectory)) {
             File::makeDirectory($pdfDirectory, 0755, true);
         }
