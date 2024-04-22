@@ -19,11 +19,11 @@ class CalenderController extends Controller
      */
     public function getHolidayListByMonth(string $month = null)
     {
-       $holidayList = Holiday::select('holiday_id', 'holiday_name', 'holiday_date', 'holiday_type')
-                               ->when( !empty($month) ,function($q) use($month){
+        $holidayList = Holiday::select('holiday_id', 'holiday_name', 'holiday_date', 'holiday_type')
+                                ->when(!empty($month) ,function($q) use($month){
                                     $q->whereRaw('MONTH(holiday_date) = ?', [$month]);
                                 })
-                               ->get();
+                                ->get();
 
         return response()->json([
                                 'data' => $holidayList?? [],
