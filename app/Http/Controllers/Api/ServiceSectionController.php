@@ -13,7 +13,7 @@ class ServiceSectionController extends Controller
 {
     /**
      * Display a listing of the resource.
-     * 
+     *
      * @return Response
      */
     public function index()
@@ -26,19 +26,19 @@ class ServiceSectionController extends Controller
                                 'data' => $serviceSection ?? [],
                                 'success' => true,
                                 ], 200);
-                            
+
     }
 
     /**
      * Show the form for creating a new resource.
-     * 
+     *
      * @param Request $request
      * @return Response
      */
     public function create(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'service_section_name' => ['required', 'string', Rule::unique('service_sections', 'service_section_name')->whereNull('deleted_at')],
+            'service_section_name' => ['required', 'string'],
             'service_section_slug' => ['required', 'string', Rule::unique('service_sections', 'service_section_slug')->whereNull('deleted_at')],
             'service_section_content' =>  'required|string',
             'service_section_status' => 'nullable|boolean',
@@ -56,24 +56,23 @@ class ServiceSectionController extends Controller
         }
 
         if(ServiceSection::withTrashed(true)
-                          ->where('service_section_name', $request->service_section_name)
-                          ->orderByhere('service_section_slug', $request->service_section_slug)
+                          ->Where('service_section_slug', $request->service_section_slug)
                           ->exists())
         {
 
-            throw new UserExistPreviouslyException('Oops! It appears that the chosen Service section Name or slug is already in use. Please select a different one and try again.');
+            throw new UserExistPreviouslyException('Oops! It appears that the chosen Service section slug is already in use. Please select a different one and try again.');
         }
 
         $result = ServiceSection::create($request->all());
 
         if ($result) {
-            
+
             return response()->json([
                                     'success' => true,
                                     'message' => 'Service section created successfully'
                                     ], 201);
         } else {
-            
+
             return response()->json([
                                     'success' => false,
                                     'message' => 'Something went wrong, please try again later'
@@ -82,8 +81,8 @@ class ServiceSectionController extends Controller
     }
 
     /**
-     * this functionis used to restored deleted data.
-     * 
+     * this functions used to restored deleted data.
+     *
      * @param string $name
      * @return response
      */
@@ -92,7 +91,7 @@ class ServiceSectionController extends Controller
         $serviceSection = ServiceSection::withTrashed(true)->where('service_section_name', $name)->first();
 
         if ($serviceSection) {
-            
+
             $serviceSection->restore();
 
             return response()->json([
@@ -100,7 +99,7 @@ class ServiceSectionController extends Controller
                                     'message' => 'Service Section restored successfully'
                                     ], 202);
         } else {
-            
+
             return response()->json([
                                     'success' => false,
                                     'message' => 'Something went wrong, please try again later',
@@ -110,7 +109,7 @@ class ServiceSectionController extends Controller
 
     /**
      * Display the specified resource.
-     * 
+     *
      * @param string $id
      * @return Response
      */
@@ -119,14 +118,14 @@ class ServiceSectionController extends Controller
         $serviceSection = ServiceSection::find($id);
 
         if ($serviceSection) {
-            
+
             return response()->json([
                                     'data' => $serviceSection,
                                     'success' => true,
                                     'message' => ''
                                     ], 200);
         } else {
-            
+
             return response()->json([
                                     'data' => [],
                                     'success' => false,
@@ -145,7 +144,7 @@ class ServiceSectionController extends Controller
 
     /**
      * Update the specified resource in storage.
-     * 
+     *
      * @param string $id
      * @param Request $request
      * @return Response
@@ -155,7 +154,7 @@ class ServiceSectionController extends Controller
         $serviceSection = ServiceSection::findOrFail($id);
 
         if (!$serviceSection) {
-            
+
             return response()->json([
                                     'success' => false,
                                     'message' => 'Service Section not found'
@@ -163,8 +162,10 @@ class ServiceSectionController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'service_section_name' => ['required', 'string', Rule::unique('service_sections', 'service_section_name')->ignore($id, 'service_section_id')->whereNull('deleted_at')],
-            'service_section_slug' => ['required', 'string', Rule::unique('service_sections', 'service_section_slug')->ignore($id, 'service_section_id')->whereNull('deleted_at')],
+            'service_section_name' => ['required', 'string'],
+            'service_section_slug' => ['required', 'string', Rule::unique('service_sections', 'service_section_slug')
+                                                                   ->ignore($id, 'service_section_id')
+                                                                   ->whereNull('deleted_at')],
             'service_section_content' => 'required|string',
             'service_section_status' => 'nullable|boolean',
             'service_section_order' => 'nullable|integer',
@@ -200,7 +201,7 @@ class ServiceSectionController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     * 
+     *
      * @param string $id
      * @return Response
      */

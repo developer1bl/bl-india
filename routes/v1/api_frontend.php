@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Frontend\CaptchaController;
 use App\Http\Controllers\Api\Frontend\FormController;
 use App\Http\Controllers\Api\Frontend\CalenderController;
+use App\Http\Controllers\Api\Frontend\ServicePageController;
 
 Route::prefix('v1')->group(function(){
 
@@ -93,6 +94,14 @@ Route::prefix('v1')->group(function(){
         Route::get('/holiday-list/{month?}', 'getHolidayListByMonth'); //get calender holiday list data
         Route::get('/download/{year?}', 'downloadHolidayListOfYear'); //downloaded calender
         Route::delete('/download/{calendar}', 'downloadHolidayListOfYear'); //delete calender PDF
+    });
+
+    //service page route
+    Route::group(['prefix' => 'service', 'controller' => ServicePageController::class], function(){
+
+        Route::get('/service-category/{slug?}', 'getService'); //get service by category
+        Route::get('/intro-section/{service?}', 'getServiceIntroData'); //get single service
+        Route::get('/product-section', 'viewMandatoryProductList'); //get mandatory product
     });
 
 

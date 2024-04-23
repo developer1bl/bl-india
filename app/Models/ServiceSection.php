@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Service;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class ServiceSection extends Model
 {
@@ -27,6 +28,28 @@ class ServiceSection extends Model
     protected $casts = [
         'service_section_status' => 'boolean',
     ];
+
+    /**
+     * Interact with the service section name.
+     */
+    protected function serviceSectionName(): Attribute
+    {
+        return Attribute::make(
+            get: fn (string $value) => ucfirst($value),
+            set: fn (string $value) => strtolower($value),
+        );
+    }
+
+    /**
+     * Interact with the service section name.
+     */
+    protected function serviceSectionSlug(): Attribute
+    {
+        return Attribute::make(
+            get: fn (string $value) => strtolower($value),
+            set: fn (string $value) => strtolower($value),
+        );
+    }
 
     public function service()
     {
