@@ -11,19 +11,19 @@ use App\Models\Permission;
 class Role extends Model
 {
     use HasFactory, SoftDeletes;
-    
+
     public $table = 'roles';
     protected $dates = ['deleted_at'];
     protected $fillable = ['name', 'created_at', 'is_active' , 'role_description'];
-    
+
      /**
      * The attributes that should be cast to native types.
      *
      * @var array
      */
-    protected $casts = [
-        'is_active' => 'boolean',
-    ];
+    // protected $casts = [
+    //     // 'is_active' => 'boolean',
+    // ];
 
     public function users()
     {

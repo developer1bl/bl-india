@@ -40,7 +40,7 @@ class RegisterController extends Controller
             return response()->json([
                                     'success' => false,
                                     'message' => $validator->messages()
-                                    ], 400);
+                                    ], 403);
         }
 
         // create new user

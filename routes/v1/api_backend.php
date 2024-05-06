@@ -32,6 +32,7 @@ use App\Http\Controllers\Api\ServiceCategoryController;
 use Illuminate\Http\Request;
 use App\Helpers\MediaHelper;
 use App\Helpers\DocumentHelper;
+use App\Http\Controllers\Api\Auth\TokenController;
 
 /*
 |--------------------------------------------------------------------------
@@ -88,6 +89,9 @@ Route::prefix('v1')->group(function () {
     //protected routes (authorized user can access)
     Route::middleware('auth:sanctum')->group(function () {
 
+        //for checking the token validity
+        Route::Post('/check-token', [TokenController::class, 'checkTokenValidity']);
+
         //for user routes
         Route::post('/add-user', [RegisterController::class, 'registerUser'])->middleware(['checkRoleAndPermission:admin,create_user']);
 
@@ -102,6 +106,7 @@ Route::prefix('v1')->group(function () {
                 Route::post('/{user}', 'update')->middleware(['checkRoleAndPermission:admin,edit_user']);
                 Route::post('/self/{user}', 'updateUserSelf');
                 Route::delete('/{user}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_user']);
+                Route::delete('/delete/selected-users', 'deleteSelectedUsers');
             });
         });
 
@@ -122,6 +127,7 @@ Route::prefix('v1')->group(function () {
                     Route::post('/create', 'create')->middleware(['checkRoleAndPermission:admin,create_role']);
                     Route::post('/{role}', 'update')->middleware(['checkRoleAndPermission:admin,edit_role']);
                     Route::delete('/{role}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_role']);
+                    Route::delete('/delete/selected-role', 'deleteSelectedRole');
                 });
             });
 
@@ -136,6 +142,7 @@ Route::prefix('v1')->group(function () {
                     Route::post('/create', 'create')->middleware(['checkRoleAndPermission:admin,create_permission']);
                     Route::post('/{permission}', 'update')->middleware(['checkRoleAndPermission:admin,edit_permission']);
                     Route::delete('/{permission}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_permission']);
+                    Route::delete('/delete/selected-permission', 'deleteSelectedPermission');
                 });
             });
 

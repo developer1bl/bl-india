@@ -11,14 +11,16 @@ class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
-     * 
+     *
      * @return Response
      */
     public function index()
     {
-        $user = User::with('roles', 'userPermissions')->get();
+        $authUser = request()->user()->id;
 
-        return response()->json(['data'=> $user],200);
+        $user = User::Where('id', '!=', $authUser)->get();
+
+        return response()->json(['data' => $user], 200);
     }
 
     /**
@@ -26,12 +28,11 @@ class UserController extends Controller
      */
     public function create(Request $request)
     {
-    
     }
 
     /**
      * Store a newly created resource in storage.
-     * 
+     *
      * @param string $request
      * @return Response
      */
@@ -40,52 +41,52 @@ class UserController extends Controller
         $user = User::withTrashed(true)->whereName($request)->first();
 
         if ($user) {
-            
+
             $user->restore();
 
             return response()->json([
-                                    'success' => true,
-                                    'message' => 'user restored successfully'
-                                    ],200);
-        }else{
+                'success' => true,
+                'message' => 'user restored successfully'
+            ], 200);
+        } else {
 
             return response()->json([
-                                   'success' => false,
-                                   'message' => 'user not found'
-                                    ],404);
+                'success' => false,
+                'message' => 'user not found'
+            ], 404);
         }
     }
 
     /**
      * Display the specified resource.
-     * 
+     *
      *  @param integer $id
      *  @return Response
      */
     public function show(string $id)
     {
-        $user = User::with('roles')->find($id);
+        $user = User::find($id);
 
         if ($user) {
-            
+
             return response()->json([
-                                    'data'=> $user,
-                                    'sucess' => true,
-                                    'message' => ''
-                                    ],200);
+                'data' => $user,
+                'sucess' => true,
+                'message' => ''
+            ], 200);
         } else {
-            
+
             return response()->json([
-                                    'data'=> [],
-                                    'sucess' => false,
-                                    'message' => 'User not found'
-                                    ],404);
+                'data' => [],
+                'sucess' => false,
+                'message' => 'User not found'
+            ], 404);
         }
     }
 
     /**
      * update the specified resource
-     *  
+     *
      * @param integer $id
      * @param Request $request
      * @return Response
@@ -94,8 +95,8 @@ class UserController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,'.$id,
-            'phone' => 'required|string|max:20|unique:users,email,'.$id,
+            'email' => 'required|email|unique:users,email,' . $id,
+            'phone' => 'required|string|max:20|unique:users,email,' . $id,
         ]);
 
         //if the request have some validation errors
@@ -108,39 +109,36 @@ class UserController extends Controller
         }
 
         $user = User::find($id);
-    
+
         if (!empty($user)) {
-           
+
             $result = $user->update($request->all());
 
-             if ($result) {
-                
-                return response()->json([
-                                        'success' => true,
-                                        'message' => 'User updated successfully'
-                                        ], 202);
+            if ($result) {
 
-             } else {
-                
                 return response()->json([
-                                        'success' => false,
-                                         'message' => 'something went wrong'
-                                        ], 403);
-             }
-        
+                    'success' => true,
+                    'message' => 'User updated successfully'
+                ], 202);
+            } else {
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'something went wrong'
+                ], 403);
+            }
         } else {
 
             return response()->json([
-                                    'success' => false,
-                                    'message' => 'User not found'
-                                    ], 404);
+                'success' => false,
+                'message' => 'User not found'
+            ], 404);
         }
-        
     }
 
     /**
      * Update the specified resource in storage.
-     * 
+     *
      * @param integer $id
      * @param Request $request
      * @return Response
@@ -149,8 +147,8 @@ class UserController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,'.$id,
-            'phone' => 'required|string|max:20|unique:users,email,'.$id,
+            'email' => 'required|email|unique:users,email,' . $id,
+            'phone' => 'required|string|max:20|unique:users,email,' . $id,
             'role_id' => 'nullable|exists:roles,id', // Assuming roles are stored in the 'roles' table
             'is_active' => 'required|boolean',
         ]);
@@ -159,43 +157,42 @@ class UserController extends Controller
         if ($validator->fails()) {
 
             return response()->json([
-                                    'success' => false,
-                                    'message' => $validator->messages()
-                                    ], 403);
+                'success' => false,
+                'message' => $validator->messages()
+            ], 403);
         }
 
         $user = User::find($id);
 
-        if(!empty($user)) {
+        if (!empty($user)) {
 
             $result = $user->update($request->all());
 
             if ($result) {
 
                 return response()->json([
-                                        'success' => true,
-                                        'message' => 'User Updated successfully'
-                                        ], 201);
-            }else{
+                    'success' => true,
+                    'message' => 'User Updated successfully'
+                ], 201);
+            } else {
 
                 return response()->json([
-                                        'success' => false,
-                                        'message' => 'Something went wrong'
-                                        ], 500);
+                    'success' => false,
+                    'message' => 'Something went wrong'
+                ], 500);
             }
-
-        }else{
+        } else {
 
             return response()->json([
-                                    'success' => false,
-                                    'message' => 'User not found'
-                                    ], 404);
+                'success' => false,
+                'message' => 'User not found'
+            ], 404);
         }
     }
 
     /**
      * Remove the specified resource from storage.
-     * 
+     *
      *  @param int $id
      *  @return response
      */
@@ -203,7 +200,7 @@ class UserController extends Controller
     {
         $user = User::find($id);
 
-        if(!empty($user)) {
+        if (!empty($user)) {
 
             $user->tokens()->delete();
 
@@ -212,22 +209,59 @@ class UserController extends Controller
             if ($result) {
 
                 return response()->json([
+                    'success' => true,
+                    'message' => 'User Deleted successfully'
+                ], 201);
+            } else {
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Something went wrong'
+                ], 422);
+            }
+        } else {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found'
+            ], 404);
+        }
+    }
+
+    /**
+     * Remove the selected resource from storage.
+     *
+     *  @param Request $request
+     *  @return response
+     */
+    public function deleteSelectedUsers(Request $request)
+    {
+        $userIds = explode(',', $request->input('user_ids'));
+
+        if (!empty($userIds)) {
+
+            $result = User::whereIn('id', $userIds)->get();
+
+            if (!empty($result)) {
+
+                User::whereIn('id', $userIds)->delete();
+
+                return response()->json([
                                         'success' => true,
-                                        'message' => 'User Deleted successfully'
-                                        ], 202);
-            }else{
+                                        'message' => 'All selected Users deleted successfully'
+                                        ], 200);
+            } else {
 
                 return response()->json([
                                         'success' => false,
-                                        'message' => 'Something went wrong'
-                                        ], 500);
+                                        'message' => 'Selected User found'
+                                        ], 404);
             }
-
-        }else{
+        } else {
 
             return response()->json([
                                     'success' => false,
-                                    'message' => 'User not found'
+                                    'message' => 'No User Selected'
                                     ], 404);
         }
     }

@@ -203,4 +203,42 @@ class RoleController extends Controller
                                     ], 404);
         }
     }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function deleteSelectedRole(Request $request){
+
+        $role_Ids = explode(',', $request->input('role_ids'));
+
+        if(!empty($role_Ids)){
+
+            if (Role::whereIn('id', $role_Ids)->exists()) {
+
+                Role::whereIn('id', $role_Ids)->delete();
+
+                return response()->json([
+                                        'success' => true,
+                                        'message' => "All Selected role deleted successfully",
+                                        ],200);
+            } else {
+
+                return response()->json([
+                                        'success' => false,
+                                        'message' => "Selected role not found",
+                                        ],404);
+            }
+
+        }else {
+
+            return response()->json([
+                                    'success' => false,
+                                    'message' => "No role selected",
+                                    ],404);
+
+        }
+    }
 }
