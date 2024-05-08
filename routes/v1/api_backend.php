@@ -155,16 +155,17 @@ Route::prefix('v1')->group(function () {
                 Route::post('/create', 'create');
                 Route::post('/{category}', 'update');
                 Route::delete('/{category}', 'destroy');
+                Route::delete('/delete/selected-service-category', 'deleteSelectedServiceCategory');
             });
 
             //services routes
-            Route::prefix('/services')->group(function () {
+            Route::prefix('/service')->group(function () {
 
                 Route::controller(ServiceController::class)->group(function () {
 
                     Route::get('/', 'index')->middleware(['checkRoleAndPermission:admin,view_service']);
-                    Route::get('/{services}', 'show')->middleware(['checkRoleAndPermission:admin,view_service']);
-                    Route::get('/{services}/restore', 'restore')->middleware(['checkRoleAndPermission:admin,restore_data']);
+                    Route::get('/{service}', 'show')->middleware(['checkRoleAndPermission:admin,view_service']);
+                    Route::get('/{service}/restore', 'restore')->middleware(['checkRoleAndPermission:admin,restore_data']);
                     Route::post('/create', 'create')->middleware(['checkRoleAndPermission:admin,create_service']);
                     Route::post('/{service}', 'update')->middleware(['checkRoleAndPermission:admin,edit_service']);
                     Route::delete('/{service}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_service']);

@@ -17,12 +17,12 @@ class ServiceCategoryController extends Controller
      */
     public function index()
     {
-       $serviceCategory = ServiceCategory::with('services')->OrderByDesc('id')->get();
+        $serviceCategory = ServiceCategory::with('services')->OrderByDesc('id')->get();
 
-       return response()->json([
-                               'data' => $serviceCategory ?? [],
-                               'success' => true
-                               ], 200);
+        return response()->json([
+            'data' => $serviceCategory ?? [],
+            'success' => true
+        ], 200);
     }
 
     /**
@@ -33,7 +33,7 @@ class ServiceCategoryController extends Controller
      */
     public function create(Request $request)
     {
-        $validator = Validator::make($request->all(),[
+        $validator = Validator::make($request->all(), [
             'service_category_name' => 'required|string|max:255',
             'service_category_slug' => 'required|string|max:255|unique:service_categories',
             'category_img_id' => 'nullable|integer|exists:media,media_id',
@@ -44,23 +44,23 @@ class ServiceCategoryController extends Controller
         if ($validator->fails()) {
 
             return response()->json([
-                                    'success' => false,
-                                    'message' => $validator->messages()
-                                    ], 403);
+                'success' => false,
+                'message' => $validator->messages()
+            ], 403);
         }
 
-        if(ServiceCategory::withTrashed(true)
-                            ->where('service_category_slug', $request->service_category_slug)
-                            ->first())
-        {
+        if (ServiceCategory::withTrashed(true)
+            ->where('service_category_slug', $request->service_category_slug)
+            ->first()
+        ) {
             throw new UserExistPreviouslyException('Oops! It appears that the chosen Service Category slug is already in use. Please select a different one and try again');
         }
 
         $categoryImagPath = MediaHelper::getMediaPath($request->category_img_id ?? null);
 
         $data = [
-           'service_category_name' => $request->service_category_name,
-           'service_category_slug' => $request->service_category_slug,
+            'service_category_name' => $request->service_category_name,
+            'service_category_slug' => $request->service_category_slug,
             'category_img_url' => $categoryImagPath,
             'category_img_alt' => $request->category_img_alt,
         ];
@@ -70,17 +70,16 @@ class ServiceCategoryController extends Controller
         if ($result) {
 
             return response()->json([
-                                    'success' => true,
-                                    'message' => 'Service Category created successfully'
-                                    ], 200);
+                'success' => true,
+                'message' => 'Service Category created successfully'
+            ], 200);
         } else {
 
             return response()->json([
-                                    'success' => false,
-                                    'message' => 'Something went wrong, please try again later'
-                                    ], 422);
+                'success' => false,
+                'message' => 'Something went wrong, please try again later'
+            ], 422);
         }
-
     }
 
     /**
@@ -91,21 +90,21 @@ class ServiceCategoryController extends Controller
     public function restore(string $slug)
     {
         $serviceCategory = ServiceCategory::withTrashed()
-                                            ->where('service_category_slug', $slug)
-                                            ->restore();
+            ->where('service_category_slug', $slug)
+            ->restore();
 
         if ($serviceCategory) {
 
             return response()->json([
-                                    'success' => true,
-                                    'message' => 'Service Category restored successfully'
-                                    ], 201);
+                'success' => true,
+                'message' => 'Service Category restored successfully'
+            ], 201);
         } else {
 
             return response()->json([
-                                    'success' => false,
-                                    'message' => 'Something went wrong, please try again later'
-                                    ], 422);
+                'success' => false,
+                'message' => 'Something went wrong, please try again later'
+            ], 422);
         }
     }
 
@@ -122,17 +121,17 @@ class ServiceCategoryController extends Controller
         if ($serviceCategory) {
 
             return response()->json([
-                                    'data' => $serviceCategory,
-                                    'success' => true,
-                                    'message' => ''
-                                    ], 200);
+                'data' => $serviceCategory,
+                'success' => true,
+                'message' => ''
+            ], 200);
         } else {
 
             return response()->json([
-                                    'data' => [],
-                                    'success' => false,
-                                    'message' => 'Service Category not found'
-                                    ], 404);
+                'data' => [],
+                'success' => false,
+                'message' => 'Service Category not found'
+            ], 404);
         }
     }
 
@@ -155,19 +154,19 @@ class ServiceCategoryController extends Controller
     {
         $serviceCategory = ServiceCategory::find($id);
 
-        if(!$serviceCategory){
+        if (!$serviceCategory) {
 
             return response()->json([
-                                    'success' => false,
-                                    'message' => 'Service Category not found'
-                                    ], 404);
+                'success' => false,
+                'message' => 'Service Category not found'
+            ], 404);
         }
 
-        $validator = Validator::make($request->all(),[
+        $validator = Validator::make($request->all(), [
             'service_category_name' => 'required|string|max:255',
             'service_category_slug' => ['required', 'string', 'max:255',  Rule::unique('service_categories', 'service_category_slug')
-                                                                                ->ignore($id)
-                                                                                ->whereNull('deleted_at')],
+                ->ignore($id)
+                ->whereNull('deleted_at')],
             'category_img_id' => 'nullable|integer|exists:media,media_id',
             'category_img_alt' => 'nullable|string|max:255',
         ]);
@@ -176,9 +175,9 @@ class ServiceCategoryController extends Controller
         if ($validator->fails()) {
 
             return response()->json([
-                                    'success' => false,
-                                    'message' => $validator->messages()
-                                    ], 403);
+                'success' => false,
+                'message' => $validator->messages()
+            ], 403);
         }
 
         $categoryImagPath = MediaHelper::getMediaPath($request->category_img_id ?? null);
@@ -188,6 +187,7 @@ class ServiceCategoryController extends Controller
             'service_category_slug' => $request->service_category_slug,
             'category_img_url' => $categoryImagPath,
             'category_img_alt' => $request->category_img_alt,
+            'category_status' => $request->category_status
         ];
 
         $result = $serviceCategory->update($data);
@@ -195,15 +195,15 @@ class ServiceCategoryController extends Controller
         if ($result) {
 
             return response()->json([
-                                    'success' => true,
-                                    'message' => 'Service Category updated successfully'
-                                    ], 201);
+                'success' => true,
+                'message' => 'Service Category updated successfully'
+            ], 201);
         } else {
 
             return response()->json([
-                                    'success' => false,
-                                    'message' => 'Something went wrong, please try again later'
-                                    ], 422);
+                'success' => false,
+                'message' => 'Something went wrong, please try again later'
+            ], 422);
         }
     }
 
@@ -221,15 +221,52 @@ class ServiceCategoryController extends Controller
 
             $serviceCategory->delete();
             return response()->json([
-                                    'success' => true,
-                                    'message' => 'Service Category deleted successfully'
-                                    ], 201);
+                'success' => true,
+                'message' => 'Service Category deleted successfully'
+            ], 201);
         } else {
 
             return response()->json([
-                                    'success' => false,
-                                    'message' => 'Service Category not found'
-                                    ], 404);
+                'success' => false,
+                'message' => 'Service Category not found'
+            ], 404);
+        }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param Request $request
+     * @return Response
+     *
+     **/
+    public function deleteSelectedServiceCategory(Request $request)
+    {
+        $category_ids = explode(',', $request->input('category_ids'));
+
+        if (!empty($category_ids)) {
+
+            if (ServiceCategory::whereIn('id', $category_ids)->exists()) {
+
+                ServiceCategory::whereIn('id', $category_ids)->delete();
+
+                return response()->json([
+                    'success' => true,
+                    'message' => "All Selected Service Category deleted successfully",
+                ], 200);
+            } else {
+
+                return response()->json([
+                    'success' => false,
+                    'message' => "Selected Service Category not found",
+                ], 404);
+            }
+        } else {
+
+            return response()->json([
+                'success' => false,
+                'message' => "No Service Category selected",
+            ], 404);
         }
     }
 }

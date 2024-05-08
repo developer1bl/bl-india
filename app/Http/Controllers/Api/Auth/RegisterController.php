@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Client;
 use App\Mail\SendMails;
@@ -13,8 +12,8 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Carbon;
-use App\Models\Role;
-// use Illuminate\Auth\Events\Registered;
+use Illuminate\Validation\Rule;
+use App\Exceptions\UserExistPreviouslyException;
 
 class RegisterController extends Controller
 {
@@ -29,7 +28,7 @@ class RegisterController extends Controller
         //set validation
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:150',
-            'email' => 'required|email|unique:users',
+            'email' => ['required','email',Rule::unique('users', 'email')->whereNull('deleted_at')],
             'phone' => 'required|string|unique:users',
             'role_id' => 'required|exists:roles,id',
         ]);
@@ -41,6 +40,14 @@ class RegisterController extends Controller
                                     'success' => false,
                                     'message' => $validator->messages()
                                     ], 403);
+        }
+
+
+        if (User::withTrashed()
+                    ->where('email', $request->email)
+                    ->exists())
+        {
+            throw new UserExistPreviouslyException('Oops! It appears that the chosen User email is already in use. Please select a different one and try again');
         }
 
         // create new user

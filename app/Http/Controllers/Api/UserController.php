@@ -71,14 +71,14 @@ class UserController extends Controller
 
             return response()->json([
                 'data' => $user,
-                'sucess' => true,
+                'success' => true,
                 'message' => ''
             ], 200);
         } else {
 
             return response()->json([
                 'data' => [],
-                'sucess' => false,
+                'success' => false,
                 'message' => 'User not found'
             ], 404);
         }
