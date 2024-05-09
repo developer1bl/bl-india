@@ -18,14 +18,13 @@ return new class extends Migration
             $table->string('service_slug')->unique();
             $table->string('service_img_url')->nullable();
             $table->string('service_img_alt')->nullable();
-            $table->longText('service_description')->nullable();
+            $table->json('service_description')->nullable();
             $table->json('service_compliance')->nullable();
             $table->json('faqs')->nullable();
             $table->string('seo_title')->nullable();
             $table->text('seo_description')->nullable();
             $table->text('seo_keywords')->nullable();
             $table->boolean('service_featured')->default(false);
-            $table->boolean('service_product_show')->default(true);
             $table->integer('service_order')->default(0);
             $table->boolean('service_status')->default(true);
             $table->foreignIdFor(ServiceCategory::class)->nullable();

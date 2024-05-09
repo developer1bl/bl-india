@@ -560,3 +560,122 @@ Did you mean one of these?
 #12 Command line code(1): Illuminate\\Foundation\\Console\\Kernel->handle()
 #13 {main}
 "} 
+[2024-05-09 17:02:35] local.ERROR: Command "migarte" is not defined.
+
+Did you mean one of these?
+    migrate
+    migrate:fresh
+    migrate:install
+    migrate:refresh
+    migrate:reset
+    migrate:rollback
+    migrate:status {"exception":"[object] (Symfony\\Component\\Console\\Exception\\CommandNotFoundException(code: 0): Command \"migarte\" is not defined.
+
+Did you mean one of these?
+    migrate
+    migrate:fresh
+    migrate:install
+    migrate:refresh
+    migrate:reset
+    migrate:rollback
+    migrate:status at C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\symfony\\console\\Application.php:737)
+[stacktrace]
+#0 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\symfony\\console\\Application.php(266): Symfony\\Component\\Console\\Application->find()
+#1 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\symfony\\console\\Application.php(175): Symfony\\Component\\Console\\Application->doRun()
+#2 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Console\\Kernel.php(201): Symfony\\Component\\Console\\Application->run()
+#3 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\artisan(35): Illuminate\\Foundation\\Console\\Kernel->handle()
+#4 {main}
+"} 
+[2024-05-09 17:02:43] local.ERROR: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'bl_india_db.services' doesn't exist (Connection: mysql, SQL: alter table `services` add `service_id` bigint unsigned not null auto_increment primary key, add `service_name` varchar(150) not null, add `service_slug` varchar(255) not null, add `service_img_url` varchar(255) null, add `service_img_alt` varchar(255) null, add `service_description` json null, add `service_compliance` json null, add `faqs` json null, add `seo_title` varchar(255) null, add `seo_description` text null, add `seo_keywords` text null, add `service_featured` tinyint(1) not null default '0', add `service_order` int not null default '0', add `service_status` tinyint(1) not null default '1', add `service_category_id` bigint unsigned null, add `created_at` timestamp null, add `updated_at` timestamp null, add `deleted_at` timestamp null) {"exception":"[object] (Illuminate\\Database\\QueryException(code: 42S02): SQLSTATE[42S02]: Base table or view not found: 1146 Table 'bl_india_db.services' doesn't exist (Connection: mysql, SQL: alter table `services` add `service_id` bigint unsigned not null auto_increment primary key, add `service_name` varchar(150) not null, add `service_slug` varchar(255) not null, add `service_img_url` varchar(255) null, add `service_img_alt` varchar(255) null, add `service_description` json null, add `service_compliance` json null, add `faqs` json null, add `seo_title` varchar(255) null, add `seo_description` text null, add `seo_keywords` text null, add `service_featured` tinyint(1) not null default '0', add `service_order` int not null default '0', add `service_status` tinyint(1) not null default '1', add `service_category_id` bigint unsigned null, add `created_at` timestamp null, add `updated_at` timestamp null, add `deleted_at` timestamp null) at C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php:829)
+[stacktrace]
+#0 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(783): Illuminate\\Database\\Connection->runQueryCallback()
+#1 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(576): Illuminate\\Database\\Connection->run()
+#2 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Schema\\Blueprint.php(110): Illuminate\\Database\\Connection->statement()
+#3 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Schema\\Builder.php(602): Illuminate\\Database\\Schema\\Blueprint->build()
+#4 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Schema\\Builder.php(444): Illuminate\\Database\\Schema\\Builder->build()
+#5 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Support\\Facades\\Facade.php(355): Illuminate\\Database\\Schema\\Builder->table()
+#6 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\database\\migrations\\2024_05_09_170028_create_services.php(15): Illuminate\\Support\\Facades\\Facade::__callStatic()
+#7 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Migrations\\Migrator.php(493): Illuminate\\Database\\Migrations\\Migration@anonymous->up()
+#8 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Migrations\\Migrator.php(410): Illuminate\\Database\\Migrations\\Migrator->runMethod()
+#9 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Migrations\\Migrator.php(419): Illuminate\\Database\\Migrations\\Migrator->Illuminate\\Database\\Migrations\\{closure}()
+#10 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Migrations\\Migrator.php(216): Illuminate\\Database\\Migrations\\Migrator->runMigration()
+#11 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\View\\Components\\Task.php(37): Illuminate\\Database\\Migrations\\Migrator->Illuminate\\Database\\Migrations\\{closure}()
+#12 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Migrations\\Migrator.php(756): Illuminate\\Console\\View\\Components\\Task->render()
+#13 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Migrations\\Migrator.php(216): Illuminate\\Database\\Migrations\\Migrator->write()
+#14 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Migrations\\Migrator.php(181): Illuminate\\Database\\Migrations\\Migrator->runUp()
+#15 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Migrations\\Migrator.php(124): Illuminate\\Database\\Migrations\\Migrator->runPending()
+#16 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Console\\Migrations\\MigrateCommand.php(90): Illuminate\\Database\\Migrations\\Migrator->run()
+#17 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Migrations\\Migrator.php(633): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->Illuminate\\Database\\Console\\Migrations\\{closure}()
+#18 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Console\\Migrations\\MigrateCommand.php(83): Illuminate\\Database\\Migrations\\Migrator->usingConnection()
+#19 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(36): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->handle()
+#20 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Util.php(41): Illuminate\\Container\\BoundMethod::Illuminate\\Container\\{closure}()
+#21 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(93): Illuminate\\Container\\Util::unwrapIfClosure()
+#22 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod()
+#23 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(662): Illuminate\\Container\\BoundMethod::call()
+#24 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Command.php(211): Illuminate\\Container\\Container->call()
+#25 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\symfony\\console\\Command\\Command.php(326): Illuminate\\Console\\Command->execute()
+#26 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Command.php(180): Symfony\\Component\\Console\\Command\\Command->run()
+#27 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\symfony\\console\\Application.php(1096): Illuminate\\Console\\Command->run()
+#28 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\symfony\\console\\Application.php(324): Symfony\\Component\\Console\\Application->doRunCommand()
+#29 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\symfony\\console\\Application.php(175): Symfony\\Component\\Console\\Application->doRun()
+#30 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Console\\Kernel.php(201): Symfony\\Component\\Console\\Application->run()
+#31 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\artisan(35): Illuminate\\Foundation\\Console\\Kernel->handle()
+#32 {main}
+
+[previous exception] [object] (PDOException(code: 42S02): SQLSTATE[42S02]: Base table or view not found: 1146 Table 'bl_india_db.services' doesn't exist at C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php:587)
+[stacktrace]
+#0 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(587): PDOStatement->execute()
+#1 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(816): Illuminate\\Database\\Connection->Illuminate\\Database\\{closure}()
+#2 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(783): Illuminate\\Database\\Connection->runQueryCallback()
+#3 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(576): Illuminate\\Database\\Connection->run()
+#4 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Schema\\Blueprint.php(110): Illuminate\\Database\\Connection->statement()
+#5 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Schema\\Builder.php(602): Illuminate\\Database\\Schema\\Blueprint->build()
+#6 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Schema\\Builder.php(444): Illuminate\\Database\\Schema\\Builder->build()
+#7 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Support\\Facades\\Facade.php(355): Illuminate\\Database\\Schema\\Builder->table()
+#8 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\database\\migrations\\2024_05_09_170028_create_services.php(15): Illuminate\\Support\\Facades\\Facade::__callStatic()
+#9 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Migrations\\Migrator.php(493): Illuminate\\Database\\Migrations\\Migration@anonymous->up()
+#10 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Migrations\\Migrator.php(410): Illuminate\\Database\\Migrations\\Migrator->runMethod()
+#11 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Migrations\\Migrator.php(419): Illuminate\\Database\\Migrations\\Migrator->Illuminate\\Database\\Migrations\\{closure}()
+#12 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Migrations\\Migrator.php(216): Illuminate\\Database\\Migrations\\Migrator->runMigration()
+#13 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\View\\Components\\Task.php(37): Illuminate\\Database\\Migrations\\Migrator->Illuminate\\Database\\Migrations\\{closure}()
+#14 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Migrations\\Migrator.php(756): Illuminate\\Console\\View\\Components\\Task->render()
+#15 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Migrations\\Migrator.php(216): Illuminate\\Database\\Migrations\\Migrator->write()
+#16 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Migrations\\Migrator.php(181): Illuminate\\Database\\Migrations\\Migrator->runUp()
+#17 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Migrations\\Migrator.php(124): Illuminate\\Database\\Migrations\\Migrator->runPending()
+#18 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Console\\Migrations\\MigrateCommand.php(90): Illuminate\\Database\\Migrations\\Migrator->run()
+#19 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Migrations\\Migrator.php(633): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->Illuminate\\Database\\Console\\Migrations\\{closure}()
+#20 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Console\\Migrations\\MigrateCommand.php(83): Illuminate\\Database\\Migrations\\Migrator->usingConnection()
+#21 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(36): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->handle()
+#22 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Util.php(41): Illuminate\\Container\\BoundMethod::Illuminate\\Container\\{closure}()
+#23 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(93): Illuminate\\Container\\Util::unwrapIfClosure()
+#24 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod()
+#25 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(662): Illuminate\\Container\\BoundMethod::call()
+#26 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Command.php(211): Illuminate\\Container\\Container->call()
+#27 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\symfony\\console\\Command\\Command.php(326): Illuminate\\Console\\Command->execute()
+#28 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Command.php(180): Symfony\\Component\\Console\\Command\\Command->run()
+#29 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\symfony\\console\\Application.php(1096): Illuminate\\Console\\Command->run()
+#30 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\symfony\\console\\Application.php(324): Symfony\\Component\\Console\\Application->doRunCommand()
+#31 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\symfony\\console\\Application.php(175): Symfony\\Component\\Console\\Application->doRun()
+#32 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Console\\Kernel.php(201): Symfony\\Component\\Console\\Application->run()
+#33 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\artisan(35): Illuminate\\Foundation\\Console\\Kernel->handle()
+#34 {main}
+"} 
+[2024-05-09 17:03:49] local.ERROR: There are no commands defined in the "opitmize" namespace.
+
+Did you mean this?
+    optimize {"exception":"[object] (Symfony\\Component\\Console\\Exception\\NamespaceNotFoundException(code: 0): There are no commands defined in the \"opitmize\" namespace.
+
+Did you mean this?
+    optimize at C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\symfony\\console\\Application.php:669)
+[stacktrace]
+#0 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\symfony\\console\\Application.php(720): Symfony\\Component\\Console\\Application->findNamespace()
+#1 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\symfony\\console\\Application.php(266): Symfony\\Component\\Console\\Application->find()
+#2 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\symfony\\console\\Application.php(175): Symfony\\Component\\Console\\Application->doRun()
+#3 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Console\\Kernel.php(201): Symfony\\Component\\Console\\Application->run()
+#4 C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\artisan(35): Illuminate\\Foundation\\Console\\Kernel->handle()
+#5 {main}
+"} 
+[2024-05-09 17:04:53] local.ERROR: Cannot redeclare App\Models\Service::faqs() {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot redeclare App\\Models\\Service::faqs() at C:\\Users\\it\\OneDrive\\Documents\\GitHub\\bl-india\\app\\Models\\Service.php:72)
+[stacktrace]
+#0 {main}
+"} 
