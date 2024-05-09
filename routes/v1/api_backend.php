@@ -169,6 +169,7 @@ Route::prefix('v1')->group(function () {
                     Route::post('/create', 'create')->middleware(['checkRoleAndPermission:admin,create_service']);
                     Route::post('/{service}', 'update')->middleware(['checkRoleAndPermission:admin,edit_service']);
                     Route::delete('/{service}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_service']);
+                    Route::delete('/delete/selected-service', 'deleteSelectedService');
                 });
             });
 
