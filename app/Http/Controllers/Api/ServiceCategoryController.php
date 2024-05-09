@@ -20,9 +20,9 @@ class ServiceCategoryController extends Controller
         $serviceCategory = ServiceCategory::with('services')->OrderByDesc('id')->get();
 
         return response()->json([
-            'data' => $serviceCategory ?? [],
-            'success' => true
-        ], 200);
+                                'data' => $serviceCategory ?? [],
+                                'success' => true
+                                ], 200);
     }
 
     /**
@@ -44,9 +44,9 @@ class ServiceCategoryController extends Controller
         if ($validator->fails()) {
 
             return response()->json([
-                'success' => false,
-                'message' => $validator->messages()
-            ], 403);
+                                    'success' => false,
+                                    'message' => $validator->messages()
+                                    ], 403);
         }
 
         if (ServiceCategory::withTrashed(true)
@@ -70,15 +70,15 @@ class ServiceCategoryController extends Controller
         if ($result) {
 
             return response()->json([
-                'success' => true,
-                'message' => 'Service Category created successfully'
-            ], 200);
+                                    'success' => true,
+                                    'message' => 'Service Category created successfully'
+                                    ], 200);
         } else {
 
             return response()->json([
-                'success' => false,
-                'message' => 'Something went wrong, please try again later'
-            ], 422);
+                                    'success' => false,
+                                    'message' => 'Something went wrong, please try again later'
+                                    ], 422);
         }
     }
 
@@ -90,21 +90,21 @@ class ServiceCategoryController extends Controller
     public function restore(string $slug)
     {
         $serviceCategory = ServiceCategory::withTrashed()
-            ->where('service_category_slug', $slug)
-            ->restore();
+                                            ->where('service_category_slug', $slug)
+                                            ->restore();
 
         if ($serviceCategory) {
 
             return response()->json([
-                'success' => true,
-                'message' => 'Service Category restored successfully'
-            ], 201);
+                                    'success' => true,
+                                    'message' => 'Service Category restored successfully'
+                                    ], 201);
         } else {
 
             return response()->json([
-                'success' => false,
-                'message' => 'Something went wrong, please try again later'
-            ], 422);
+                                    'success' => false,
+                                    'message' => 'Something went wrong, please try again later'
+                                    ], 422);
         }
     }
 
@@ -121,17 +121,17 @@ class ServiceCategoryController extends Controller
         if ($serviceCategory) {
 
             return response()->json([
-                'data' => $serviceCategory,
-                'success' => true,
-                'message' => ''
-            ], 200);
+                                    'data' => $serviceCategory,
+                                    'success' => true,
+                                    'message' => ''
+                                    ], 200);
         } else {
 
             return response()->json([
-                'data' => [],
-                'success' => false,
-                'message' => 'Service Category not found'
-            ], 404);
+                                    'data' => [],
+                                    'success' => false,
+                                    'message' => 'Service Category not found'
+                                    ], 404);
         }
     }
 
@@ -157,9 +157,9 @@ class ServiceCategoryController extends Controller
         if (!$serviceCategory) {
 
             return response()->json([
-                'success' => false,
-                'message' => 'Service Category not found'
-            ], 404);
+                                    'success' => false,
+                                    'message' => 'Service Category not found'
+                                    ], 404);
         }
 
         $validator = Validator::make($request->all(), [
@@ -195,15 +195,15 @@ class ServiceCategoryController extends Controller
         if ($result) {
 
             return response()->json([
-                'success' => true,
-                'message' => 'Service Category updated successfully'
-            ], 201);
+                                    'success' => true,
+                                    'message' => 'Service Category updated successfully'
+                                    ], 201);
         } else {
 
             return response()->json([
-                'success' => false,
-                'message' => 'Something went wrong, please try again later'
-            ], 422);
+                                    'success' => false,
+                                    'message' => 'Something went wrong, please try again later'
+                                    ], 422);
         }
     }
 
@@ -221,15 +221,15 @@ class ServiceCategoryController extends Controller
 
             $serviceCategory->delete();
             return response()->json([
-                'success' => true,
-                'message' => 'Service Category deleted successfully'
-            ], 201);
+                                    'success' => true,
+                                    'message' => 'Service Category deleted successfully'
+                                    ], 201);
         } else {
 
             return response()->json([
-                'success' => false,
-                'message' => 'Service Category not found'
-            ], 404);
+                                    'success' => false,
+                                    'message' => 'Service Category not found'
+                                    ], 404);
         }
     }
 
@@ -251,22 +251,22 @@ class ServiceCategoryController extends Controller
                 ServiceCategory::whereIn('id', $category_ids)->delete();
 
                 return response()->json([
-                    'success' => true,
-                    'message' => "All Selected Service Category deleted successfully",
-                ], 200);
+                                        'success' => true,
+                                        'message' => "All Selected Service Category deleted successfully",
+                                        ], 200);
             } else {
 
                 return response()->json([
-                    'success' => false,
-                    'message' => "Selected Service Category not found",
-                ], 404);
+                                        'success' => false,
+                                        'message' => "Selected Service Category not found",
+                                        ], 404);
             }
         } else {
 
             return response()->json([
-                'success' => false,
-                'message' => "No Service Category selected",
-            ], 404);
+                                    'success' => false,
+                                    'message' => "No Service Category selected",
+                                    ], 404);
         }
     }
 }
