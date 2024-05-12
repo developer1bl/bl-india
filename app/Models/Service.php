@@ -32,13 +32,9 @@ class Service extends Model
         'service_order',
         'service_status',
         'service_featured',
-        'service_product_show'
     ];
 
     protected $casts = [
-        'service_status' => 'boolean',
-        'service_featured' => 'boolean',
-        'service_product_show' => 'boolean',
         'service_order' => 'integer',
         'service_compliance' => 'json',
         'faqs' => 'json',

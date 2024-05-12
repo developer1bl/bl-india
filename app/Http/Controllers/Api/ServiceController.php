@@ -77,7 +77,6 @@ class ServiceController extends Controller
             'seo_description' => $request->seo_description,
             'seo_keywords' => $request->seo_keywords,
             'service_featured' => $request->service_featured,
-            'service_product_show' => $request->service_product_show,
             'service_order' => $request->service_order,
             'service_status' => $request->service_status,
         ];
