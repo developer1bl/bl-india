@@ -18,8 +18,8 @@ class ServiceController extends Controller
     public function index()
     {
         $service = Service::with(['notices', 'service_section', 'service_category'])
-            ->orderByDesc('service_id')
-            ->get();
+                            ->orderByDesc('service_id')
+                            ->get();
 
         return response()->json([
                                 'success' => true,
@@ -43,22 +43,18 @@ class ServiceController extends Controller
         if ($validator->fails()) {
 
             return response()->json([
-                'success' => false,
-                'message' => $validator->messages()
-            ], 403);
+                                    'success' => false,
+                                    'message' => $validator->messages()
+                                    ], 403);
         }
 
         if (Service::withTrashed(true)
-            ->whereService_name($request->service_name)
-            ->whereService_slug($request->service_slug)
-            ->exists()
+                    ->whereService_name($request->service_name)
+                    ->whereService_slug($request->service_slug)
+                    ->exists()
         ) {
             throw new UserExistPreviouslyException('Oops! It appears that the chosen Service Name or slug is already in use. Please select a different one and try again.');
         }
-
-        $question = explode(',', $request->question);
-        $answer = explode(',', $request->answer);
-        $faq = array_combine($question, $answer);
 
         $compliance = explode(',', $request->service_compliance);
 
@@ -72,7 +68,7 @@ class ServiceController extends Controller
             'service_img_alt' => $request->service_img_alt,
             'service_compliance' => $compliance,
             'service_description' => $request->service_description,
-            'faqs' => $faq,
+            'faqs' => $request->faq,
             'seo_title' => $request->seo_title,
             'seo_description' => $request->seo_description,
             'seo_keywords' => $request->seo_keywords,
@@ -143,7 +139,8 @@ class ServiceController extends Controller
      */
     public function show(string $id)
     {
-        $service = Service::with(['notices', 'service_section'])->find($id);
+        // $service = Service::with(['notices', 'service_section'])->find($id);
+        $service = Service::find($id);
 
         if ($service) {
 
@@ -155,10 +152,10 @@ class ServiceController extends Controller
         } else {
 
             return response()->json([
-                'data' => [],
-                'success' => false,
-                'message' => 'Service not found'
-            ], 404);
+                                    'data' => [],
+                                    'success' => false,
+                                    'message' => 'Service not found'
+                                    ], 404);
         }
     }
 
@@ -182,9 +179,9 @@ class ServiceController extends Controller
         if (!$service) {
 
             return response()->json([
-                'success' => false,
-                'message' => 'Service not found'
-            ], 404);
+                                    'success' => false,
+                                    'message' => 'Service not found'
+                                    ], 404);
         }
 
         $validator = Validator::make($request->all(), [
@@ -198,16 +195,10 @@ class ServiceController extends Controller
         if ($validator->fails()) {
 
             return response()->json([
-                'success' => false,
-                'message' => $validator->messages()
-            ], 403);
+                                    'success' => false,
+                                    'message' => $validator->messages()
+                                    ], 403);
         }
-
-        $question = explode(',', $request->question);
-        $answer = explode(',', $request->answer);
-        $faq = array_combine($question, $answer);
-
-        $compliance = explode(',', $request->service_compliance);
 
         $serviceImagePath = MediaHelper::getMediaPath($request->service_image_id ?? null);
 
@@ -217,19 +208,16 @@ class ServiceController extends Controller
             'service_category_id' => $request->service_category_id,
             'service_img_url' => $serviceImagePath,
             'service_img_alt' => $request->service_img_alt,
-            'service_compliance' => json_encode($compliance),
+            'service_compliance' => $request->service_compliance,
             'service_description' => $request->service_description,
-            'faqs' => json_encode($faq),
+            'faqs' => $request->faq,
             'seo_title' => $request->seo_title,
             'seo_description' => $request->seo_description,
             'seo_keywords' => $request->seo_keywords,
             'service_featured' => $request->service_featured,
-            'service_product_show' => $request->service_product_show,
             'service_order' => $request->service_order,
             'service_status' => $request->service_status,
         ];
-
-        $service = Service::find($id);
 
         if ($service) {
 
@@ -238,22 +226,22 @@ class ServiceController extends Controller
             if ($result) {
 
                 return response()->json([
-                    'success' => true,
-                    'message' => 'Service updated successfully'
-                ], 202);
+                                        'success' => true,
+                                        'message' => 'Service updated successfully'
+                                        ], 202);
             } else {
 
                 return response()->json([
-                    'success' => false,
-                    'message' => 'Something went wrong, please try again later'
-                ], 422);
+                                        'success' => false,
+                                        'message' => 'Something went wrong, please try again later'
+                                        ], 422);
             }
         } else {
 
             return response()->json([
-                'success' => false,
-                'message' => 'Service not found'
-            ], 404);
+                                    'success' => false,
+                                    'message' => 'Service not found'
+                                    ], 404);
         }
     }
 
@@ -272,15 +260,15 @@ class ServiceController extends Controller
             $service->delete();
 
             return response()->json([
-                'success' => true,
-                'message' => 'Service deleted successfully'
-            ], 202);
+                                    'success' => true,
+                                    'message' => 'Service deleted successfully'
+                                    ], 202);
         } else {
 
             return response()->json([
-                'success' => false,
-                'message' => 'Service not found'
-            ], 404);
+                                    'success' => false,
+                                    'message' => 'Service not found'
+                                    ], 404);
         }
     }
 
@@ -302,22 +290,22 @@ class ServiceController extends Controller
                 Service::whereIn('service_id', $service_ids)->delete();
 
                 return response()->json([
-                    'success' => true,
-                    'message' => "All Selected Service Category deleted successfully",
-                ], 200);
+                                        'success' => true,
+                                        'message' => "All Selected Service Category deleted successfully",
+                                        ], 200);
             } else {
 
                 return response()->json([
-                    'success' => false,
-                    'message' => "Selected Service Category not found",
-                ], 404);
+                                        'success' => false,
+                                        'message' => "Selected Service Category not found",
+                                        ], 404);
             }
         } else {
 
             return response()->json([
-                'success' => false,
-                'message' => "No Service Category selected",
-            ], 404);
+                                    'success' => false,
+                                    'message' => "No Service Category selected",
+                                    ], 404);
         }
     }
 }
