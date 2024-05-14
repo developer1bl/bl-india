@@ -184,6 +184,7 @@ Route::prefix('v1')->group(function () {
                     Route::post('/create', 'create')->middleware(['checkRoleAndPermission:admin,create_service_section']);
                     Route::post('/{service_section}', 'update')->middleware(['checkRoleAndPermission:admin,edit_service_section']);
                     Route::delete('/{service_section}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_service_section']);
+                    Route::delete('/delete/selected-service-section', 'deleteSelectedServiceSection');
                 });
             });
 
@@ -451,6 +452,11 @@ Route::prefix('v1')->group(function () {
 
                 Route::Post('/update/{media}', function(Request $request, string $name){
                     return MediaHelper::updateImage($request, $name);
+                });
+
+                Route::get('/{media}', function (String $media){
+
+                    return MediaHelper::getMediaByName($media);
                 });
             });
 

@@ -40,7 +40,7 @@ class ServiceSectionController extends Controller
         $validator = Validator::make($request->all(), [
             'service_section_name' => ['required', 'string'],
             'service_section_slug' => ['required', 'string', Rule::unique('service_sections', 'service_section_slug')->whereNull('deleted_at')],
-            'service_section_content' =>  'required|string',
+            'service_section_content' =>  'required',
             'service_section_status' => 'nullable|boolean',
             'service_section_order' => 'nullable|integer',
             'service_id' => 'integer|exists:services,service_id'
@@ -63,7 +63,16 @@ class ServiceSectionController extends Controller
             throw new UserExistPreviouslyException('Oops! It appears that the chosen Service section slug is already in use. Please select a different one and try again.');
         }
 
-        $result = ServiceSection::create($request->all());
+        $data = [
+            'service_id' => $request->service_id,
+            'service_section_content' => $request->service_section_content,
+            'service_section_name' => $request->service_section_name,
+            'service_section_order' => $request->service_section_order,
+            'service_section_slug' => $request->service_section_slug,
+            'service_section_status' => $request->service_section_status,
+        ];
+
+        $result = ServiceSection::create($data);
 
         if ($result) {
 
@@ -151,7 +160,7 @@ class ServiceSectionController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $serviceSection = ServiceSection::findOrFail($id);
+        $serviceSection = ServiceSection::find($id);
 
         if (!$serviceSection) {
 
@@ -166,7 +175,7 @@ class ServiceSectionController extends Controller
             'service_section_slug' => ['required', 'string', Rule::unique('service_sections', 'service_section_slug')
                                                                    ->ignore($id, 'service_section_id')
                                                                    ->whereNull('deleted_at')],
-            'service_section_content' => 'required|string',
+            'service_section_content' => 'required',
             'service_section_status' => 'nullable|boolean',
             'service_section_order' => 'nullable|integer',
             'service_id' => 'integer|exists:services,service_id'
@@ -182,9 +191,18 @@ class ServiceSectionController extends Controller
         }
 
         try {
+            
+            $data = [
+                'service_id' => $request->service_id,
+                'service_section_content' => $request->service_section_content,
+                'service_section_name' => $request->service_section_name,
+                'service_section_order' => $request->service_section_order,
+                'service_section_slug' => $request->service_section_slug,
+                'service_section_status' => $request->service_section_status,
+            ];
 
             // Update the attributes
-            $serviceSection->update($request->all());
+            $serviceSection->update($data);
 
             return response()->json([
                                     'success' => true,
@@ -229,6 +247,43 @@ class ServiceSectionController extends Controller
                                     'success' => false,
                                     'message' => 'something went wrong, please try again'
                                     ], 422);
+        }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param Request $request
+     * @return Response
+     *
+     **/
+    public function deleteSelectedServiceSection(Request $request)
+    {
+        $Section_ids = explode(',', $request->input('Section_ids'));
+
+        if (!empty($Section_ids)) {
+
+            if (ServiceSection::whereIn('service_section_id', $Section_ids)->exists()) {
+
+                ServiceSection::whereIn('service_section_id', $Section_ids)->delete();
+
+                return response()->json([
+                                        'success' => true,
+                                        'message' => "All Selected Service Category deleted successfully",
+                                        ], 200);
+            } else {
+
+                return response()->json([
+                                        'success' => false,
+                                        'message' => "Selected Service Category not found",
+                                        ], 404);
+            }
+        } else {
+
+            return response()->json([
+                                    'success' => false,
+                                    'message' => "No Service Category selected",
+                                    ], 404);
         }
     }
 }

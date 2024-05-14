@@ -25,9 +25,9 @@ class ServiceSection extends Model
         'service_id'
     ];
 
-    protected $casts = [
-        'service_section_status' => 'boolean',
-    ];
+    // protected $casts = [
+    //     'service_section_status' => 'boolean',
+    // ];
 
     /**
      * Interact with the service section name.
@@ -48,6 +48,17 @@ class ServiceSection extends Model
         return Attribute::make(
             get: fn (string $value) => strtolower($value),
             set: fn (string $value) => strtolower($value),
+        );
+    }
+
+     /**
+     * Interact with the faqs
+     */
+    protected function serviceSectionContent(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => json_decode($value),
+            set: fn ($value) => json_encode($value),
         );
     }
 

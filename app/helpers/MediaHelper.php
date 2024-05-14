@@ -186,5 +186,26 @@ class MediaHelper{
             return null;
         }
     }
+
+    /**
+     * this function is used to return the media
+     *
+     * @param string $name
+     * @return Response
+     */
+    public static function getMediaByName(string $name = null){
+
+        $name = 'media/'.$name;
+        
+        $media = Media::Where('media_path', $name)->first();
+
+        if ($media) {
+
+            return $media;
+        }else{
+
+            return null;
+        }
+    }
 }
 ?>

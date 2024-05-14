@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id('service_section_id');
             $table->string('service_section_name');
             $table->string('service_section_slug')->unique();
-            $table->longText('service_section_content')->nullable();
+            $table->json('service_section_content')->nullable();
             $table->boolean('service_section_status')->default(true);
             $table->integer('service_section_order')->default(0);
             $table->unsignedBigInteger('service_id')->nullable();
