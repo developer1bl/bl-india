@@ -15,12 +15,12 @@ return new class extends Migration
             $table->id('product_category_id');
             $table->string('product_category_name', 150);
             $table->string('product_category_slug')->unique();
-            $table->longText('product_category_content')->nullable();
+            $table->json('product_category_content')->nullable();
             $table->string('seo_title')->nullable();
             $table->text('seo_description')->nullable();
             $table->text('seo_keywords')->nullable();
             $table->boolean('product_category_status')->default(true);
-            $table->integer('product_category_order')->default(0);      
+            $table->integer('product_category_order')->default(0);
             $table->timestamps();
             $table->softDeletes();
         });

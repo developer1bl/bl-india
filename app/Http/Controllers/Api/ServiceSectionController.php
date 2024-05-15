@@ -191,7 +191,7 @@ class ServiceSectionController extends Controller
         }
 
         try {
-            
+
             $data = [
                 'service_id' => $request->service_id,
                 'service_section_content' => $request->service_section_content,
