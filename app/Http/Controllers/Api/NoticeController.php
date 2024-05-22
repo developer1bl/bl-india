@@ -160,6 +160,7 @@ class NoticeController extends Controller
             if($noticeOptionData[0]->option === 'service'){
 
                 foreach ($noticeOptionData[0]->product_id as $key => $value) {
+
                     $notice->notice_service()->attach($optionId, ['product_id' => $value]);
                 }
             }
@@ -358,6 +359,43 @@ class NoticeController extends Controller
                                     'success' => false,
                                     'message' => 'Notice not found'
                                     ], 404);
+        }
+    }
+
+     /**
+     * Remove the specified resource from storage.
+     *
+     * @param Request $request
+     * @return Response
+     *
+     **/
+    public function deleteSelectedNotice(Request $request)
+    {
+        $notice_ids = explode(',', $request->input('notice_ids'));
+
+        if (!empty($notice_ids)) {
+
+            if (Notice::whereIn('notice_id', $notice_ids)->exists()) {
+
+                Notice::whereIn('notice_id', $notice_ids)->delete();
+
+                return response()->json([
+                    'success' => true,
+                    'message' => "All Selected Notice deleted successfully",
+                ], 200);
+            } else {
+
+                return response()->json([
+                    'success' => false,
+                    'message' => "Selected Notice not found",
+                ], 404);
+            }
+        } else {
+
+            return response()->json([
+                'success' => false,
+                'message' => "No Notice selected",
+            ], 404);
         }
     }
 }

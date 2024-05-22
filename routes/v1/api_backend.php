@@ -200,6 +200,7 @@ Route::prefix('v1')->group(function () {
                     Route::post('/create', 'create')->middleware(['checkRoleAndPermission:admin,create_product']);
                     Route::post('/{product}', 'update')->middleware(['checkRoleAndPermission:admin,edit_product']);
                     Route::delete('/{product}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_product']);
+                    Route::delete('/delete/selected-product', 'deleteSelectedProduct');
                 });
             });
 
@@ -214,6 +215,7 @@ Route::prefix('v1')->group(function () {
                     Route::post('/create', 'create')->middleware(['checkRoleAndPermission:admin,create_productCategory']);
                     Route::post('/{productcategories}', 'update')->middleware(['checkRoleAndPermission:admin,edit_ProductCategory']);
                     Route::delete('/{productcategories}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_productCategory']);
+                    Route::delete('/delete/selected-product-category', 'deleteSelectedProductCategory');
                 });
             });
 
@@ -228,6 +230,7 @@ Route::prefix('v1')->group(function () {
                     Route::post('/create', 'create')->middleware(['checkRoleAndPermission:admin,create_notice']);
                     Route::post('/{notice}', 'update')->middleware(['checkRoleAndPermission:admin,edit_notice']);
                     Route::delete('/{notice}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_notice']);
+                    Route::delete('/delete/selected-notice', 'deleteSelectedNotice');
                 });
             });
 

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Product;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class ProductCategories extends Model
 {
@@ -26,8 +27,19 @@ class ProductCategories extends Model
         'product_category_order',
     ];
 
+    /**
+     * Interact with the faqs
+     */
+    protected function productCategoryContent(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => json_decode($value),
+            set: fn ($value) => json_encode($value),
+        );
+    }
+
     protected $casts = [
-        'product_category_status' => 'boolean',
+        // 'product_category_status' => 'boolean',
         'product_category_order' => 'integer',
     ];
 

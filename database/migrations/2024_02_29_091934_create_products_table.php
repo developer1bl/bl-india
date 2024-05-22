@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('product_slug')->unique();
             $table->string('product_img_url')->nullable();
             $table->string('product_img_alt')->nullable();
-            $table->longText('product_content')->nullable();
+            $table->json('product_content')->nullable();
             $table->string('seo_title')->nullable();
             $table->text('seo_description')->nullable();
             $table->text('seo_keywords')->nullable();

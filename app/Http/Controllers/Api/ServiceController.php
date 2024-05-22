@@ -56,8 +56,6 @@ class ServiceController extends Controller
             throw new UserExistPreviouslyException('Oops! It appears that the chosen Service Name or slug is already in use. Please select a different one and try again.');
         }
 
-        $compliance = explode(',', $request->service_compliance);
-
         $PageImagePath = MediaHelper::getMediaPath($request->service_image_id ?? null);
 
         $data = [
@@ -66,7 +64,7 @@ class ServiceController extends Controller
             'service_category_id' => $request->service_category_id,
             'service_img_url' => $PageImagePath,
             'service_img_alt' => $request->service_img_alt,
-            'service_compliance' => $compliance,
+            'service_compliance' => $request->service_compliance,
             'service_description' => $request->service_description,
             'faqs' => $request->faq,
             'seo_title' => $request->seo_title,

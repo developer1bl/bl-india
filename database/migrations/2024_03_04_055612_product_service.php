@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('product_id')->references('product_id')->on('products')->onDelete('cascade');
             $table->foreignId('service_id')->references('service_id')->on('services')->onDelete('cascade');
-            $table->enum('service_type', [1,2])->default(1)->comment('1 for mandatory service, 2 for voluntary service');
+            $table->boolean('service_type')->default(false)->comment('1 for mandatory service, 0 for voluntary service');
             $table->json('service_compliance')->nullable();
             $table->timestamps();
         });
