@@ -35,7 +35,7 @@ class TeamController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => ['required','string','max:255'],
-            'profile_id' => 'integer|exists:media,media_id',
+            'image_id' => 'integer|exists:media,media_id',
             'designation' => 'nullable|string',
         ]);
 
@@ -49,7 +49,7 @@ class TeamController extends Controller
         }
 
         //get image url path
-        $teamUserImagePath = MediaHelper::getMediaPath($request->profile_id ?? null);
+        $teamUserImagePath = MediaHelper::getMediaPath($request->image_id ?? null);
 
         //data array
         $data = [
@@ -140,7 +140,7 @@ class TeamController extends Controller
 
         $validator = Validator::make($request->all(), [
             'name' => ['required','string','max:255'],
-            'profile_id' => 'integer|exists:media,media_id',
+            'image_id' => 'integer|exists:media,media_id',
             'designation' => 'nullable|string',
             'status' => 'nullable|boolean'
         ]);
@@ -155,7 +155,7 @@ class TeamController extends Controller
         }
 
         //get image url path
-        $teamUserImagePath = MediaHelper::getMediaPath($request->profile_id ?? null);
+        $teamUserImagePath = MediaHelper::getMediaPath($request->image_id ?? null);
 
         //data array
         $data = [
