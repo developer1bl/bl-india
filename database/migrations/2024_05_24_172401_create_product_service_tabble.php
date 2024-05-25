@@ -9,14 +9,15 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+    public function up()
     {
         Schema::create('product_services', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')->references('product_id')->on('products')->onDelete('cascade');
-            $table->foreignId('service_id')->references('service_id')->on('services')->onDelete('cascade');
-            $table->boolean('service_type')->default(false)->comment('1 for mandatory service, 0 for voluntary service');
-            $table->json('service_compliance')->nullable();
+            $table->unsignedBigInteger('user_id');
+            // $table->foreign('product_id')->references('product_id')->on('products');
+            $table->unsignedBigInteger('service_id');
+            // $table->foreign('service_id')->references('service_id')->on('services');
+            $table->json('service_compliance');
             $table->timestamps();
         });
     }

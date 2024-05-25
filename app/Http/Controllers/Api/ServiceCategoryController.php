@@ -187,7 +187,8 @@ class ServiceCategoryController extends Controller
             'service_category_slug' => $request->service_category_slug,
             'category_img_url' => $categoryImagPath,
             'category_img_alt' => $request->category_img_alt,
-            'category_status' => $request->category_status
+            'category_status' => $request->category_status,
+            'service_category_type' => $request->service_category_type
         ];
 
         $result = $serviceCategory->update($data);

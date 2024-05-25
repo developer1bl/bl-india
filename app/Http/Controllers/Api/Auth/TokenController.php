@@ -13,8 +13,12 @@ class TokenController extends Controller
      *
      * @return void
      */
-    public function checkTokenValidity()
+    public function checkTokenValidity(Request $request)
     {
-        return response()->json(['success' => true], 200);
+        if (!$request->user()) {
+            return response()->json(['error' => 'Unauthorized access.'], 401);
+        }
+
+        return response()->json(['message' => 'Token is valid.'], 200);
     }
 }

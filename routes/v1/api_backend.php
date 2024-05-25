@@ -107,6 +107,7 @@ Route::prefix('v1')->group(function () {
                 Route::post('/self/{user}', 'updateUserSelf');
                 Route::delete('/{user}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_user']);
                 Route::delete('/delete/selected-users', 'deleteSelectedUsers');
+                Route::get('/get/AuthUser', 'getAuthUserData');
             });
         });
 

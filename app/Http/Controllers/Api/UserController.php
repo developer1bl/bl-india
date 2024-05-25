@@ -247,22 +247,41 @@ class UserController extends Controller
                 User::whereIn('id', $userIds)->delete();
 
                 return response()->json([
-                                        'success' => true,
-                                        'message' => 'All selected Users deleted successfully'
-                                        ], 200);
+                    'success' => true,
+                    'message' => 'All selected Users deleted successfully'
+                ], 200);
             } else {
 
                 return response()->json([
-                                        'success' => false,
-                                        'message' => 'Selected User found'
-                                        ], 404);
+                    'success' => false,
+                    'message' => 'Selected User found'
+                ], 404);
             }
         } else {
 
             return response()->json([
-                                    'success' => false,
-                                    'message' => 'No User Selected'
-                                    ], 404);
+                'success' => false,
+                'message' => 'No User Selected'
+            ], 404);
+        }
+    }
+
+    /**
+     * get auth user data.
+     *
+     *  @param Request $request
+     *  @return response
+     */
+    public function getAuthUserData(Request $request)
+    {
+        if ($request->user()) {
+            return response()->json([
+                'user' => $request->user()
+            ], 200);
+        } else {
+            return response()->json([
+                'message' => 'user is authorized'
+            ], 401);
         }
     }
 }

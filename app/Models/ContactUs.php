@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class ContactUs extends Model
 {
@@ -27,21 +28,36 @@ class ContactUs extends Model
         'feedback_person' => 'json'
     ];
 
-    // Mutator to automatically decode JSON strings when setting the mobile_number attribute
-    public function setMobileNumberAttribute($value)
+    /**
+     * Interact with mobile_number
+     */
+    protected function mobileNumber(): Attribute
     {
-        $this->attributes['mobile_number'] = json_decode($value, true);
+        return Attribute::make(
+            get: fn ($value) => json_decode($value),
+            set: fn ($value) => json_encode($value),
+        );
     }
 
-    // Mutator to automatically decode JSON strings when setting the office_number attribute
-    public function setOfficeNumberAttribute($value)
+    /**
+     * Interact with office_number
+     */
+    protected function officeNumber(): Attribute
     {
-        $this->attributes['office_number'] = json_decode($value, true);
+        return Attribute::make(
+            get: fn ($value) => json_decode($value),
+            set: fn ($value) => json_encode($value),
+        );
     }
 
-    // Mutator to automatically decode JSON strings when setting the feedback_person attribute
-    public function setFeedbackPersonAttribute($value)
+    /**
+     * Interact with feedback_person
+     */
+    protected function feedbackPerson(): Attribute
     {
-        $this->attributes['feedback_person'] = json_decode($value, true);
+        return Attribute::make(
+            get: fn ($value) => json_decode($value),
+            set: fn ($value) => json_encode($value),
+        );
     }
 }

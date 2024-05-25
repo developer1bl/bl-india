@@ -16,7 +16,8 @@ class ServiceCategory extends Model
         'service_category_slug',
         'category_img_url',
         'category_img_alt',
-        'category_status'
+        'category_status',
+        'service_category_type',
     ];
 
     public function services(){

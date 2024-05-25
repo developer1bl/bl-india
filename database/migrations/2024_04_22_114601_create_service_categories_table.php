@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('category_img_url')->nullable();
             $table->string('category_img_alt')->nullable();
             $table->boolean('category_status')->default(true);
+            $table->boolean('service_category_type')->default(false);
             $table->timestamps();
             $table->softDeletes();
         });
