@@ -18,9 +18,9 @@ return new class extends Migration
             $table->string('section_img_alt')->nullable();
             $table->string('section_name');
             $table->string('section_slug')->unique();
-            $table->string('section_tagline')->nullable();
-            $table->text('section_description')->nullable();
-            $table->text('section_content')->nullable();
+            $table->json('section_tagline')->nullable();
+            $table->json('section_description')->nullable();
+            $table->json('section_content')->nullable();
             $table->boolean('section_status')->default(true)->comment('default status is true');
             $table->integer('section_order')->default(0);
             $table->timestamps();

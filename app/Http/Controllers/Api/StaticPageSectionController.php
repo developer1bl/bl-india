@@ -43,9 +43,6 @@ class StaticPageSectionController extends Controller
             'section_img_alt' => 'nullable|string',
             'section_name' => ['required','string','max:150'],
             'section_slug' => ['required','string','max:150', Rule::unique('static_page_sections', 'section_slug')->whereNull('deleted_at')],
-            'section_tagline' => 'nullable|string',
-            'section_description' => 'nullable|string',
-            'section_content' => 'nullable|string',
         ]);
 
         //if the request have some validation errors
@@ -76,7 +73,7 @@ class StaticPageSectionController extends Controller
             'section_description' => $request->section_description,
             'section_content' => $request->section_content,
             'section_status' => true,
-            'section_order' => 0
+            'section_order' => $request->section_order
         ];
 
         $staticPageSection = StaticPageSection::create($data);
@@ -179,20 +176,13 @@ class StaticPageSectionController extends Controller
                                     ], 403);
         }
 
+
         $validator = Validator::make($request->all(), [
             'static_page_id' => 'required|integer|exists:static_pages,static_page_id',
             'section_media_id' => 'integer|exists:media,media_id',
             'section_img_alt' => 'nullable|string',
-            'section_name' => [ 'required','string','max:150',
-                                Rule::unique('static_page_sections', 'section_name')
-                                    ->whereNull('deleted_at')
-                                    ->ignore($id, 'static_page_section_id'),
-            ],
-            'section_tagline' => 'nullable|string',
-            'section_description' => 'nullable|string',
-            'section_content' => 'nullable|string',
-            'section_status' => 'boolean',
-            'section_order' => 'integer',
+            'section_name' => ['required','string','max:150'],
+            'section_slug' => ['required','string','max:150', Rule::unique('static_page_sections', 'section_slug')->ignore($id,'static_page_section_id')->whereNull('deleted_at')],
         ]);
 
         // If the request has validation errors

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class StaticPageSection extends Model
 {
@@ -27,8 +28,42 @@ class StaticPageSection extends Model
     ];
 
     protected $casts = [
-       'section_status' => 'boolean'
+    //    'section_status' => 'boolean'
     ];
+
+    /**
+     * Interact with section_tagline
+     */
+    protected function sectionTagline(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => json_decode($value),
+            set: fn ($value) => json_encode($value),
+        );
+    }
+
+
+    /**
+     * Interact with section_content
+     */
+    protected function sectionContent(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => json_decode($value),
+            set: fn ($value) => json_encode($value),
+        );
+    }
+
+    /**
+     * Interact with section_description
+     */
+    protected function sectionDescription(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => json_decode($value),
+            set: fn ($value) => json_encode($value),
+        );
+    }
 
     public function staticPage(){
         return $this->belongsTo(StaticPage::class, 'static_page_id');
