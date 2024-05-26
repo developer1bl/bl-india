@@ -15,7 +15,7 @@ class WorkFlowController extends Controller
      */
     public function index()
     {
-        $workFlow = WorkFlow::orderByDesc('id')->get();
+        $workFlow = WorkFlow::orderBy('flow_order')->get();
 
         return response()->json([
                                 'data' => $workFlow ?? [],
@@ -167,10 +167,10 @@ class WorkFlowController extends Controller
         $validator  = Validator::make($request->all(),[
             'name' => 'required|string',
             'description' => 'required|string',
-            'step_image_id' => 'nullable|string',
+            'step_image_id' => 'required|exists:media,media_id',
             'step_img_alt' => 'nullable|string',
             'flow_order' => 'nullable|integer',
-            'flow_status' => 'nullable|boolean',
+            'flow_status' => 'nullable|boolean'
         ]);
 
          //if the request have some validation errors
@@ -182,10 +182,12 @@ class WorkFlowController extends Controller
                                     ], 403);
         }
 
+        $workflowImagePath = MediaHelper::getMediaPath($request->step_image_id ?? null);
+
         $data = [
             'name' => $request->input('name'),
             'description' => $request->input('description'),
-            'step_img_url' => $request->input('step_image'),
+            'step_img_url' => $workflowImagePath,
             'step_img_alt' => $request->input('step_img_alt'),
             'flow_order' => $request->input('flow_order') ?? 0,
             'flow_status' => $request->input('flow_status'),

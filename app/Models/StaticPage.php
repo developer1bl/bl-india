@@ -26,7 +26,7 @@ class StaticPage extends Model
     ];
 
     protected $casts = [
-        'page_status' => 'boolean'
+        // 'page_status' => 'boolean'
     ];
 
     public function pageSection(){
