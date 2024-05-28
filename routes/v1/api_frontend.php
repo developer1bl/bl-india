@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\CareerController;
 use App\Http\Controllers\Api\ContactUsController;
 use App\Http\Controllers\Api\Frontend\AboutPageController;
 use App\Http\Controllers\Api\Frontend\BlogPageController;
@@ -9,12 +10,15 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Frontend\CaptchaController;
 use App\Http\Controllers\Api\Frontend\FormController;
 use App\Http\Controllers\Api\Frontend\CalenderController;
+use App\Http\Controllers\Api\Frontend\KnowledgeBaseController;
 use App\Http\Controllers\Api\Frontend\ServicePageController;
+use App\Http\Controllers\Api\GalleryController;
+use App\Models\KnowledgeBaseCategory;
 
-Route::prefix('v1')->group(function(){
+Route::prefix('v1')->group(function () {
 
     //home page frontend routes
-    Route::prefix('home')->group(function(){
+    Route::prefix('home')->group(function () {
 
         Route::get('/', [HomeController::class, 'index']);
         Route::get('/sections/{slug}', [HomeController::class, 'getHomeSectionData']);
@@ -29,8 +33,8 @@ Route::prefix('v1')->group(function(){
         Route::get('/section/associate', [HomeController::class, 'getHomeAssociateData']);
     });
 
-     //captcha routes
-     Route::group(['prefix' => 'captcha', 'controller' => CaptchaController::class], function(){
+    //captcha routes
+    Route::group(['prefix' => 'captcha', 'controller' => CaptchaController::class], function () {
 
         //getCaptcha
         Route::get('/', 'getCaptcha');
@@ -41,8 +45,9 @@ Route::prefix('v1')->group(function(){
     });
 
     //brochures form routes
-    Route::group(['prefix' => 'brochures', 'controller' => BrochureController::class], function(){
+    Route::group(['prefix' => 'brochures', 'controller' => BrochureController::class], function () {
 
+        Route::get('/', 'brochureFromImage');
         // submit from handling
         Route::post('/submit', 'submitBrochureForm');
         //deleteBrochurePDf
@@ -50,7 +55,7 @@ Route::prefix('v1')->group(function(){
     });
 
     //all static form routes
-    Route::controller(FormController::class)->group(function(){
+    Route::controller(FormController::class)->group(function () {
 
         //this route handles the request to call from
         Route::post('request-to-call', 'requestToCallSubmit');
@@ -62,7 +67,7 @@ Route::prefix('v1')->group(function(){
 
 
     //about page routes
-    Route::group(['prefix' => 'about', 'controller' => AboutPageController::class], function(){
+    Route::group(['prefix' => 'about', 'controller' => AboutPageController::class], function () {
 
         Route::get('/', 'index'); //about main page
         Route::get('section/{slug}', 'getAboutSectionData'); //get about sections
@@ -72,24 +77,24 @@ Route::prefix('v1')->group(function(){
     });
 
     //contact-us page routes
-    Route::group(['prefix' => 'contact-us', 'controller' => ContactUsController::class], function(){
+    Route::group(['prefix' => 'contact-us', 'controller' => ContactUsController::class], function () {
 
         Route::get('/', 'getContactDetails'); //get contact details
         Route::post('/submit', 'submitContactUsForm'); //submit contact us form
     });
 
     //blog page routes
-    Route::group(['prefix' => 'blog', 'controller' => BlogPageController::class], function(){
+    Route::group(['prefix' => 'blog', 'controller' => BlogPageController::class], function () {
 
         Route::get('/', 'getBlogs'); //blog list
         Route::get('/category', 'getBlogsCategory'); //blog category list
         Route::get('/category/{categorySlug}', 'getCategoryWiseBlogs'); //single blog category
         Route::get('/get/{blog}', 'getSingleBlogData'); //single blog
-        Route::get('/latest','getLatestBlogData'); //Latest Blog
+        Route::get('/latest', 'getLatestBlogData'); //Latest Blog
     });
 
     //calender page routes
-    Route::group(['prefix' => 'calender', 'controller' => CalenderController::class], function(){
+    Route::group(['prefix' => 'calender', 'controller' => CalenderController::class], function () {
 
         Route::get('/holiday-list/{month?}', 'getHolidayListByMonth'); //get calender holiday list data
         Route::get('/download/{year?}', 'downloadHolidayListOfYear'); //downloaded calender
@@ -97,21 +102,39 @@ Route::prefix('v1')->group(function(){
     });
 
     //service page route
-    Route::group(['prefix' => 'service', 'controller' => ServicePageController::class], function(){
+    Route::group(['prefix' => 'service', 'controller' => ServicePageController::class], function () {
 
         Route::get('/service-category/{slug?}', 'getService'); //get service by category
         Route::get('/intro-section/{service?}', 'getServiceIntroData'); //get single service
         Route::get('/product-section', 'viewMandatoryProductList'); //get mandatory product
     });
 
+    //careers
+    Route::group(['prefix' => 'careers', 'controller' => CareerController::class], function () {
+        Route::get('/', 'index');
+    });
+
+    //gallery
+    Route::get('/gallery', [GalleryController::class, 'index']);
+
+    //knowledge base route
+    Route::group(['prefix' => 'knowledgeBase', 'controller' => KnowledgeBaseController::class], function () {
+        //for all knowledge base categories
+        Route::get('/category', 'viewAllCategories');
+        //for single knowledge base category
+        Route::get('/category/{category}', 'viewSingleCategory');
+        //for single knowledge base article
+        Route::get('/', 'viewAllKnowledgeBase');
+        //for all knowledge base articles
+        Route::get('/{knowledgeBase}', 'viewSingleKnowledgeBase');
+    });
 
     //for unknown routes
     Route::get('/{any}', function () {
 
         return response()->json([
-                                'success' => false,
-                                'message' => '404, Page Not found, please try again',
-                                ], 404);
+            'success' => false,
+            'message' => '404, Page Not found, please try again',
+        ], 404);
     })->where('any', '.*');
 });
-?>

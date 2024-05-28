@@ -13,9 +13,24 @@ use Illuminate\Support\Facades\File;
 use  Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ThanksMail;
+use App\Helpers\MediaHelper;
 
 class BrochureController extends Controller
 {
+    /**
+     * this function is used to pass the brochure from image.
+     *
+     */
+    public function brochureFromImage($name = 'Brochure-section-image'){
+
+        $image  = MediaHelper::getMediaByMediaName($name);
+
+        if (!$image) {
+            return response()->json([ 'data' => null],200);
+        }
+        return response()->json([ 'data' => $image],200);
+    }
+
     /**
      * this function is handle the submitted BrochureForm.
      *
