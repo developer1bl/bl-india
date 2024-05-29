@@ -33,7 +33,7 @@ class Notice extends Model
     ];
 
     protected $casts = [
-        'notice_status' => 'boolean',
+        // 'notice_status' => 'boolean',
         'products_tag' => 'json',
         'notice_image_id' => 'integer',
         'notice_document_id' => 'integer',

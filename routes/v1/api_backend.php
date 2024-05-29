@@ -508,7 +508,7 @@ Route::prefix('v1')->group(function () {
             //Document
             Route::prefix('/document')->group(function () {
 
-                Route::post('/upload', function (Request $request) {
+                Route::post('/upload-Document', function (Request $request) {
                     return DocumentHelper::uploadDocument($request);
                 });
 
@@ -520,9 +520,9 @@ Route::prefix('v1')->group(function () {
                     return DocumentHelper::deleteDocument($id);
                 });
 
-                Route::Post('/update/{document}', function (Request $request, string $name) {
-                    return DocumentHelper::updateDocument($request, $name);
-                });
+                // Route::Post('/update/{document}', function (Request $request, string $name) {
+                //     return DocumentHelper::updateDocument($request, $name);
+                // });
 
                 Route::get('/download/{document}', function (string $id) {
                     return DocumentHelper::downloadDocument($id);

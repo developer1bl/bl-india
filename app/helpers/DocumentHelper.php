@@ -17,7 +17,7 @@ class DocumentHelper{
      * @return Response
      */
     public static function uploadDocument(Request  $request)
-    {
+    { 
         $validator = Validator::make($request->all(), [
             'document_file' => 'required|file|mimes:pdf',
         ],[

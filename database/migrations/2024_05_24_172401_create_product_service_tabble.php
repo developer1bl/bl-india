@@ -13,10 +13,9 @@ return new class extends Migration
     {
         Schema::create('product_services', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
-            // $table->foreign('product_id')->references('product_id')->on('products');
+            $table->unsignedBigInteger('product_id');
             $table->unsignedBigInteger('service_id');
-            // $table->foreign('service_id')->references('service_id')->on('services');
+            $table->boolean('service_type');
             $table->json('service_compliance');
             $table->timestamps();
         });

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('notice_slug')->unique();
             $table->string('notice_img_url')->nullable();
             $table->string('notice_img_alt')->nullable();
-            $table->text('notice_content')->nullable();
+            $table->longText('notice_content')->nullable();
             $table->unsignedBigInteger('service_id')->nullable();
             $table->string('seo_title')->nullable();
             $table->text('seo_description')->nullable();

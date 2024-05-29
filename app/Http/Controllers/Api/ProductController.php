@@ -45,11 +45,6 @@ class ProductController extends Controller
                 'product_image_id' => 'integer|exists:media,media_id',
                 'product_technical_name' => 'nullable|string',
                 'product_img_alt' => 'nullable|string',
-                'product_content' => 'nullable|array',
-                'services' => [
-                    'required',
-                    'array',
-                ],
             ]
         );
 
@@ -87,27 +82,30 @@ class ProductController extends Controller
 
         $product = Product::create($data);
 
-        //attach product category with product
+        // attach product category with product
         $category = explode(',', $request->product_category_id);
         $category = array_map('intval', $category);
         $product->productCategories()->sync($category);
 
         //attach services on product
         $services = $complains = [];
+        $requestService = json_decode($request->service);
 
-        foreach ($request->services as $serviceData) {
+        foreach ($requestService as $serviceData) {
 
-            $serviceId = $serviceData['service_id'];
-            $serviceType = $serviceData['service_type'];
-            foreach ($serviceData['service_compliance'] as $compliance) {
-                $complains[$compliance['name']][] = $compliance['value'];
+            $serviceId = $serviceData->service_id;
+            $serviceType = $serviceData->service_type;
+            $complianceData = [];
+
+            foreach ($serviceData->service_compliance as $compliance) {
+                $complianceData[$compliance->name] = $compliance->value;
             }
 
             $services[$serviceId] = [
                 'service_type' => $serviceType,
-                'service_compliance' => json_encode($complains),
+                'service_compliance' => json_encode($complianceData),
             ];
-        };
+        }
 
         $product->productService()->sync($services);
 

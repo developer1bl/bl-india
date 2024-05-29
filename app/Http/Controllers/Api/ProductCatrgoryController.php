@@ -16,7 +16,9 @@ class ProductCatrgoryController extends Controller
      */
     public function index()
     {
-        $product_category = ProductCategories::orderByDesc('product_category_id')->get();
+        $product_category = ProductCategories::with('products')
+                                               ->orderByDesc('product_category_id')
+                                               ->get();
 
         return response()->json([
                                 'data'=> $product_category,
@@ -30,7 +32,7 @@ class ProductCatrgoryController extends Controller
     public function create(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'product_category_name' => ['required', 'string', 'max:150', Rule::unique('product_categories', 'product_category_name')->whereNull('deleted_at')],
+            'product_category_name' => ['required', 'string', 'max:150'],
             'product_category_slug' => ['required', 'string', 'max:255', Rule::unique('product_categories', 'product_category_slug')->whereNull('deleted_at')],
             'product_category_content' => ['nullable'],
             'seo_title' => ['nullable', 'string'],
@@ -50,11 +52,10 @@ class ProductCatrgoryController extends Controller
         }
 
         if (ProductCategories::withTrashed()
-                                ->where('product_category_name',$request->product_category_name)
-                                ->orWhere('product_category_slug', $request->product_category_slug)
+                                ->Where('product_category_slug', $request->product_category_slug)
                                 ->exists())
         {
-            throw new UserExistPreviouslyException('Oops! It appears that the chosen Product Category Name or slug is already in use. Please select a different one and try again');
+            throw new UserExistPreviouslyException('Oops! It appears that the chosen Product Category slug is already in use. Please select a different one and try again');
         }
 
         $product_category = ProductCategories::create($request->all());
@@ -82,7 +83,9 @@ class ProductCatrgoryController extends Controller
      */
     public function restore(string $request)
     {
-        $service = ProductCategories::withTrashed(true)->whereProduct_category_name($request)->first();
+        $service = ProductCategories::withTrashed(true)
+                                      ->whereProduct_category_name($request)
+                                      ->first();
 
         if ($service) {
 
@@ -150,7 +153,7 @@ class ProductCatrgoryController extends Controller
         }
 
         $validator = Validator::make($request->all(),[
-            'product_category_name' => ['required', 'string', 'max:150', Rule::unique('product_categories', 'product_category_name')->ignore($id, 'product_category_id')],
+            'product_category_name' => ['required', 'string', 'max:150'],
             'product_category_slug' => ['required', 'string', 'max:255', Rule::unique('product_categories', 'product_category_slug')->ignore($id, 'product_category_id')],
             'product_category_content' => ['nullable'],
             'seo_title' => ['nullable', 'string'],
