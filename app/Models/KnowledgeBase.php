@@ -16,11 +16,14 @@ class KnowledgeBase extends Model
     protected $fillable = [
         'category_id',
         'knowledge_bases_question',
-        'knowledge_bases_answer'
+        'knowledge_bases_answer',
+        'view_count',
+        'search_count',
     ];
 
-    public function category()
+    // Define the inverse of the relationship
+    public function KnowledgeBaseCategory()
     {
-        return $this->belongsTo(KnowledgeBaseCategory::class, 'knowledgebase_category_id', 'knowledgebase_category_id');
+        return $this->belongsTo(KnowledgeBaseCategory::class, 'category_id', 'knowledgebase_category_id');
     }
 }

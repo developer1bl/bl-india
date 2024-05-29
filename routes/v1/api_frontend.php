@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\Frontend\KnowledgeBaseController;
 use App\Http\Controllers\Api\Frontend\ServicePageController;
 use App\Http\Controllers\Api\GalleryController;
 use App\Models\KnowledgeBaseCategory;
+use App\Helpers\DownloadBrochureHelper;
 
 Route::prefix('v1')->group(function () {
 
@@ -48,7 +49,19 @@ Route::prefix('v1')->group(function () {
     Route::group(['prefix' => 'brochures', 'controller' => BrochureController::class], function () {
 
         Route::get('/', 'brochureFromImage');
-        // submit from handling
+        //country list
+        Route::get('/country', function(){
+            return DownloadBrochureHelper::getCountryData();
+        });
+        //service list
+        Route::get('/service', function(){
+            return DownloadBrochureHelper::getServiceData();
+        });
+        //sources list
+        Route::get('/sources', function(){
+            return DownloadBrochureHelper::getSourceList();
+        });
+        // submit from Download brochure form
         Route::post('/submit', 'submitBrochureForm');
         //deleteBrochurePDf
         Route::delete('/{brochure}', 'deleteBrochurePDF');

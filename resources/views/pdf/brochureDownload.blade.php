@@ -96,8 +96,8 @@
         <div class="uk-section uk-margin-remove uk-padding-large uk-text-center">
             <img class="uk-margin-xlarge-bottom" src="https://ik.imagekit.io/bimma/exportapproval/logo.png?updatedAt=1703831191033">
             <h3 class="uk-text-bold uk-h3 middle-text site-blue">Enabling your products for export to India</h3>
-            <h2 class="uk-margin-top uk-margin-remove-bottom uk-h2 uk-text-bold">Obtain {{$data['service']['service_name']}}</h2>
-            <div class="service-description uk-margin-small-top">{!!$data['service']['service_description']!!}</div>
+            <h2 class="uk-margin-top uk-margin-remove-bottom uk-h2 uk-text-bold">Obtain {{$service['service_name']}}</h2>
+            <div class="service-description uk-margin-small-top">{!!$service_description!!}</div>
             {!!$data['sections']['image']!!}
             <div class="uk-position-bottom brandliaison">
                 <span class="uk-text-bold uk-text-small">Powered By</span><br>
@@ -179,4 +179,4 @@ expectations and meet diverse client needs.</p>
             </div>
         </div>
     </body>
-</html> 
+</html>

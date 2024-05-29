@@ -11,14 +11,14 @@ class KnowledgeBaseController extends Controller
 {
     public function viewAllCategories(){
 
-        $categories = KnowledgeBaseCategory::all();
+        $categories = KnowledgeBaseCategory::with('knowledgeBases')->get();
 
         return response()->json(['data' => $categories], 200);
     }
 
     public function viewSingleCategory($id){
 
-        $category = KnowledgeBaseCategory::find($id);
+        $category = KnowledgeBaseCategory::with('knowledgeBases')->find($id);
 
         if ($category) {
 
@@ -31,14 +31,14 @@ class KnowledgeBaseController extends Controller
 
     public function viewAllKnowledgeBase(){
 
-        $knowledgeBase = KnowledgeBase::all();
+        $knowledgeBase = KnowledgeBase::with('KnowledgeBaseCategory')->get();
 
         return response()->json(['data' => $knowledgeBase], 200);
     }
 
     public function viewSingleKnowledgeBase($id){
 
-        $knowledgeBase = KnowledgeBase::find($id);
+        $knowledgeBase = KnowledgeBase::with('KnowledgeBaseCategory')->find($id);
 
         if ($knowledgeBase) {
 

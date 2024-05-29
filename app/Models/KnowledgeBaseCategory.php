@@ -13,13 +13,14 @@ class KnowledgeBaseCategory extends Model
     protected $table = 'knowledgebase_categories';
     protected $primaryKey = 'knowledgebase_category_id';
 
-    protected $fillable =[
+    protected $fillable = [
         'knowledgebase_category_name',
         'knowledgebase_category_slug',
     ];
 
-    public function knowledgeBase()
+    // Define the relationship
+    public function knowledgeBases()
     {
-        return $this->hasMany(KnowledgeBase::class, 'knowledgebase_category_id', 'knowledgebase_category_id');
+        return $this->hasMany(KnowledgeBase::class, 'category_id', 'knowledgebase_category_id');
     }
 }
