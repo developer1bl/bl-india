@@ -37,6 +37,7 @@ use App\Http\Controllers\Api\CareerController;
 use App\Http\Controllers\Api\GalleryController;
 use App\Http\Controllers\Api\KnowledgebaseCategoryController;
 use App\Http\Controllers\Api\KnowledgeBaseController;
+use App\Http\Controllers\Api\NotificationCategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -221,6 +222,17 @@ Route::prefix('v1')->group(function () {
                     Route::post('/{productcategories}', 'update')->middleware(['checkRoleAndPermission:admin,edit_ProductCategory']);
                     Route::delete('/{productcategories}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_productCategory']);
                     Route::delete('/delete/selected-product-category', 'deleteSelectedProductCategory');
+                });
+            });
+
+            //notification category
+            Route::prefix('notification-category')->group(function(){
+                Route::controller(NotificationCategoryController::class)->group(function(){
+                    Route::get('/', 'index');
+                    Route::Post('/create', 'store');
+                    Route::get('/{category}', 'show');
+                    Route::Post('/update/{category}', 'update');
+                    Route::delete('/{category}', 'destroy');
                 });
             });
 

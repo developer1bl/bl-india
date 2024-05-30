@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\Frontend\ServicePageController;
 use App\Http\Controllers\Api\GalleryController;
 use App\Models\KnowledgeBaseCategory;
 use App\Helpers\DownloadBrochureHelper;
+use App\Http\Controllers\Api\Frontend\NotificationController;
 
 Route::prefix('v1')->group(function () {
 
@@ -140,6 +141,18 @@ Route::prefix('v1')->group(function () {
         Route::get('/', 'viewAllKnowledgeBase');
         //for all knowledge base articles
         Route::get('/{knowledgeBase}', 'viewSingleKnowledgeBase');
+    });
+
+    //Notifications
+    Route::group(['prefix' => 'notification', 'controller' => NotificationController::class], function () {
+        //get all notifications
+        Route::get('/', 'index');
+        //get single notification
+        Route::get('/{notice}', 'getSingleNotification');
+       //get all notifications category
+        Route::get('/category/all', 'getNotificationCategory');
+        //get single notification category
+        Route::get('/category/{category}', 'getSingleNotificationCategory');
     });
 
     //for unknown routes

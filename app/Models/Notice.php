@@ -30,6 +30,7 @@ class Notice extends Model
         'notice_status',
         'products_tag',
         'seo_other_details',
+        'notification_category_id',
     ];
 
     protected $casts = [
@@ -51,4 +52,10 @@ class Notice extends Model
         return $this->belongsToMany(Service::class, 'notice_service', 'notice_id', 'service_id')
                     ->withPivot('product_id');
     }
+
+     // Define the relationship with NotificationCategory
+     public function notificationCategory()
+     {
+         return $this->belongsTo(NotificationCategory::class, 'notification_category_id', 'notification_category_id');
+     }
 }

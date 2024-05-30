@@ -23,7 +23,7 @@ class NoticeController extends Controller
      */
     public function index()
     {
-        $notice = Notice::with('productCategories', 'notice_service')
+        $notice = Notice::with('productCategories', 'notice_service', 'notificationCategory')
                           ->orderByDesc('notice_id')
                           ->get();
 
@@ -53,6 +53,7 @@ class NoticeController extends Controller
             'seo_other_details' => 'nullable|string',
             'notice_img_id' => 'integer|exists:media,media_id',
             'notice_doc_id' => 'required|integer|exists:documents,document_id',
+            'category_id' => 'required|integer|exists:notification_categories,notification_category_id',
             'notice_category_options' => ['required','json',
                                          function ($attribute, $value, $fail){
 
@@ -128,6 +129,7 @@ class NoticeController extends Controller
         $data = [
             "notice_title" => $request->notice_title,
             "notice_slug" => $request->notice_slug,
+            'notification_category_id' => $request->category_id,
             "notice_content" => $request->notice_content,
             "notice_img_url" => $noticeImagePath,
             "notice_img_alt" => $request->notice_img_alt,

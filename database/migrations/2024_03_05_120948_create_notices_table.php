@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('notice_img_alt')->nullable();
             $table->longText('notice_content')->nullable();
             $table->unsignedBigInteger('service_id')->nullable();
+            $table->unsignedBigInteger('notification_category_id')->nullable();
             $table->string('seo_title')->nullable();
             $table->text('seo_description')->nullable();
             $table->text('seo_keywords')->nullable();
