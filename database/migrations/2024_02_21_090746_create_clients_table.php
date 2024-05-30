@@ -18,6 +18,7 @@ return new class extends Migration
             $table->boolean('is_email_verified')->default(false);
             $table->timestamp('email_verified_at')->nullable();
             $table->string('phone');
+            $table->string('country');
             $table->string('password')->nullable();
             $table->dateTime('login_at')->nullable()->comment('this field will be update everytime when the user is logged');
             $table->string('otp')->nullable()->comment('this field store the OTP at the time of login/register');

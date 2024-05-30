@@ -92,6 +92,7 @@ class RegisterController extends Controller
             'email' => 'required|email:rfc,dns|unique:clients',
             'phone' => 'required|numeric',
             'password' => 'required',
+            'country_code' => 'required',
         ]);
 
         //if the request have some validation errors
@@ -103,13 +104,32 @@ class RegisterController extends Controller
                                     ], 400);
         }
 
-        // create new client
-        $client = Client::create([
+
+        $countries = $request->country_code ?? null;
+
+        if ($countries) {
+            // Removing brackets and spaces from the string
+            $requestValue = str_replace(['[', ']', ' '], '', $countries);
+            // Exploding the string into an array
+            $requestArray = explode(',', $requestValue);
+            // Extracting values
+            $country = $requestArray[0];
+            $phonecode = $requestArray[1];
+        } else {
+            $country = null;
+            $phonecode = null;
+        }
+
+        $data = [
             'name' => $request->name,
             'email' => $request->email,
             'password' => $request->password,
-            'phone' => $request->phone,
-        ]);
+            'phone' => '+' . $phonecode . '-' . $request->phone,
+            'country' => $country,
+        ];
+       
+        // create new client
+        $client = Client::create($data);
 
         if (!empty($client)) {
 
