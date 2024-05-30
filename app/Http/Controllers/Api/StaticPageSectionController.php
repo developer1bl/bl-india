@@ -75,7 +75,7 @@ class StaticPageSectionController extends Controller
             'section_status' => true,
             'section_order' => $request->section_order
         ];
-
+        return response()->json([$data],200);
         $staticPageSection = StaticPageSection::create($data);
 
         if ($staticPageSection) {
