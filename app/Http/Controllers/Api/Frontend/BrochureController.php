@@ -90,7 +90,7 @@ class BrochureController extends Controller
         ];
 
         //Stornig the lead
-        // Leads::create($data);
+        Leads::create($data);
 
         if (!empty($request->service)) {
             //store service Id
@@ -120,7 +120,7 @@ class BrochureController extends Controller
 
             //send thanks mail to user
             if(!empty($data)){
-                
+
                 $data1 =[
                     'name' =>$data['name'],
                     'email' =>$data['email'],

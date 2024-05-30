@@ -38,6 +38,7 @@ class ServiceCategoryController extends Controller
             'service_category_slug' => 'required|string|max:255|unique:service_categories',
             'category_img_id' => 'nullable|integer|exists:media,media_id',
             'category_img_alt' => 'nullable|string|max:255',
+            'service_category_type' => 'boolean'
         ]);
 
         //if the request have some validation errors
@@ -63,6 +64,7 @@ class ServiceCategoryController extends Controller
             'service_category_slug' => $request->service_category_slug,
             'category_img_url' => $categoryImagPath,
             'category_img_alt' => $request->category_img_alt,
+            'service_category_type' => $request->category_img_alt
         ];
 
         $result = ServiceCategory::create($data);
@@ -169,6 +171,7 @@ class ServiceCategoryController extends Controller
                 ->whereNull('deleted_at')],
             'category_img_id' => 'nullable|integer|exists:media,media_id',
             'category_img_alt' => 'nullable|string|max:255',
+            'service_category_type' => 'boolean'
         ]);
 
         //if the request have some validation errors

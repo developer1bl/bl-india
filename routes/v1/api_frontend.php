@@ -27,7 +27,7 @@ Route::prefix('v1')->group(function () {
         //services routes
         Route::get('/section/services', [HomeController::class, 'getHomeServiceData']);
         Route::get('/service/{service}', [HomeController::class, 'getHomeSingleServiceData']);
-        Route::get('/service-all', [HomeController::class, 'getHomeAllServiceData']);
+        // Route::get('/service-all', [HomeController::class, 'getHomeAllServiceData']);
         //blogs routes
         Route::get('/section/blogs', [HomeController::class, 'getHomeBlogData']);
         Route::get('/section/workflow', [HomeController::class, 'getHomeWorkFlowData']);
