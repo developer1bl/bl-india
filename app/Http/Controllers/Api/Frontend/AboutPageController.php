@@ -35,19 +35,18 @@ class AboutPageController extends Controller
      * @param string $slug
      * @return \Illuminate\Http\Response
      */
-    public function getAboutSection(string $slug){
+    public function getAboutSectionData(string $slug){
 
-        $page = StaticPage::wherePage_name('about')
-                            ->wherePage_status(1)
-                            ->first();
-
-        $pageSection = StaticPageSection::where('section_slug', $slug)
-                                          ->where('section_status', 1)
-                                          ->where('static_page_id', $page->static_page_id)
-                                          ->first();
+        $pageSectionData = StaticPage::Select('static_page_sections.*')
+                                        ->join('static_page_sections', function($q){
+                                            $q->on('static_page_sections.static_page_section_id', 'static_pages.static_page_id');
+                                         })
+                                       ->where('static_pages.page_name', 'about')
+                                       ->where('static_page_sections.section_slug', $slug)
+                                       ->get();
 
         return response()->json([
-                                'data' => $pageSection ?? [],
+                                'data' => $pageSectionData ?? [],
                                 'success' => true,
                                 ], 200);
     }

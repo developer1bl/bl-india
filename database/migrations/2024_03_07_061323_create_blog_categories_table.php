@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('seo_keywords')->nullable();
             $table->longText('seo_other_details')->nullable();
             $table->boolean('blog_category_status')->default(true);
+            $table->boolean('blog_category_type')->default(false);
             $table->timestamps();
             $table->softDeletes();
         });

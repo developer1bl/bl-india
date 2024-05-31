@@ -23,7 +23,8 @@ class BlogCategory extends Model
         'seo_description',
         'seo_keywords',
         'seo_other_details',
-        'blog_category_status'
+        'blog_category_status',
+        'blog_category_type'
     ];
 
     protected $casts = [
