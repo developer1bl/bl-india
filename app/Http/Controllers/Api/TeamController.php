@@ -49,7 +49,7 @@ class TeamController extends Controller
         }
 
         //get image url path
-        $teamUserImagePath = MediaHelper::getMediaPath($request->image_id ?? null);
+        $teamUserImagePath = MediaHelper::getMediaPath($request->profile_id ?? null);
 
         //data array
         $data = [
