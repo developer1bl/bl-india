@@ -17,14 +17,15 @@ class ContactUsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function getContactDetails(){
+    public function getContactDetails()
+    {
 
         $contactInformation = ContactUs::all();
 
         return response()->json([
-                                'data' => $contactInformation ?? [],
-                                'success' => true
-                                ], 200);
+            'data' => $contactInformation ?? [],
+            'success' => true
+        ], 200);
     }
 
     /**
@@ -33,7 +34,8 @@ class ContactUsController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function CreateContactDetails(Request $request){
+    public function CreateContactDetails(Request $request)
+    {
 
         $validator = Validator::make($request->all(), [
             'page_tag_line' => 'required|string|max:255',
@@ -51,17 +53,17 @@ class ContactUsController extends Controller
         if ($validator->fails()) {
 
             return response()->json([
-                                    'success' => false,
-                                    'message' => $validator->messages()
-                                    ], 403);
+                'success' => false,
+                'message' => $validator->messages()
+            ], 403);
         }
 
         if (ContactUs::first()->exists()) {
 
             return response()->json([
-                                    'success' => true,
-                                    'message' => 'Contact already exists, you can only update it',
-                                    ], 403);
+                'success' => true,
+                'message' => 'Contact already exists, you can only update it',
+            ], 403);
         }
 
         $data = [
@@ -79,15 +81,15 @@ class ContactUsController extends Controller
         if ($result) {
 
             return response()->json([
-                                   'success' => true,
-                                   'message' => 'Contact details created successfully'
-                                    ], 201);
+                'success' => true,
+                'message' => 'Contact details created successfully'
+            ], 201);
         } else {
 
             return response()->json([
-                                   'success' => false,
-                                   'message' => 'Something went wrong, try again later'
-                                    ], 422);
+                'success' => false,
+                'message' => 'Something went wrong, try again later'
+            ], 422);
         }
     }
 
@@ -97,16 +99,17 @@ class ContactUsController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function UpdateContactDetails(Request $request, string $id){
+    public function UpdateContactDetails(Request $request, string $id)
+    {
 
         $contact = ContactUs::find($id);
 
         if (!$contact) {
 
             return response()->json([
-                                    'success' => false,
-                                    'message' => 'Contact details not found'
-                                    ], 404);
+                'success' => false,
+                'message' => 'Contact details not found'
+            ], 404);
         }
 
         $validator = Validator::make($request->all(), [
@@ -114,7 +117,7 @@ class ContactUsController extends Controller
             'page_description' => 'required|string',
             'address' => 'required|string|max:255',
             'company_email' => 'required|email|max:255',
-            'mobile_number' => ['required','json'],
+            'mobile_number' => ['required', 'json'],
             'office_number' => 'required|json',
             'feedback_person' => 'required|json',
         ]);
@@ -123,9 +126,9 @@ class ContactUsController extends Controller
         if ($validator->fails()) {
 
             return response()->json([
-                                    'success' => false,
-                                    'message' => $validator->messages()
-                                    ], 403);
+                'success' => false,
+                'message' => $validator->messages()
+            ], 403);
         }
 
         $data = [
@@ -143,15 +146,15 @@ class ContactUsController extends Controller
         if ($result) {
 
             return response()->json([
-                                    'success' => true,
-                                    'message' => 'Contact details updated successfully'
-                                    ], 201);
+                'success' => true,
+                'message' => 'Contact details updated successfully'
+            ], 201);
         } else {
 
             return response()->json([
-                                    'success' => false,
-                                    'message' => 'Something went wrong, try again later'
-                                    ], 422);
+                'success' => false,
+                'message' => 'Something went wrong, try again later'
+            ], 422);
         }
     }
 
@@ -161,14 +164,15 @@ class ContactUsController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function submitContactUsForm(Request $request){
+    public function submitContactUsForm(Request $request)
+    {
 
         $validator = Validator::make($request->all(), [
             'client_name' => 'required|string|max:255',
             'organization_name' => 'required|string|max:255',
-            'client_email' => ['required', 'email','max:20'],
+            'client_email' => ['required', 'email', 'max:20'],
             'country_code' => 'required|string|max:5',
-            'phone' => ['required', 'string','max:20'],
+            'phone' => ['required', 'string', 'max:20'],
             'service' => 'required|exists:services,service_id',
             'find_us' => 'nullable|string',
             'message' => 'nullable|string',
@@ -178,18 +182,18 @@ class ContactUsController extends Controller
         if ($validator->fails()) {
 
             return response()->json([
-                                    'success' => false,
-                                    'message' => $validator->messages()
-                                    ], 403);
+                'success' => false,
+                'message' => $validator->messages()
+            ], 403);
         }
 
         //get country code
         $country = getCountryNameByCountryCode($request->country_code);
 
-        if(!empty($country[0])){
+        if (!empty($country[0])) {
             $country = $country[0];
-            $phone ='+'.$request->country_code.'-'.$request->phone;
-        }else{
+            $phone = '+' . $request->country_code . '-' . $request->phone;
+        } else {
             $country = null;
             $phone = null;
         }
@@ -214,16 +218,16 @@ class ContactUsController extends Controller
 
         //send mail to the client
         // Message
-        $thanks = "<p style='font-family: Arial, Helvetica, sans-serif; font-size: 18px; color: #000;'>Hello ".$data['name'].",<br/>".
-        "Thank you for downloading our brochure for <b>".$service[0]."</b>!</p>".
-        "<p style='font-family: Arial, Helvetica, sans-serif; font-size: 18px; color: #000;'>We appreciate your interest in Export Approval, powered by Brand Liaison - a compliance consultant company offering comprehensive support to foreign manufacturers in obtaining required Indian approvals and certifications to export their products to India. Our Export Approval platform is designed to provide seamless assistance, ensuring that your products meet the required standards for successful international trade.</p>".
-        "<p style='font-family: Arial, Helvetica, sans-serif; font-size: 18px; color: #000;'>Our team has received your interest, and we want to assure you that we are here to assist you promptly. You can expect to hear from us within the next 6 working hours.</p>".
-        "<p style='font-family: Arial, Helvetica, sans-serif; font-size: 18px; color: #000;'>If you have any immediate questions or concerns, feel free to reach out to us at +91-9810363988.</p>".
-        "<p style='font-family: Arial, Helvetica, sans-serif; font-size: 18px; color: #000;'>Wishing you a great day ahead!</p>".
-        "<p style='font-family: Arial, Helvetica, sans-serif; font-size: 18px; color: #000;'>Best regards,<br>".
-        "Team Brand Liaison<br>".
-        "Contact No: +91-9250056788, +91-8130615678<br>".
-        "Email: info@bl-india.com</p>";
+        $thanks = "<p style='font-family: Arial, Helvetica, sans-serif; font-size: 18px; color: #000;'>Hello " . $data['name'] . ",<br/>" .
+            "Thank you for downloading our brochure for <b>" . $service[0] . "</b>!</p>" .
+            "<p style='font-family: Arial, Helvetica, sans-serif; font-size: 18px; color: #000;'>We appreciate your interest in Export Approval, powered by Brand Liaison - a compliance consultant company offering comprehensive support to foreign manufacturers in obtaining required Indian approvals and certifications to export their products to India. Our Export Approval platform is designed to provide seamless assistance, ensuring that your products meet the required standards for successful international trade.</p>" .
+            "<p style='font-family: Arial, Helvetica, sans-serif; font-size: 18px; color: #000;'>Our team has received your interest, and we want to assure you that we are here to assist you promptly. You can expect to hear from us within the next 6 working hours.</p>" .
+            "<p style='font-family: Arial, Helvetica, sans-serif; font-size: 18px; color: #000;'>If you have any immediate questions or concerns, feel free to reach out to us at +91-9810363988.</p>" .
+            "<p style='font-family: Arial, Helvetica, sans-serif; font-size: 18px; color: #000;'>Wishing you a great day ahead!</p>" .
+            "<p style='font-family: Arial, Helvetica, sans-serif; font-size: 18px; color: #000;'>Best regards,<br>" .
+            "Team Brand Liaison<br>" .
+            "Contact No: +91-9250056788, +91-8130615678<br>" .
+            "Email: info@bl-india.com</p>";
 
         $data1 = [
             'subject' => 'Your application is submitted',
@@ -232,23 +236,43 @@ class ContactUsController extends Controller
         ];
 
         //send mail to contact person
-        if(!empty($request->client_email))
-        {
+        if (!empty($request->client_email)) {
             Mail::to($request->client_email)->send(new ThanksMail($data1));
         }
 
         if ($result) {
 
             return response()->json([
-                                   'success' => true,
-                                   'message' => 'Form submitted successfully'
-                                    ], 201);
+                'success' => true,
+                'message' => 'Form submitted successfully'
+            ], 201);
         } else {
 
             return response()->json([
-                                   'success' => false,
-                                   'message' => 'Something went wrong, try again later'
-                                    ], 422);
+                'success' => false,
+                'message' => 'Something went wrong, try again later'
+            ], 422);
         }
+    }
+
+    /**
+     * this function will return the google map contents
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getGoogleMapContents()
+    {
+
+        $data = [
+            'lat' => '28.644800',
+            'lng' => '77.216721',
+            'zoom' => 15,
+            'googleMapsApiKey' => ''
+        ];
+
+        return response()->json([
+            'success' => true,
+            'data' => $data
+        ], 200);
     }
 }

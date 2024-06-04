@@ -94,6 +94,7 @@ Route::prefix('v1')->group(function () {
     Route::group(['prefix' => 'contact-us', 'controller' => ContactUsController::class], function () {
 
         Route::get('/', 'getContactDetails'); //get contact details
+        Route::get('/google-map', 'getGoogleMapContents'); //for google map display
         Route::post('/submit', 'submitContactUsForm'); //submit contact us form
     });
 
