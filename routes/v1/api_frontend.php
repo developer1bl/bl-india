@@ -119,9 +119,17 @@ Route::prefix('v1')->group(function () {
     //service page route
     Route::group(['prefix' => 'service', 'controller' => ServicePageController::class], function () {
 
-        Route::get('/service-category/{slug?}', 'getService'); //get service by category
-        Route::get('/intro-section/{service?}', 'getServiceIntroData'); //get single service
-        Route::get('/product-section', 'viewMandatoryProductList'); //get mandatory product
+        //get all service categories
+        Route::get('/service-category', 'getAllServiceCategories');
+        //get single service category
+        Route::get('/service-category/{category}', 'getSingleServiceCategory');
+        //get all services
+        Route::get('/', 'getAllServices');
+        //get single service
+        Route::get('/get/{service}', 'getSingleService');
+        //service detail page section
+        Route::get('/{service?}/service-section/{section?}', 'getServiceSectionDetails');
+
     });
 
     //careers
