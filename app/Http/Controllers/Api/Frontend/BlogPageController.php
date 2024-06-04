@@ -16,7 +16,7 @@ class BlogPageController extends Controller
      */
     public function getBlogs(){
 
-        $blog = Blog::paginate(10);
+        $blog = Blog::all();
 
         return response()->json([
                                 'data' => $blog ?? [],
