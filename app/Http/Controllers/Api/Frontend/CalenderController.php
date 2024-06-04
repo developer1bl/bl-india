@@ -8,7 +8,7 @@ use App\Models\Holiday;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpFoundation\Response;
 
 class CalenderController extends Controller
 {
@@ -21,15 +21,15 @@ class CalenderController extends Controller
     public function getHolidayListByMonth(string $month = null)
     {
         $holidayList = Holiday::select('holiday_id', 'holiday_name', 'holiday_date', 'holiday_type')
-                                ->when(!empty($month), function ($q) use ($month) {
-                                    $q->whereRaw('EXTRACT(MONTH FROM holiday_date) = ?', [$month]);
-                                })
-                                ->get();
+            ->when(!empty($month), function ($q) use ($month) {
+                $q->whereRaw('EXTRACT(MONTH FROM holiday_date) = ?', [$month]);
+            })
+            ->get();
 
         return response()->json([
-                                'data' => $holidayList ?? [],
-                                'success' => true,
-                                ], 200);
+            'data' => $holidayList ?? [],
+            'success' => true,
+        ], 200);
     }
 
     /**
@@ -42,27 +42,16 @@ class CalenderController extends Controller
     {
 
         $year = $year ?? now()->year;
+        
+        $pdf = PDF::loadView('pdf.calender', compact(['year']));
+        $pdfContent = $pdf->output();
 
-        //if directory is not exist then create a new directory for store pdf files
-        $pdfDirectory = storage_path('app/public/Calendar');
+        // Create a new response instance
+        $response = new Response();
+        $response->headers->set('Content-Type', 'application/pdf');
+        $response->headers->set('Content-Disposition', 'attachment; filename="document.pdf"');
+        $response->setContent($pdfContent);
 
-        if (!File::exists($pdfDirectory)) {
-            File::makeDirectory($pdfDirectory, 0755, true);
-        }
-
-        // Generate a unique filename
-        $filename = 'Brand Liaison Holiday list-' . $year . '.pdf';
-
-        $pdfDirectory = $pdfDirectory . '/' . $filename;
-
-        if (!Storage::exists($pdfDirectory)) {
-
-            $pdf = PDF::loadView('pdf.calender', compact(['year']));
-
-            // Store the PDF in the storage path
-            $pdf->save($pdfDirectory);
-        }
-
-        return $filename;
+        return $response;
     }
 }
