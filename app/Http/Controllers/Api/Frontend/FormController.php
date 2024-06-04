@@ -77,10 +77,18 @@ class FormController extends Controller
         //storing the leads
         $country = getCountryNameByCountryCode($request->country_code ?? null);
 
+        if(!empty($country[0])){
+            $country = $country[0];
+            $phone = '+'.$request->country_code.'-'.$request->phone_number;
+        }else{
+            $country = null;
+            $phone = null;
+        }
+
         $data = [
             'name' => $request->name,
-            'country' => $country[0],
-            'phone' => '+'.$request->country_code.'-'.$request->phone_number,
+            'country' => $country,
+            'phone' => $phone,
             'message' => $request->message,
             'status' => 'open',
             'ip_address' => $request->ip(),
