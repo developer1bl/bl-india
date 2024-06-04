@@ -73,20 +73,16 @@ class AboutPageController extends Controller
      */
     public function getFounderVoiceData(){
 
-        $founderVoice = "Lorem Ipsum is simply dummy text of the printing and typesetting
-                         industry. Lorem Ipsum has been the industry's standard dummy text
-                         ever since the 1500s, when an unknown printer took a galley of type
-                         and scrambled it to make a type specimen book.";
-
-        $founderName = "Rajesh Kumar";
-
-        $data = [
-            'founder_voice' => $founderVoice,
-            'founder_name' => $founderName,
-        ];
+        $pageSectionData = StaticPage::Select('static_page_sections.*')
+                                        ->join('static_page_sections', function($q){
+                                            $q->on('static_page_sections.static_page_section_id', 'static_pages.static_page_id');
+                                         })
+                                       ->where('static_pages.page_name', 'about')
+                                       ->where('static_page_sections.section_slug', 'about-founder-voice-section')
+                                       ->get();
 
         return response()->json([
-                                'data' => $data ?? [],
+                                'data' => $pageSectionData ?? [],
                                 'success' => true,
                                 ], 200);
     }
