@@ -8,6 +8,7 @@ use App\Models\Holiday;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class CalenderController extends Controller
 {
@@ -20,13 +21,13 @@ class CalenderController extends Controller
     public function getHolidayListByMonth(string $month = null)
     {
         $holidayList = Holiday::select('holiday_id', 'holiday_name', 'holiday_date', 'holiday_type')
-                                ->when(!empty($month) ,function($q) use($month){
-                                    $q->whereRaw('MONTH(holiday_date) = ?', [$month]);
+                                ->when(!empty($month), function ($q) use ($month) {
+                                    $q->whereRaw('EXTRACT(MONTH FROM holiday_date) = ?', [$month]);
                                 })
                                 ->get();
 
         return response()->json([
-                                'data' => $holidayList?? [],
+                                'data' => $holidayList ?? [],
                                 'success' => true,
                                 ], 200);
     }
@@ -37,7 +38,8 @@ class CalenderController extends Controller
      * @param string $year
      * @return Response
      */
-    public function downloadHolidayListOfYear(string $year = null){
+    public function downloadHolidayListOfYear(string $year = null)
+    {
 
         $year = $year ?? now()->year;
 
@@ -49,9 +51,9 @@ class CalenderController extends Controller
         }
 
         // Generate a unique filename
-        $filename = 'Brand Liaison Holiday list-'.$year.'.pdf';
+        $filename = 'Brand Liaison Holiday list-' . $year . '.pdf';
 
-        $pdfDirectory = $pdfDirectory .'/'. $filename;
+        $pdfDirectory = $pdfDirectory . '/' . $filename;
 
         if (!Storage::exists($pdfDirectory)) {
 
