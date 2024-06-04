@@ -186,12 +186,20 @@ class ContactUsController extends Controller
         //get country code
         $country = getCountryNameByCountryCode($request->country_code);
 
+        if(!empty($country[0])){
+            $country = $country[0];
+            $phone ='+'.$request->country_code.'-'.$request->phone;
+        }else{
+            $country = null;
+            $phone = null;
+        }
+
         $data = [
             'name' => $request->client_name,
             'organisation' => $request->organization_name,
             'email' => $request->client_email,
-            'country' => $country[0],
-            'phone' => '+'.$request->country_code.'-'.$request->phone,
+            'country' => $country,
+            'phone' => $phone,
             'service' => $request->service,
             'source' => $request->find_us ?? 'website',
             'message' => $request->message,
