@@ -15,9 +15,11 @@ use App\Http\Controllers\Api\Frontend\ServicePageController;
 use App\Http\Controllers\Api\GalleryController;
 use App\Models\KnowledgeBaseCategory;
 use App\Helpers\DownloadBrochureHelper;
+use App\Helpers\LanguageHelper;
 use App\Http\Controllers\Api\Frontend\NotificationController;
 use App\Http\Controllers\Api\Frontend\ProductController;
 use App\Http\Controllers\Api\Frontend\SocialMediaController;
+use Illuminate\Http\Request;
 
 Route::prefix('v1')->group(function () {
 
@@ -182,6 +184,30 @@ Route::prefix('v1')->group(function () {
         //get all social media
         Route::get('/', 'getSocialMedia');
     });
+
+    //language api
+   Route::prefix('language')->group(function(){
+    
+        Route::get('/', function(Request $request){
+
+            $language = LanguageHelper::getLanguageByRegion($request->ip() ?? null);
+
+            if (!empty($language)) {
+
+                return response()->json([
+                                        'success' => true,
+                                        'data' => $language
+                                        ]);
+            } else {
+
+                return response()->json([
+                                       'success' => false,
+                                       'message' => 'Language not found',
+                                        ]);
+            }
+
+        });
+   });
 
     //for unknown routes
     Route::get('/{any}', function () {

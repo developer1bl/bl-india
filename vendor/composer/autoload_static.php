@@ -40,6 +40,7 @@ class ComposerStaticInit9c491b8531eec05ba41a11d9276a5749
         'a1cfe24d14977df6878b9bf804af2d1c' => __DIR__ . '/..' . '/nunomaduro/collision/src/Adapters/Phpunit/Autoload.php',
         'ec07570ca5a812141189b1fa81503674' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Assert/Functions.php',
         '320163ac6b93aebe3dc25b60a0533d56' => __DIR__ . '/..' . '/spatie/laravel-ignition/src/helpers.php',
+        '1e298922c3e2134d42dcdb03e6d5f55a' => __DIR__ . '/..' . '/torann/geoip/src/helpers.php',
         '6dd93bb55118dda96730f9ab07f143c7' => __DIR__ . '/../..' . '/app/helpers/helper.php',
     );
 
@@ -55,6 +56,7 @@ class ComposerStaticInit9c491b8531eec05ba41a11d9276a5749
         ),
         'T' => 
         array (
+            'Torann\\GeoIP\\' => 13,
             'TijsVerkoyen\\CssToInlineStyles\\' => 31,
             'Tests\\' => 6,
             'Termwind\\' => 9,
@@ -205,6 +207,10 @@ class ComposerStaticInit9c491b8531eec05ba41a11d9276a5749
         'Webmozart\\Assert\\' => 
         array (
             0 => __DIR__ . '/..' . '/webmozart/assert/src',
+        ),
+        'Torann\\GeoIP\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/torann/geoip/src',
         ),
         'TijsVerkoyen\\CssToInlineStyles\\' => 
         array (
@@ -592,6 +598,7 @@ class ComposerStaticInit9c491b8531eec05ba41a11d9276a5749
         'App\\Exceptions\\UserExistPreviouslyException' => __DIR__ . '/../..' . '/app/Exceptions/UserExistPreviouslyException.php',
         'App\\Helpers\\DocumentHelper' => __DIR__ . '/../..' . '/app/helpers/DocumentHelper.php',
         'App\\Helpers\\DownloadBrochureHelper' => __DIR__ . '/../..' . '/app/helpers/DownloadBrochureHelper.php',
+        'App\\Helpers\\LanguageHelper' => __DIR__ . '/../..' . '/app/helpers/LanguageHelper.php',
         'App\\Helpers\\MediaHelper' => __DIR__ . '/../..' . '/app/helpers/MediaHelper.php',
         'App\\Http\\Controllers\\Api\\AssociateController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/AssociateController.php',
         'App\\Http\\Controllers\\Api\\Auth\\EmailVerifyController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/Auth/EmailVerifyController.php',
@@ -616,11 +623,15 @@ class ComposerStaticInit9c491b8531eec05ba41a11d9276a5749
         'App\\Http\\Controllers\\Api\\Frontend\\FormController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/Frontend/FormController.php',
         'App\\Http\\Controllers\\Api\\Frontend\\HomeController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/Frontend/HomeController.php',
         'App\\Http\\Controllers\\Api\\Frontend\\KnowledgeBaseController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/Frontend/KnowledgeBaseController.php',
+        'App\\Http\\Controllers\\Api\\Frontend\\NotificationController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/Frontend/NotificationController.php',
+        'App\\Http\\Controllers\\Api\\Frontend\\ProductController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/Frontend/ProductController.php',
         'App\\Http\\Controllers\\Api\\Frontend\\ServicePageController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/Frontend/ServicePageController.php',
+        'App\\Http\\Controllers\\Api\\Frontend\\SocialMediaController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/Frontend/SocialMediaController.php',
         'App\\Http\\Controllers\\Api\\GalleryController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/GalleryController.php',
         'App\\Http\\Controllers\\Api\\HolidayController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/HolidayController.php',
         'App\\Http\\Controllers\\Api\\KnowledgeBaseController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/KnowledgeBaseController.php',
         'App\\Http\\Controllers\\Api\\NoticeController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/NoticeController.php',
+        'App\\Http\\Controllers\\Api\\NotificationCategoryController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/NotificationCategoryController.php',
         'App\\Http\\Controllers\\Api\\PermissionController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/PermissionController.php',
         'App\\Http\\Controllers\\Api\\ProductCatrgoryController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/ProductCatrgoryController.php',
         'App\\Http\\Controllers\\Api\\ProductController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/ProductController.php',
@@ -628,6 +639,7 @@ class ComposerStaticInit9c491b8531eec05ba41a11d9276a5749
         'App\\Http\\Controllers\\Api\\ServiceCategoryController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/ServiceCategoryController.php',
         'App\\Http\\Controllers\\Api\\ServiceController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/ServiceController.php',
         'App\\Http\\Controllers\\Api\\ServiceSectionController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/ServiceSectionController.php',
+        'App\\Http\\Controllers\\Api\\SocialMediaController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/SocialMediaController.php',
         'App\\Http\\Controllers\\Api\\StaticPageConroller' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/StaticPageConroller.php',
         'App\\Http\\Controllers\\Api\\StaticPageSectionController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/StaticPageSectionController.php',
         'App\\Http\\Controllers\\Api\\TeamController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/TeamController.php',
@@ -672,6 +684,7 @@ class ComposerStaticInit9c491b8531eec05ba41a11d9276a5749
         'App\\Models\\Leads' => __DIR__ . '/../..' . '/app/Models/Leads.php',
         'App\\Models\\Media' => __DIR__ . '/../..' . '/app/Models/Media.php',
         'App\\Models\\Notice' => __DIR__ . '/../..' . '/app/Models/Notice.php',
+        'App\\Models\\NotificationCategory' => __DIR__ . '/../..' . '/app/Models/NotificationCategory.php',
         'App\\Models\\PartnerForm' => __DIR__ . '/../..' . '/app/Models/PartnerForm.php',
         'App\\Models\\PasswordReset' => __DIR__ . '/../..' . '/app/Models/PasswordReset.php',
         'App\\Models\\Permission' => __DIR__ . '/../..' . '/app/Models/Permission.php',
@@ -682,6 +695,7 @@ class ComposerStaticInit9c491b8531eec05ba41a11d9276a5749
         'App\\Models\\Service' => __DIR__ . '/../..' . '/app/Models/Service.php',
         'App\\Models\\ServiceCategory' => __DIR__ . '/../..' . '/app/Models/ServiceCategory.php',
         'App\\Models\\ServiceSection' => __DIR__ . '/../..' . '/app/Models/ServiceSection.php',
+        'App\\Models\\SocialMedia' => __DIR__ . '/../..' . '/app/Models/SocialMedia.php',
         'App\\Models\\StaticPage' => __DIR__ . '/../..' . '/app/Models/StaticPage.php',
         'App\\Models\\StaticPageSection' => __DIR__ . '/../..' . '/app/Models/StaticPageSection.php',
         'App\\Models\\Team' => __DIR__ . '/../..' . '/app/Models/Team.php',
@@ -7222,6 +7236,22 @@ class ComposerStaticInit9c491b8531eec05ba41a11d9276a5749
         'TijsVerkoyen\\CssToInlineStyles\\Css\\Property\\Property' => __DIR__ . '/..' . '/tijsverkoyen/css-to-inline-styles/src/Css/Property/Property.php',
         'TijsVerkoyen\\CssToInlineStyles\\Css\\Rule\\Processor' => __DIR__ . '/..' . '/tijsverkoyen/css-to-inline-styles/src/Css/Rule/Processor.php',
         'TijsVerkoyen\\CssToInlineStyles\\Css\\Rule\\Rule' => __DIR__ . '/..' . '/tijsverkoyen/css-to-inline-styles/src/Css/Rule/Rule.php',
+        'Torann\\GeoIP\\Cache' => __DIR__ . '/..' . '/torann/geoip/src/Cache.php',
+        'Torann\\GeoIP\\Console\\Clear' => __DIR__ . '/..' . '/torann/geoip/src/Console/Clear.php',
+        'Torann\\GeoIP\\Console\\Update' => __DIR__ . '/..' . '/torann/geoip/src/Console/Update.php',
+        'Torann\\GeoIP\\Contracts\\ServiceInterface' => __DIR__ . '/..' . '/torann/geoip/src/Contracts/ServiceInterface.php',
+        'Torann\\GeoIP\\Facades\\GeoIP' => __DIR__ . '/..' . '/torann/geoip/src/Facades/GeoIP.php',
+        'Torann\\GeoIP\\GeoIP' => __DIR__ . '/..' . '/torann/geoip/src/GeoIP.php',
+        'Torann\\GeoIP\\GeoIPServiceProvider' => __DIR__ . '/..' . '/torann/geoip/src/GeoIPServiceProvider.php',
+        'Torann\\GeoIP\\Location' => __DIR__ . '/..' . '/torann/geoip/src/Location.php',
+        'Torann\\GeoIP\\Services\\AbstractService' => __DIR__ . '/..' . '/torann/geoip/src/Services/AbstractService.php',
+        'Torann\\GeoIP\\Services\\IPApi' => __DIR__ . '/..' . '/torann/geoip/src/Services/IPApi.php',
+        'Torann\\GeoIP\\Services\\IPData' => __DIR__ . '/..' . '/torann/geoip/src/Services/IPData.php',
+        'Torann\\GeoIP\\Services\\IPFinder' => __DIR__ . '/..' . '/torann/geoip/src/Services/IPFinder.php',
+        'Torann\\GeoIP\\Services\\IPGeoLocation' => __DIR__ . '/..' . '/torann/geoip/src/Services/IPGeoLocation.php',
+        'Torann\\GeoIP\\Services\\MaxMindDatabase' => __DIR__ . '/..' . '/torann/geoip/src/Services/MaxMindDatabase.php',
+        'Torann\\GeoIP\\Services\\MaxMindWebService' => __DIR__ . '/..' . '/torann/geoip/src/Services/MaxMindWebService.php',
+        'Torann\\GeoIP\\Support\\HttpClient' => __DIR__ . '/..' . '/torann/geoip/src/Support/HttpClient.php',
         'UnhandledMatchError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/UnhandledMatchError.php',
         'ValueError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/ValueError.php',
         'Webmozart\\Assert\\Assert' => __DIR__ . '/..' . '/webmozart/assert/src/Assert.php',
