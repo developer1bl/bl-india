@@ -11,17 +11,19 @@ use App\Exceptions\UserExistPreviouslyException;
 use App\Models\Service;
 use App\Models\ProductCategories;
 use App\Models\Product;
+use App\Helpers\MediaHelper;
+use App\Helpers\DocumentHelper;
 
 class NoticeController extends Controller
 {
     /**
      * Display a listing of the resource.
-     * 
+     *
      * @return Response
      */
     public function index()
     {
-        $notice = Notice::with('services', 'image', 'documents', 'productCategories', 'services_product')
+        $notice = Notice::with('productCategories', 'notice_service', 'notificationCategory')
                           ->orderByDesc('notice_id')
                           ->get();
 
@@ -33,14 +35,14 @@ class NoticeController extends Controller
 
     /**
      * Show the form for creating a new resource.
-     * 
+     *
      * @param Request $request
      * @return Response
      */
     public function create(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'notice_title' => ['required', 'string', 'max:255', Rule::unique('notices', 'notice_title')->whereNull('deleted_at')],
+            'notice_title' => ['required', 'string', 'max:255'],
             'notice_slug' => ['required', 'string', 'max:255', Rule::unique('notices', 'notice_slug')->whereNull('deleted_at')],
             'notice_content' => 'nullable|string',
             'notice_img_alt' => 'nullable|string',
@@ -49,13 +51,14 @@ class NoticeController extends Controller
             'seo_keywords' => 'nullable|string',
             'notice_status' => 'boolean',
             'seo_other_details' => 'nullable|string',
-            'notice_image_id' => 'integer|exists:media,media_id',
-            'notice_document_id' => 'integer|exists:documents,document_id',
+            'notice_img_id' => 'integer|exists:media,media_id',
+            'notice_doc_id' => 'required|integer|exists:documents,document_id',
+            'category_id' => 'required|integer|exists:notification_categories,notification_category_id',
             'notice_category_options' => ['required','json',
                                          function ($attribute, $value, $fail){
-                                            
+
                                             $notice_option = json_decode($value);
-                                            
+
                                             if(isset($notice_option[0]->option))
                                             {
                                                 if(!in_array($notice_option[0]->option, ['service', 'product category'])){
@@ -84,15 +87,15 @@ class NoticeController extends Controller
                                                 }
 
                                                 if (isset($notice_option[0]->product_id)) {
-                                                
+
                                                     foreach ($notice_option[0]->product_id as $key => $value) {
-                                                           
+
                                                         $product = Product::find($value);
 
                                                         if ($product === null) {
                                                             $fail('Selected product does not exist.');
                                                         }
-                                                    } 
+                                                    }
                                                 }
                                             }
 
@@ -111,25 +114,29 @@ class NoticeController extends Controller
         }
 
         if (Notice::withTrashed()
-                    ->where('notice_title',$request->notice_title)
                     ->orWhere('notice_slug', $request->notice_slug)
-                    ->exists()) 
+                    ->exists())
         {
-            throw new UserExistPreviouslyException('Oops! It appears that the chosen Notice Title Name or slug is already in use. Please select a different one and try again');
+            throw new UserExistPreviouslyException('Oops! It appears that the chosen Notice slug is already in use. Please select a different one and try again');
         }
-        
+
         $product_tags = explode(',', $request->products_tag);
+
+        //get image url
+        $noticeImagePath = MediaHelper::getMediaPath($request->notice_img_id ?? null);
+        $noticeDocUrl = DocumentHelper::getDocUrl($request->notice_doc_id ?? null);
 
         $data = [
             "notice_title" => $request->notice_title,
             "notice_slug" => $request->notice_slug,
+            'notification_category_id' => $request->category_id,
             "notice_content" => $request->notice_content,
-            "notice_image_id" => $request->notice_image_id,
+            "notice_img_url" => $noticeImagePath,
             "notice_img_alt" => $request->notice_img_alt,
             "seo_title" => $request->seo_title,
             "seo_description" => $request->seo_description,
             "seo_keywords" => $request->seo_keywords,
-            "notice_document_id" => $request->notice_document_id,
+            "notice_doc_url" => $noticeDocUrl,
             "products_tag" => json_encode($product_tags),
             "seo_other_details" => $request->seo_other_details,
         ];
@@ -140,21 +147,22 @@ class NoticeController extends Controller
 
         if (!empty($noticeOptionData[0])) {
 
-            $optionId = $noticeOptionData[0]->option_id; 
+            $optionId = $noticeOptionData[0]->option_id;
 
             //for product category
             if($noticeOptionData[0]->option === 'product category'){
-                
+
                 foreach ($noticeOptionData[0]->product_id as $key => $value) {
-                    $notice->productCategories()->attach($optionId, ['product_id' => $value]);           
+                    $notice->productCategories()->attach($optionId, ['product_id' => $value]);
                 }
             }
 
             //for service
             if($noticeOptionData[0]->option === 'service'){
-                
+
                 foreach ($noticeOptionData[0]->product_id as $key => $value) {
-                    $notice->services_product()->attach($optionId, ['product_id' => $value]);           
+
+                    $notice->notice_service()->attach($optionId, ['product_id' => $value]);
                 }
             }
         }
@@ -173,13 +181,13 @@ class NoticeController extends Controller
                                     ], 403);
         }
         if ($notice) {
-            
+
             return response()->json([
                                     'success' => true,
                                     'message' => 'Notice created successfully'
                                     ], 202);
         } else {
-            
+
             return response()->json([
                                     'success' => false,
                                     'message' => 'Something went wrong, please try again later'
@@ -190,7 +198,7 @@ class NoticeController extends Controller
 
     /**
      * store relation data.
-     * 
+     *
      * @param string $request
      * @param Notice $id
      * @return response
@@ -202,7 +210,7 @@ class NoticeController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     * 
+     *
      * @param string $request
      * @return response
      */
@@ -215,13 +223,13 @@ class NoticeController extends Controller
             $result = $notice->restore();
 
             if ($result) {
-                
+
                 return response()->json([
                                         'success' => true,
                                         'message' => 'Notice restored successfully'
                                         ], 202);
             } else {
-                
+
                 return response()->json([
                                         'success' => false,
                                         'message' => 'Something went wrong, please try again later'
@@ -229,7 +237,7 @@ class NoticeController extends Controller
             }
 
         } else {
-            
+
             return response()->json([
                                    'success' => false,
                                    'message' => 'Notice not found'
@@ -245,7 +253,7 @@ class NoticeController extends Controller
         $notice = Notice::find($id);
 
         if ($notice) {
-            
+
             return response()->json([
                                     'data' => $notice,
                                     'success' => true,
@@ -271,7 +279,7 @@ class NoticeController extends Controller
 
     /**
      * Update the specified resource in storage.
-     * 
+     *
      */
     public function update(Request $request, string $id)
     {
@@ -285,9 +293,9 @@ class NoticeController extends Controller
                                     'message' => 'Notice not found'
                                     ], 404);
         }
-        
+
         $validator = Validator::make($request->all(), [
-            'notice_title' => ['required', 'string', 'max:255', Rule::unique('notices', 'notice_title')->ignore($id, 'notice_id')],
+            'notice_title' => ['required', 'string', 'max:255'],
             'notice_slug' => ['required', 'string', 'max:255', Rule::unique('notices', 'notice_slug')->ignore($id, 'notice_id')],
             'notice_content' => 'nullable|string',
             'service_id' => 'integer|exists:services,service_id',
@@ -310,27 +318,27 @@ class NoticeController extends Controller
                                     'message' => $validator->messages()
                                     ], 403);
         }
-  
+
         $result = $notice->update($request->all());
 
         if ($result) {
-            
+
             return response()->json([
                                     'success' => true,
                                     'message' => 'Notice updated successfully'
                                     ], 202);
         } else {
-           
+
             return response()->json([
                                     'success' => false,
                                     'message' => 'Something went wrong, please try again later'
                                     ], 422);
-        }   
+        }
     }
 
     /**
      * Remove the specified resource from storage.
-     * 
+     *
      * @param int $id
      * @return response
      */
@@ -339,7 +347,7 @@ class NoticeController extends Controller
         $notice = Notice::find($id);
 
         if ($notice) {
-            
+
             $notice->delete();
 
             return response()->json([
@@ -347,11 +355,48 @@ class NoticeController extends Controller
                                     'message' => 'Notice deleted successfully'
                                     ], 202);
         } else {
-            
+
             return response()->json([
                                     'success' => false,
                                     'message' => 'Notice not found'
                                     ], 404);
+        }
+    }
+
+     /**
+     * Remove the specified resource from storage.
+     *
+     * @param Request $request
+     * @return Response
+     *
+     **/
+    public function deleteSelectedNotice(Request $request)
+    {
+        $notice_ids = explode(',', $request->input('notice_ids'));
+
+        if (!empty($notice_ids)) {
+
+            if (Notice::whereIn('notice_id', $notice_ids)->exists()) {
+
+                Notice::whereIn('notice_id', $notice_ids)->delete();
+
+                return response()->json([
+                    'success' => true,
+                    'message' => "All Selected Notice deleted successfully",
+                ], 200);
+            } else {
+
+                return response()->json([
+                    'success' => false,
+                    'message' => "Selected Notice not found",
+                ], 404);
+            }
+        } else {
+
+            return response()->json([
+                'success' => false,
+                'message' => "No Notice selected",
+            ], 404);
         }
     }
 }

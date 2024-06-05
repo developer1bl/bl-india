@@ -45,7 +45,7 @@ class RoleController extends Controller
 
         if (Role::withTrashed()
                   ->where('name', $request->name)
-                  ->exists()) 
+                  ->exists())
         {
             throw new UserExistPreviouslyException('Oops! It appears that the chosen Rule Name is already in use. Please select a different one and try again');
         }
@@ -70,16 +70,16 @@ class RoleController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     * 
+     *
      * @param string $request
      * @return response object
      */
     public function restore(string $request)
     {
         $role = Role::withTrashed(true)->whereName($request)->first();
-        
+
         if ($role) {
-            
+
             $role->restore();
 
             return response()->json([
@@ -87,12 +87,12 @@ class RoleController extends Controller
                                   'message' => 'Role restored successfully'
                                     ], 200);
         } else {
-            
+
             return response()->json([
                                   'success' => false,
                                   'message' => 'Role not found'
                                     ], 404);
-        }        
+        }
     }
 
     /**
@@ -110,7 +110,7 @@ class RoleController extends Controller
                                     'message' => ''
                                     ], 200);
         } else {
-            
+
             return response()->json([
                                     'data' => [],
                                     'success' => false,
@@ -148,14 +148,14 @@ class RoleController extends Controller
         }
 
         $role = Role::find($id);
-      
+
         if($role){
 
             $result = $role->update([
                                     'name' => $request->name,
                                     'is_active' => $request->is_active
                                     ]);
-       
+
             if ($result) {
 
                 return response()->json([
@@ -163,7 +163,7 @@ class RoleController extends Controller
                                         'message' => 'Role Updated successfully'
                                         ], 201);
             } else {
-                
+
                 return response()->json([
                                         'success' => false,
                                         'message' => 'Something went wrong'
@@ -184,7 +184,7 @@ class RoleController extends Controller
     public function destroy(string $id)
     {
         $role = Role::find($id);
-    
+
         if ($role) {
 
             $role->update(['is_active' => false]);
@@ -196,11 +196,49 @@ class RoleController extends Controller
                                     ], 202);
 
         } else {
-           
+
             return response()->json([
                                     'success' => false,
                                     'message' => 'Role not found'
                                     ], 404);
+        }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function deleteSelectedRole(Request $request){
+
+        $role_Ids = explode(',', $request->input('role_ids'));
+
+        if(!empty($role_Ids)){
+
+            if (Role::whereIn('id', $role_Ids)->exists()) {
+
+                Role::whereIn('id', $role_Ids)->delete();
+
+                return response()->json([
+                                        'success' => true,
+                                        'message' => "All Selected role deleted successfully",
+                                        ],200);
+            } else {
+
+                return response()->json([
+                                        'success' => false,
+                                        'message' => "Selected role not found",
+                                        ],404);
+            }
+
+        }else {
+
+            return response()->json([
+                                    'success' => false,
+                                    'message' => "No role selected",
+                                    ],404);
+
         }
     }
 }

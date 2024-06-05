@@ -14,7 +14,7 @@ class OtpController extends Controller
 {
     /**
      * authClientByOTP() this function is used to authenticate a user based on OTP
-     * 
+     *
      * @param Request $request
      * @return Response
      */
@@ -51,20 +51,20 @@ class OtpController extends Controller
             }
 
             $client  = Client::where((string)$authByField, $authByValue)
-                               ->whereDeleted_at(null) 
+                               ->whereDeleted_at(null)
                                ->first();
-                              
+
             if (!empty($client)) {
 
                 //check otp validity
                 $otpValidTill = Carbon::parse($client->otp_verify_till_valid)->format('Y-m-d');
                 $now = Carbon::now();
 
-                //if the otp genrated date is today 
+                //if the otp generated date is today
                 if ($now >= $otpValidTill) {
                     //here we check if the otp request mac address is same as the current device
-                   
-                    //now we are comparing the otp 
+
+                    //now we are comparing the otp
                     if ($request->otp == $client->otp) {
 
                         //update otp related fields and set to null
@@ -127,7 +127,7 @@ class OtpController extends Controller
 
     /**
      * resendOTP() this function is used to resend OTP
-     * 
+     *
      * @param Request $request
      * @return Response
      */
@@ -163,7 +163,7 @@ class OtpController extends Controller
             }
 
             $client = Client::where((string)$sendOption, $content)
-                              ->whereDeleted_at(null)  
+                              ->whereDeleted_at(null)
                               ->first();
 
             if(empty($client)){
@@ -173,37 +173,37 @@ class OtpController extends Controller
                                         'message' => 'Client not found, with this '.$sendOption
                                         ], 404);
             }
-            
+
             if (!empty($client) && !empty($sendOption) && $sendOption == 'email') {
-                
+
                 if (!empty($client)) {
-                    //create a random 4 digits intiger no. 
+                    //create a random 4 digits intiger no.
                     $randomNumber = random_int(1000, 9999);
-                   
+
                     $client->update([
                         'otp' => $randomNumber,
                         'otp_generated_at' => now(),
                         'otp_generated_address' => '',
                         'otp_verify_till_valid' => Carbon::now()->addMinutes(5),
                     ]);
-        
+
                     $data = [
                         'user' => $client,
                         'subject' => 'Verification mail',
                         'body' => 'Please verify your OTP',
                         'otp' => $randomNumber
                     ];
-        
+
                     //return $user;
                     Mail::to($client->email)->send(new SendMails($data));
-        
+
                     return response()->json([
                                             'success' => true,
                                             'message' => 'OTP has been sent to your email address'
                                             ], 201);
-        
+
                 } else {
-        
+
                     return response()->json([
                                             'success' => false,
                                             'message' => 'Please check your Cridentials, something is wrong.'
@@ -217,7 +217,7 @@ class OtpController extends Controller
                                         'message' => 'Client not found'
                                         ], 404);
             }
-            
+
         } else {
 
             return response()->json([

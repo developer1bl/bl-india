@@ -20,41 +20,26 @@ class Notice extends Model
     protected $fillable = [
         'notice_title',
         'notice_slug',
-        'notice_image_id',
+        'notice_img_url',
         'notice_img_alt',
         'notice_content',
         'seo_title',
         'seo_description',
         'seo_keywords',
-        'notice_document_id',
+        'notice_doc_url',
         'notice_status',
         'products_tag',
         'seo_other_details',
+        'notification_category_id',
     ];
 
     protected $casts = [
-        'notice_status' => 'boolean',
+        // 'notice_status' => 'boolean',
         'products_tag' => 'json',
         'notice_image_id' => 'integer',
         'notice_document_id' => 'integer',
         'notice_order' => 'integer',
     ];
-
-    public function services()
-    {
-        return $this->belongsTo(Service::class, 'service_id', 'service_id')
-                    ->with('products');
-    }
-
-    public function image()
-    {
-        return $this->belongsTo(Media::class, 'notice_image_id');
-    }
-
-    public function documents()
-    {
-        return $this->hasOne(Document::class, 'document_id');
-    }
 
     public function productCategories()
     {
@@ -62,9 +47,15 @@ class Notice extends Model
                     ->withPivot('product_id');
     }
 
-    public function services_product()
+    public function notice_service()
     {
         return $this->belongsToMany(Service::class, 'notice_service', 'notice_id', 'service_id')
                     ->withPivot('product_id');
     }
+
+     // Define the relationship with NotificationCategory
+     public function notificationCategory()
+     {
+         return $this->belongsTo(NotificationCategory::class, 'notification_category_id', 'notification_category_id');
+     }
 }

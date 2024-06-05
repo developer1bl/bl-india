@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\ProductCategories;
 use App\Models\Service;
-use App\Models\Media;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Product extends Model
 {
@@ -21,7 +21,7 @@ class Product extends Model
     protected $fillable = [
         'product_name',
         'product_slug',
-        'product_image_id',
+        'product_img_url',
         'product_technical_name',
         'product_img_alt',
         'product_compliance',
@@ -34,24 +34,30 @@ class Product extends Model
     ];
 
     protected $casts = [
-        'product_status' => 'boolean',
+        // 'product_status' => 'boolean',
         'product_order' => 'integer',
-        'product_image' => 'array',
+        'product_content' => 'json',
     ];
+
+     /**
+     * Interact with the faqs
+     */
+    protected function productContent(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => json_decode($value),
+            set: fn ($value) => json_encode($value),
+        );
+    }
 
     public function productCategories()
     {
         return $this->belongsToMany(ProductCategories::class, 'product_product_category', 'product_id', 'product_category_id');
     }
 
-    public function services()
+    public function productService()
     {
         return $this->belongsToMany(Service::class, 'product_services', 'product_id', 'service_id')
                      ->withPivot('service_type', 'service_compliance');
-    }
-
-    public function image()
-    {
-        return $this->belongsTo(Media::class, 'product_image_id');
     }
 }

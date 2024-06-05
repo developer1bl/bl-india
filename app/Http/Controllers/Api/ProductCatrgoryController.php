@@ -16,7 +16,9 @@ class ProductCatrgoryController extends Controller
      */
     public function index()
     {
-        $product_category = ProductCategories::orderByDesc('product_category_id')->get();
+        $product_category = ProductCategories::with('products')
+                                               ->orderByDesc('product_category_id')
+                                               ->get();
 
         return response()->json([
                                 'data'=> $product_category,
@@ -28,11 +30,11 @@ class ProductCatrgoryController extends Controller
      * Show the form for creating a new resource.
      */
     public function create(Request $request)
-    {   
+    {
         $validator = Validator::make($request->all(), [
-            'product_category_name' => ['required', 'string', 'max:150', Rule::unique('product_categories', 'product_category_name')->whereNull('deleted_at')],
+            'product_category_name' => ['required', 'string', 'max:150'],
             'product_category_slug' => ['required', 'string', 'max:255', Rule::unique('product_categories', 'product_category_slug')->whereNull('deleted_at')],
-            'product_category_content' => ['nullable', 'string'],
+            'product_category_content' => ['nullable'],
             'seo_title' => ['nullable', 'string'],
             'seo_description' => ['nullable', 'string'],
             'seo_keywords' => ['nullable', 'string'],
@@ -48,13 +50,12 @@ class ProductCatrgoryController extends Controller
                                     'message' => $validator->messages()
                                     ], 403);
         }
-        
+
         if (ProductCategories::withTrashed()
-                                ->where('product_category_name',$request->product_category_name)
-                                ->orWhere('product_category_slug', $request->product_category_slug)
-                                ->exists()) 
+                                ->Where('product_category_slug', $request->product_category_slug)
+                                ->exists())
         {
-            throw new UserExistPreviouslyException('Oops! It appears that the chosen Product Category Name or slug is already in use. Please select a different one and try again');
+            throw new UserExistPreviouslyException('Oops! It appears that the chosen Product Category slug is already in use. Please select a different one and try again');
         }
 
         $product_category = ProductCategories::create($request->all());
@@ -66,7 +67,7 @@ class ProductCatrgoryController extends Controller
                                     'message' => 'Product Category created successfully'
                                     ], 201);
         } else {
-        
+
             return response()->json([
                                     'success' => false,
                                     'message' => 'Something went wrong'
@@ -76,16 +77,18 @@ class ProductCatrgoryController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     * 
+     *
      *  @param string $request
      *  @return Response
      */
     public function restore(string $request)
     {
-        $service = ProductCategories::withTrashed(true)->whereProduct_category_name($request)->first();
-        
+        $service = ProductCategories::withTrashed(true)
+                                      ->whereProduct_category_name($request)
+                                      ->first();
+
         if ($service) {
-            
+
             $service->restore();
 
             return response()->json([
@@ -93,7 +96,7 @@ class ProductCatrgoryController extends Controller
                                     'message' => 'Product category restored successfully'
                                     ], 200);
         } else {
-            
+
             return response()->json([
                                     'success' => false,
                                     'message' => 'Product category not found'
@@ -116,14 +119,14 @@ class ProductCatrgoryController extends Controller
                                     'success' => true
                                     ],200);
         } else {
-            
+
             return response()->json([
                                     'data'=> [],
                                     'message' => 'No such product category found',
                                     'success' => false
                                     ],404);
         }
-        
+
     }
 
     /**
@@ -142,7 +145,7 @@ class ProductCatrgoryController extends Controller
         $productCategory = ProductCategories::find($id);
 
         if (!$productCategory) {
-            
+
             return response()->json([
                                     'message' => 'No such product category found',
                                     'success' => false
@@ -150,9 +153,9 @@ class ProductCatrgoryController extends Controller
         }
 
         $validator = Validator::make($request->all(),[
-            'product_category_name' => ['required', 'string', 'max:150', Rule::unique('product_categories', 'product_category_name')->ignore($id, 'product_category_id')],
+            'product_category_name' => ['required', 'string', 'max:150'],
             'product_category_slug' => ['required', 'string', 'max:255', Rule::unique('product_categories', 'product_category_slug')->ignore($id, 'product_category_id')],
-            'product_category_content' => ['nullable', 'string'],
+            'product_category_content' => ['nullable'],
             'seo_title' => ['nullable', 'string'],
             'seo_description' => ['nullable', 'string'],
             'seo_keywords' => ['nullable', 'string'],
@@ -193,7 +196,7 @@ class ProductCatrgoryController extends Controller
     {
         $productCategory = ProductCategories::find($id);
 
-        
+
         if ($productCategory) {
 
             $productCategory->delete();
@@ -202,7 +205,7 @@ class ProductCatrgoryController extends Controller
                                    'success' => true,
                                    'message' => 'Product Category deleted successfully'
                                     ], 202);
-                                    
+
         } elseif (!$productCategory) {
 
             return response()->json([
@@ -215,6 +218,43 @@ class ProductCatrgoryController extends Controller
                                    'success' => false,
                                    'message' => 'Something went wrong, please try again later'
                                     ], 500);
+        }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param Request $request
+     * @return Response
+     *
+     **/
+    public function deleteSelectedProductCategory(Request $request)
+    {
+        $category_ids = explode(',', $request->input('categories_ids'));
+
+        if (!empty($category_ids)) {
+
+            if (ProductCategories::whereIn('product_category_id', $category_ids)->exists()) {
+
+                ProductCategories::whereIn('product_category_id', $category_ids)->delete();
+
+                return response()->json([
+                                        'success' => true,
+                                        'message' => "All Selected Product Category deleted successfully",
+                                        ], 200);
+            } else {
+
+                return response()->json([
+                                        'success' => false,
+                                        'message' => "Selected Product Category not found",
+                                        ], 404);
+            }
+        } else {
+
+            return response()->json([
+                                    'success' => false,
+                                    'message' => "No Product Category selected",
+                                    ], 404);
         }
     }
 }

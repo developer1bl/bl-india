@@ -13,7 +13,7 @@ class BlogCategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
-     * 
+     *
      * @return response
      */
     public function index()
@@ -40,6 +40,7 @@ class BlogCategoryController extends Controller
             'seo_keywords' => 'nullable|string',
             'seo_other_details' => 'nullable|string',
             'blog_category_status' => 'nullable|boolean',
+            'blog_category_type' => 'boolean',
         ]);
 
          //if the request have some validation errors
@@ -54,15 +55,15 @@ class BlogCategoryController extends Controller
         if (BlogCategory::withTrashed()
                           ->where('blog_category_name', $request->blog_category_name)
                           ->OrWhere('blog_category_slug', $request->blog_category_slug)
-                          ->exists()) 
-        {    
+                          ->exists())
+        {
             throw new UserExistPreviouslyException('Oops! It appears that the chosen Blog Category Name or slug is already in use. Please select a different one and try again');
         }
 
         $result = BlogCategory::create($request->all());
 
         if ($result) {
-            
+
             return response()->json([
                                     'success' => true,
                                     'message' => 'Blog Category created successfully'
@@ -78,7 +79,7 @@ class BlogCategoryController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     * 
+     *
      * @param string $request
      * @return response
      */
@@ -89,7 +90,7 @@ class BlogCategoryController extends Controller
                                       ->first();
 
         if ($blogCategory) {
-            
+
             $blogCategory->restore();
 
             return response()->json([
@@ -97,7 +98,7 @@ class BlogCategoryController extends Controller
                                     'message' => 'Blog Category restored successfully'
                                     ], 202);
         } else {
-            
+
             return response()->json([
                                     'success' => false,
                                     'message' => 'Blog Category not found'
@@ -107,7 +108,7 @@ class BlogCategoryController extends Controller
 
     /**
      * Display the specified resource.
-     * 
+     *
      * @param string $id
      * @return Response
      */
@@ -116,14 +117,14 @@ class BlogCategoryController extends Controller
         $blogCategory = BlogCategory::find($id);
 
         if ($blogCategory) {
-            
+
             return response()->json([
                                     'data' => $blogCategory,
                                     'success' => true,
                                     'message' => ''
                                     ], 200);
         } else {
-            
+
             return response()->json([
                                     'data' => [],
                                     'success' => false,
@@ -142,7 +143,7 @@ class BlogCategoryController extends Controller
 
     /**
      * Update the specified resource in storage.
-     * 
+     *
      * @param string $id
      * @param Request $resource
      * @return Response
@@ -152,7 +153,7 @@ class BlogCategoryController extends Controller
         $blogCategory = BlogCategory::find($id);
 
         if (!$blogCategory) {
-            
+
             return response()->json([
                                     'success' => false,
                                     'message' => 'Blog Category not found'
@@ -168,6 +169,7 @@ class BlogCategoryController extends Controller
             'seo_keywords' => 'nullable|string',
             'seo_other_details' => 'nullable|string',
             'blog_category_status' => 'nullable|boolean',
+            'blog_category_type' => 'boolean',
         ]);
 
          //if the request have some validation errors
@@ -178,7 +180,7 @@ class BlogCategoryController extends Controller
                                     'message' => $validator->messages()
                                     ], 403);
         }
-       
+
         $result = $blogCategory->update($request->all());
 
         if ($result) {
@@ -193,7 +195,7 @@ class BlogCategoryController extends Controller
                                     'success' => false,
                                     'message' => 'Something went wrong, please try again later'
                                     ], 422);
-        }  
+        }
     }
 
     /**
@@ -204,7 +206,7 @@ class BlogCategoryController extends Controller
         $blogCategory = BlogCategory::find($id);
 
         if (!$blogCategory) {
-            
+
             return response()->json([
                                    'success' => false,
                                    'message' => 'Blog Category not found'

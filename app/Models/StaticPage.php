@@ -26,10 +26,10 @@ class StaticPage extends Model
     ];
 
     protected $casts = [
-        'page_status' => 'boolean'
+        // 'page_status' => 'boolean'
     ];
 
     public function pageSection(){
-        return $this->hasMany(StaticPageSection::class,'static_page_id','static_page_id')->with('image');
+        return $this->hasMany(StaticPageSection::class,'static_page_id','static_page_id');
     }
 }

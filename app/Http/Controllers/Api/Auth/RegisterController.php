@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Client;
 use App\Mail\SendMails;
@@ -13,23 +12,23 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Carbon;
-use App\Models\Role;
-// use Illuminate\Auth\Events\Registered;
+use Illuminate\Validation\Rule;
+use App\Exceptions\UserExistPreviouslyException;
 
 class RegisterController extends Controller
 {
-    /** 
+    /**
      * registerUser() this function is used to register new user
-     * 
+     *
      * @param Request $request
      * @return Response
      */
     public function registerUser(Request $request)
     {
-        //set validation 
+        //set validation
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:150',
-            'email' => 'required|email|unique:users',
+            'email' => ['required','email',Rule::unique('users', 'email')->whereNull('deleted_at')],
             'phone' => 'required|string|unique:users',
             'role_id' => 'required|exists:roles,id',
         ]);
@@ -40,9 +39,17 @@ class RegisterController extends Controller
             return response()->json([
                                     'success' => false,
                                     'message' => $validator->messages()
-                                    ], 400);
+                                    ], 403);
         }
-       
+
+
+        if (User::withTrashed()
+                    ->where('email', $request->email)
+                    ->exists())
+        {
+            throw new UserExistPreviouslyException('Oops! It appears that the chosen User email is already in use. Please select a different one and try again');
+        }
+
         // create new user
         $user = User::create([
             'name' => $request->name,
@@ -73,9 +80,9 @@ class RegisterController extends Controller
 
     /**
      * registerClient() this function is used to register new client user
-     * 
+     *
      * @param Request $request
-     * @return Res;ponse
+     * @return Response
      */
     public function registerClient(Request $request)
     {
@@ -85,6 +92,7 @@ class RegisterController extends Controller
             'email' => 'required|email:rfc,dns|unique:clients',
             'phone' => 'required|numeric',
             'password' => 'required',
+            'country_code' => 'required',
         ]);
 
         //if the request have some validation errors
@@ -96,13 +104,32 @@ class RegisterController extends Controller
                                     ], 400);
         }
 
-        // create new client
-        $client = Client::create([
+
+        $countries = $request->country_code ?? null;
+
+        if ($countries) {
+            // Removing brackets and spaces from the string
+            $requestValue = str_replace(['[', ']', ' '], '', $countries);
+            // Exploding the string into an array
+            $requestArray = explode(',', $requestValue);
+            // Extracting values
+            $country = $requestArray[0];
+            $phonecode = $requestArray[1];
+        } else {
+            $country = null;
+            $phonecode = null;
+        }
+
+        $data = [
             'name' => $request->name,
             'email' => $request->email,
             'password' => $request->password,
-            'phone' => $request->phone,
-        ]);
+            'phone' => '+' . $phonecode . '-' . $request->phone,
+            'country' => $country,
+        ];
+       
+        // create new client
+        $client = Client::create($data);
 
         if (!empty($client)) {
 
@@ -127,7 +154,7 @@ class RegisterController extends Controller
 
     /**
      * sendVerificationMail() this function is used to send verification mail
-     * 
+     *
      * @param Request $request
      * @return Response
      */

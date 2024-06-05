@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('static_pages', function (Blueprint $table) {
             $table->id('static_page_id');
-            $table->string('page_name')->unique();
+            $table->string('page_name');
             $table->string('page_slug')->unique()->nullable();
             $table->string('tagline')->nullable();
             $table->string('page_img_url')->nullable();

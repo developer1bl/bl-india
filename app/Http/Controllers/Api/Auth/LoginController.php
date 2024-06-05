@@ -20,13 +20,13 @@ class LoginController extends Controller
 {
     /**
      * loginUser() this function is used to register new user
-     * 
+     *
      * @param Request $request
      * @return Response
      */
     public function loginUser(Request $request)
     {
-        //set validation 
+        //set validation
         $validator = Validator::make($request->all(), [
             'email' => 'required',
             'password' => 'required',
@@ -36,25 +36,25 @@ class LoginController extends Controller
         if ($validator->fails()) {
 
             return response()->json([
-                                    'success' => false,
-                                    'message' => $validator->messages()
-                                    ], 403);
+                'success' => false,
+                'message' => $validator->messages()
+            ], 403);
         }
 
         //now we have to check is there any user who has the same email
         $user = User::where('email', $request->email)
-                      ->whereDeleted_at(null)
-                      ->first();
+            ->whereDeleted_at(null)
+            ->first();
 
-        //if first user is empty      
+        //if first user is empty
         if (empty($user)) {
 
             return response()->json([
-                                    'success' => false,
-                                    'message' => 'No user Foud with this Email address'
-                                    ], 404);
+                'success' => false,
+                'message' => 'No user Found with this Email address'
+            ], 404);
         }
-    
+
         if (Hash::check($request->password, $user->password)) {
 
             //when user login successfully then update its is_active to true
@@ -67,30 +67,30 @@ class LoginController extends Controller
             $user->tokens()->delete();
 
             return response()->json([
-                                    'success' => true,
-                                    'message' => 'User Login Successfully',
-                                    'user' => $user,
-                                    'token' => $user->createToken($request->email)->plainTextToken
-                                    ], 200);
+                'success' => true,
+                'message' => 'User Login Successfully',
+                'user' => $user,
+                'token' => $user->createToken($request->email)->plainTextToken
+            ], 200);
         } else {
 
             return response()->json([
-                                    'success' => false,
-                                    'message' => 'User Login Failed, due to wrong Email or Password',
-                                    ], 401);
+                'success' => false,
+                'message' => 'User Login Failed, due to wrong Email or Password',
+            ], 401);
         }
     }
 
     /**
      * loginClient() this function is used to register new client user
-     * 
+     *
      * @param Request $request
      * @return Response
      */
     public function loginClient(Request $request)
     {
         $requestArr = $request->all() ?? [];
-        $authtype = $requestArr['option'] ?? null;
+        $authType = $requestArr['option'] ?? null;
 
         $validator = Validator::make($request->all(), [
             'option' => 'required'
@@ -109,7 +109,7 @@ class LoginController extends Controller
         if (!empty($requestArr)) {
 
             //authenticate with password
-            if ($authtype == 'password' && $authtype !== null) {
+            if ($authType == 'password' && $authType !== null) {
 
                 $validator = Validator::make($request->all(), [
                     'email' => 'required|email:rfc,dns',
@@ -120,23 +120,23 @@ class LoginController extends Controller
                 if ($validator->fails()) {
 
                     return response()->json([
-                                            'success' => false,
-                                            'message' => $validator->messages()
-                                            ], 403);
+                        'success' => false,
+                        'message' => $validator->messages()
+                    ], 403);
                 }
 
                 //now we have to check is there any user who has the same email
                 $client = Client::where('email', $request->email)
-                                  ->whereDeleted_at(null)
-                                  ->first();
+                    ->whereDeleted_at(null)
+                    ->first();
 
-                //if first user is empty      
+                //if first user is empty
                 if (empty($client)) {
 
                     return response()->json([
-                                            'success' => false,
-                                            'message' => 'No Client Foud with this Email address'
-                                            ], 404);
+                        'success' => false,
+                        'message' => 'No Client Found with this Email address'
+                    ], 404);
                 }
 
                 if (Hash::check($request->password, $client->password)) {
@@ -151,21 +151,21 @@ class LoginController extends Controller
                     $client->tokens()->delete();
 
                     return response()->json([
-                                            'success' => true,
-                                            'message' => 'Client Login Successfully',
-                                            'client' => $client,
-                                            'token' => $client->createToken($request->email)->plainTextToken
-                                            ], 200);
+                        'success' => true,
+                        'message' => 'Client Login Successfully',
+                        'client' => $client,
+                        'token' => $client->createToken($request->email)->plainTextToken
+                    ], 200);
                 } else {
 
                     return response()->json([
-                                            'success' => false,
-                                            'message' => 'Client Authentication Failed, due to invalid Email or Password',
-                                            ], 401);
+                        'success' => false,
+                        'message' => 'Client Authentication Failed, due to invalid Email or Password',
+                    ], 401);
                 }
 
-                //authenticate with Otp    
-            } elseif ($authtype == 'otp') {
+                //authenticate with Otp
+            } elseif ($authType == 'otp') {
 
                 $validator = Validator::make($request->all(), [
                     'email' => 'required|email:rfc,dns',
@@ -176,9 +176,9 @@ class LoginController extends Controller
                 if ($validator->fails()) {
 
                     return response()->json([
-                                            'success' => false,
-                                            'message' => $validator->messages()
-                                            ], 403);
+                        'success' => false,
+                        'message' => $validator->messages()
+                    ], 403);
                 }
 
                 return $this->createOTP($requestArr);
@@ -186,31 +186,34 @@ class LoginController extends Controller
         } else {
 
             return response()->json([
-                                    'success' => false,
-                                    'message' => 'Please Fill Required Fields'
-                                    ], 403);
+                'success' => false,
+                'message' => 'Please Fill Required Fields'
+            ], 403);
         }
     }
 
     /**
      * logOut() this function is used to logout the user/client
-     * 
+     *
      * @param Request $request
      * @return Response
      */
     public function logOut(Request $request)
-    {  
-       $user = $request->user();
-       $user->is_online = false;
-       $user->save();
-       $request->user()->currentAccessToken()->delete();
+    {
+        $user = $request->user();
+        $user->is_online = false;
+        $user->save();
+        $request->user()->currentAccessToken()->delete();
 
-       return response()->json(['success' => true, 'message' => 'Logged Out successfully'], 200);
+        return response()->json([
+            'success' => true,
+            'message' => 'Logged Out successfully'
+        ], 200);
     }
 
     /**
      * createOTP() this function is used to create an OTP at the time of login/signup of client
-     * 
+     *
      * @param Request $request
      * @return Response
      */
@@ -220,7 +223,7 @@ class LoginController extends Controller
         $client = Client::where('email', $arr['email'])->first();
 
         if (!empty($client)) {
-            //create a random 4 digits intiger no. 
+            //create a random 4 digits integer no.
             $randomNumber = random_int(1000, 9999);
 
             $client->update([
@@ -241,21 +244,21 @@ class LoginController extends Controller
             Mail::to($client->email)->send(new SendMails($data));
 
             return response()->json([
-                                    'success' => true,
-                                    'message' => 'OTP has been sent to your Email Address'
-                                    ], 201);
+                'success' => true,
+                'message' => 'OTP has been sent to your Email Address'
+            ], 201);
         } else {
 
             return response()->json([
-                                    'success' => false,
-                                    'message' => 'Please check your Cridentials, Something is Wrong.'
-                                    ], 404);
+                'success' => false,
+                'message' => 'Please check your Credentials, Something is Wrong.'
+            ], 404);
         }
     }
 
     /**
      * forgotPassword() this function is used to send request for forgot password
-     * 
+     *
      * @param Request $request
      * @return Response
      */
@@ -270,14 +273,14 @@ class LoginController extends Controller
         if ($validator->fails()) {
 
             return response()->json([
-                                    'success' => false,
-                                    'message' => $validator->messages()
-                                    ], 403);
+                'success' => false,
+                'message' => $validator->messages()
+            ], 403);
         }
 
         $client = Client::where('email', $input['email'])
-                         ->whereDeleted_at(null)
-                         ->first();
+            ->whereDeleted_at(null)
+            ->first();
 
         if (!empty($client)) {
 
@@ -285,7 +288,7 @@ class LoginController extends Controller
             $domain = URL::to('/');
             $url = $domain . "/api/v1/reset-password/" . $token;
 
-            //store token and email 
+            //store token and email
             PasswordReset::updateOrCreate(
                 ['email' => $input['email']],
                 [
@@ -305,20 +308,20 @@ class LoginController extends Controller
             Mail::to($client->email)->send(new SendMails($data));
 
             return response()->json([
-                                    'success' => true,
-                                    'message' => 'Forgot Password link Send Successfully'
-                                    ], 201);
+                'success' => true,
+                'message' => 'Forgot Password link Send Successfully'
+            ], 201);
         } else {
             return response()->json([
-                                    'success' => false,
-                                    'message' => 'No such Client Foud with this Email Address'
-                                    ], 404);
+                'success' => false,
+                'message' => 'No such Client Found with this Email Address'
+            ], 404);
         }
     }
 
     /**
      * resetPasswordPage() this function is used to send a forgot password page
-     * 
+     *
      * @param Request $request
      * @return Response | view
      */
@@ -341,31 +344,31 @@ class LoginController extends Controller
                     $passwordReset->delete();
 
                     return response()->json([
-                                            'success' => false,
-                                            'message' => 'your request time expired, please try again'
-                                            ], 408);
+                        'success' => false,
+                        'message' => 'your request time expired, please try again'
+                    ], 408);
                 }
             } else {
 
                 return response()->json([
-                                        'success' => false,
-                                        'message' => 'This Link already Expired. Please try again'
-                                        ], 408);
+                    'success' => false,
+                    'message' => 'This Link already Expired. Please try again'
+                ], 408);
             }
         } else {
 
             return response()->json([
-                                    'success' => false,
-                                    'message' => 'Some thing went wrong, please try again'
-                                    ], 422);
+                'success' => false,
+                'message' => 'Some thing went wrong, please try again'
+            ], 422);
         }
     }
 
     /**
      * authResetRequest() this function is used to update users password
-     * 
+     *
      * @param Request $request
-     * @return Response 
+     * @return Response
      */
     public function authResetRequest(Request $request)
     {
@@ -391,33 +394,49 @@ class LoginController extends Controller
                         $passwordReset->delete();
 
                         return response()->json([
-                                                'success' => true,
-                                                'message' => 'Password reset Successfully'
-                                                ], 201);
+                            'success' => true,
+                            'message' => 'Password reset Successfully'
+                        ], 201);
                     } else {
 
                         //delete the password reset request
                         $passwordReset->delete();
 
                         return response()->json([
-                                                'success' => false,
-                                                'message' => 'your request time expired'
-                                                ], 403);
+                            'success' => false,
+                            'message' => 'your request time expired'
+                        ], 403);
                     }
                 } else {
 
                     return response()->json([
-                                            'success' => false,
-                                            'message' => 'Please check your Cridentials, something is wrong.'
-                                            ], 400);
+                        'success' => false,
+                        'message' => 'Please check your Credentials, something is wrong.'
+                    ], 400);
                 }
             } else {
 
                 return response()->json([
-                                        'success' => false,
-                                        'message' => 'Please check your Cridentials, something is wrong.'
-                                        ], 404);
+                    'success' => false,
+                    'message' => 'Please check your Credentials, something is wrong.'
+                ], 404);
             }
         }
+    }
+
+
+    /**
+     * Check if the token is valid.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function checkToken(Request $request)
+    {
+        if (!$request->user()) {
+            return response()->json(['error' => 'Unauthorized access.'], 401);
+        }
+
+        return response()->json(['message' => 'Token is valid.'], 200);
     }
 }

@@ -16,13 +16,14 @@ class Client extends Authenticatable implements MustVerifyEmail
 
     protected $dates = ['deleted_at'];
     protected $table = 'clients';
-    
+
     protected $fillable = [
         'name',
         'email',
         'password',
         'phone',
         'login_at',
+        'country',
         'otp',
         'is_online',
         'is_active',
@@ -77,7 +78,7 @@ class Client extends Authenticatable implements MustVerifyEmail
         return false;
     }
 
-    //check is client 
+    //check is client
     public function isClient(){
         return true;
     }

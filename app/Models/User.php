@@ -44,8 +44,6 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
-        'two_factor_recovery_codes',
-        'two_factor_secret',
     ];
 
     /**
@@ -73,7 +71,7 @@ class User extends Authenticatable
         return true;
     }
 
-    //check is client 
+    //check is client
     public function isClient(){
         return false;
     }
@@ -83,7 +81,7 @@ class User extends Authenticatable
         return $this->belongsToMany(Role::class, 'role_user');
     }
 
-    //get user assigne persmissions
+    //get user assign permissions
     public function userPermissions()
     {
         return $this->roles()->with('permissions');

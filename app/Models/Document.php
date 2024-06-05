@@ -22,11 +22,6 @@ class Document extends Model
         'document_size',
     ];
 
-    public function notice()
-    {
-        return $this->belongsTo(Notice::class, 'notice_document_id', 'notice_id');
-    }
-
     public function downloads()
     {
         return $this->belongsToMany(Download::class, 'document_download', 'document_id', 'download_id')

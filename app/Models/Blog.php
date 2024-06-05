@@ -19,7 +19,7 @@ class Blog extends Model
         'blog_title',
         'blog_slug',
         'blog_category_id',
-        'blog_image_id',
+        'blog_img_url',
         'blog_img_alt',
         'blog_content',
         'seo_title',
@@ -35,13 +35,15 @@ class Blog extends Model
         'blog_tags' => 'array',
     ];
 
-    public function blogcategory()
+    public function blogCategory()
     {
         return $this->belongsTo(BlogCategory::class, 'blog_category_id');
     }
 
-    public function image()
+    // Define the attributes and relationships
+    public function scopeLatestBlogs($query, $limit = 4)
     {
-        return $this->belongsTo(Media::class, 'blog_image_id', 'media_id');
+        return $query->orderBy('created_at', 'desc')->take($limit)->get();
     }
+
 }

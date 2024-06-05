@@ -17,9 +17,9 @@ class PermissionAndRoleSeed extends Seeder
         $adminRole = Role::create(['name' => 'admin', 'role_description' => 'this role is for admin user']);
         $moderatorRole = Role::create(['name' => 'moderator', 'role_description' => 'this role is for manager user']);
         $contributorRole = Role::create(['name' => 'contributor', 'role_description' => 'this role is for contributor user']);
- 
+
         // Create permissions
-        $creaUserPermission = Permission::create(['name' => 'create_user', 'permissions_description' => 'this permission is for create user']);
+        $createUserPermission = Permission::create(['name' => 'create_user', 'permissions_description' => 'this permission is for create user']);
         $assignUserPermission = Permission::create(['name' => 'assign_user', 'permissions_description' => 'this permission is for assigne role to user']);
         $editUserPermission = Permission::create(['name' => 'edit_user', 'permissions_description' => 'this permission is for edit user']);
         $deleteUserPermission = Permission::create(['name' => 'delete_user', 'permissions_description' => 'this permission is for delete user']);
@@ -72,15 +72,15 @@ class PermissionAndRoleSeed extends Seeder
         $createBlogPermission = Permission::create(['name' => 'create_blog', 'permissions_description' => 'this permission is for create Blog permission']);
         $editBlogPermission = Permission::create(['name' => 'edit_blog', 'permissions_description' => 'this permission is for edit Blog permission']);
         $deleteBlogPermission = Permission::create(['name' => 'delete_blog', 'permissions_description' => 'this permission is for delete Blog permission']);
-        $viewServiceSectionPermission = Permission::create(['name' => 'vie_service_section', 'permissions_description' => 'this permission is for view Service Section permission']);
+        $viewServiceSectionPermission = Permission::create(['name' => 'view_service_section', 'permissions_description' => 'this permission is for view Service Section permission']);
         $createServiceSectionPermission = Permission::create(['name' => 'create_service_section', 'permissions_description' => 'this permission is for create Service Section permission']);
         $editServiceSectionPermission = Permission::create(['name' => 'edit_service_section', 'permissions_description' => 'this permission is for edit Service Section permission']);
         $deleteServiceSectionPermission = Permission::create(['name' => 'delete_service_section', 'permissions_description' => 'this permission is for delete Service Section permission']);
-        
+
         // Assign permissions to roles
-        $adminRole->permissions()->sync([$creaUserPermission->id, $editUserPermission->id, $deleteUserPermission->id,
-                                        $viewUserPermission->id, $approveUserPermission->id, $createRolePermission->id, 
-                                        $editRolePermission->id, $deleteRolePermission->id, $viewRolePermission->id, 
+        $adminRole->permissions()->sync([$createUserPermission->id, $editUserPermission->id, $deleteUserPermission->id,
+                                        $viewUserPermission->id, $approveUserPermission->id, $createRolePermission->id,
+                                        $editRolePermission->id, $deleteRolePermission->id, $viewRolePermission->id,
                                         $viewPermissionsPermission->id, $createPermissionsPermission->id, $editPermissionsPermission->id,
                                         $deletePermissionPermission->id, $viewContentPermission->id, $createContentPermission->id,
                                         $editContentPermission->id, $deleteContentPermission->id, $approveContentPermission->id,
@@ -94,7 +94,7 @@ class PermissionAndRoleSeed extends Seeder
                                         $deleteDownloadCategoryPermission->id, $viewDownloadPermission->id, $editDownloadPermission->id,
                                         $createDownloadPermission->id, $deleteDownloadPermission->id, $viewBlogCategoryPermission->id,
                                         $createBlogCategoryPermission->id, $editBlogCategoryPermission->id, $deleteBlogCategoryPermission->id,
-                                        $viewBlogPermission->id, $editBlogPermission->id, $deleteBlogPermission->id, 
+                                        $viewBlogPermission->id, $editBlogPermission->id, $deleteBlogPermission->id,
                                         $createBlogPermission->id, $viewServiceSectionPermission->id, $createServiceSectionPermission->id,
                                         $editServiceSectionPermission->id, $deleteServiceSectionPermission->id ]);
 

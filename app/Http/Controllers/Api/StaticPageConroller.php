@@ -34,10 +34,10 @@ class StaticPageConroller extends Controller
     public function create(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'page_name' => ['required','string','max:150', Rule::unique('static_pages', 'page_name')->whereNull('deleted_at')],
+            'page_name' => ['required','string','max:150'],
             'page_slug' => ['required','string','max:150', Rule::unique('static_pages', 'page_slug')->whereNull('deleted_at')],
             'tagline' => 'string|nullable',
-            'page_image_id' => 'integer|exists:media,media_id',
+            'page_image_id' => 'exists:media,media_id',
             'page_image_alt' => 'nullable|string',
             'seo_title' => 'string|nullable',
             'seo_keywords' => 'string|nullable',
@@ -55,11 +55,10 @@ class StaticPageConroller extends Controller
         }
 
         if (StaticPage::withTrashed()
-                        ->where('page_name', $request->page_name)
-                        ->orwhere('page_slug', $request->page_slug)
+                        ->where('page_slug', $request->page_slug)
                         ->first()) {
 
-            throw new UserExistPreviouslyException('Oops! It appears that the chosen Page Name or slug is already in use. Please select a different one and try again');
+            throw new UserExistPreviouslyException('Oops! It appears that the chosen Page slug is already in use. Please select a different one and try again');
         }
 
         $PageImagePath = MediaHelper::getMediaPath($request->page_image_id ?? null);
@@ -99,7 +98,10 @@ class StaticPageConroller extends Controller
      */
     public function restore(string $request)
     {
-        $staticPage = StaticPage::withTrashed()->where('page_name', $request)->orwhere('page_slug', $request)->first();
+        $staticPage = StaticPage::withTrashed()
+                                  ->where('page_name', $request)
+                                  ->orwhere('page_slug', $request)
+                                  ->first();
 
         if ($staticPage) {
 
@@ -173,7 +175,7 @@ class StaticPageConroller extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'page_name' => ['required','string','max:150', Rule::unique('static_pages', 'page_name')->ignore($id,'static_page_id')->whereNull('deleted_at')],
+            'page_name' => ['required','string','max:150'],
             'page_slug' => ['required','string','max:150', Rule::unique('static_pages', 'page_slug')->ignore($id,'static_page_id')->whereNull('deleted_at')],
             'tagline' => 'string|nullable',
             'page_image_id' => 'integer|exists:media,media_id',

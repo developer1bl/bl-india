@@ -22,7 +22,7 @@ class Holiday extends Model
     ];
 
     protected $casts = [
-        'holiday_type' => 'boolean',
+        // 'holiday_type' => 'boolean',
         'status' => 'boolean',
     ];
 }

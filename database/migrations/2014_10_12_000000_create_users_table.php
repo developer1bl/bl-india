@@ -22,7 +22,6 @@ return new class extends Migration
             $table->string('password');
             $table->boolean('is_approved')->default(false);
             $table->foreignIdFor(Role::class)->default(3);
-            $table->foreignId('current_team_id')->nullable();
             $table->string('profile_photo_path', 2048)->nullable();
             $table->boolean('is_online')->default(false)->comment('this column help to check is user online or offline');
             $table->boolean('is_active')->default(true)->comment('this column help to check is user active or not');

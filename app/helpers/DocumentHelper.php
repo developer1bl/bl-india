@@ -17,7 +17,7 @@ class DocumentHelper{
      * @return Response
      */
     public static function uploadDocument(Request  $request)
-    {
+    { 
         $validator = Validator::make($request->all(), [
             'document_file' => 'required|file|mimes:pdf',
         ],[
@@ -186,6 +186,29 @@ class DocumentHelper{
         if ($document) {
 
             return response()->download(storage_path('app/public/'.$document['document_path']), $document['document_name'], [], 'inline');
+
+        } else {
+
+            return response()->json([
+                                   'success' => false,
+                                   'message' => 'Document not found.',
+                                    ], 404);
+        }
+    }
+
+    /**
+     * this function is used to get the document url
+     *
+     * @param string $id
+     * @return Response
+     */
+    public static function getDocUrl(string $id){
+
+        $document = Document::find($id);
+
+        if ($document) {
+
+            return $document->document_path;
 
         } else {
 

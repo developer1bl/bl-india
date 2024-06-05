@@ -22,9 +22,22 @@ use App\Http\Controllers\Api\CustomFormController;
 use App\Http\Controllers\Api\HolidayController;
 use App\Http\Controllers\Api\StaticPageConroller;
 use App\Http\Controllers\Api\StaticPageSectionController;
+use App\Http\Controllers\Api\WorkFlowController;
+use App\Http\Controllers\Api\TestimonialController;
+use App\Http\Controllers\Api\AssociateController;
+use App\Http\Controllers\Api\TeamController;
+use App\Http\Controllers\Api\ClientUserController;
+use App\Http\Controllers\Api\ContactUsController;
+use App\Http\Controllers\Api\ServiceCategoryController;
+use Illuminate\Http\Request;
 use App\Helpers\MediaHelper;
 use App\Helpers\DocumentHelper;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Api\Auth\TokenController;
+use App\Http\Controllers\Api\CareerController;
+use App\Http\Controllers\Api\GalleryController;
+use App\Http\Controllers\Api\KnowledgebaseCategoryController;
+use App\Http\Controllers\Api\KnowledgeBaseController;
+use App\Http\Controllers\Api\NotificationCategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -81,13 +94,16 @@ Route::prefix('v1')->group(function () {
     //protected routes (authorized user can access)
     Route::middleware('auth:sanctum')->group(function () {
 
+        //for checking the token validity
+        Route::Post('/check-token', [TokenController::class, 'checkTokenValidity']);
+
         //for user routes
         Route::post('/add-user', [RegisterController::class, 'registerUser'])->middleware(['checkRoleAndPermission:admin,create_user']);
 
         //user Routs
-        Route::prefix('/user')->group(function(){
+        Route::prefix('/user')->group(function () {
 
-            Route::controller(UserController::class)->group(function(){
+            Route::controller(UserController::class)->group(function () {
 
                 Route::get('/', 'index')->middleware(['checkRoleAndPermission:admin,view_user']);
                 Route::get('/{user}', 'show')->middleware(['checkRoleAndPermission:admin,view_user']);
@@ -95,6 +111,8 @@ Route::prefix('v1')->group(function () {
                 Route::post('/{user}', 'update')->middleware(['checkRoleAndPermission:admin,edit_user']);
                 Route::post('/self/{user}', 'updateUserSelf');
                 Route::delete('/{user}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_user']);
+                Route::delete('/delete/selected-users', 'deleteSelectedUsers');
+                Route::get('/get/AuthUser', 'getAuthUserData');
             });
         });
 
@@ -115,6 +133,7 @@ Route::prefix('v1')->group(function () {
                     Route::post('/create', 'create')->middleware(['checkRoleAndPermission:admin,create_role']);
                     Route::post('/{role}', 'update')->middleware(['checkRoleAndPermission:admin,edit_role']);
                     Route::delete('/{role}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_role']);
+                    Route::delete('/delete/selected-role', 'deleteSelectedRole');
                 });
             });
 
@@ -129,20 +148,34 @@ Route::prefix('v1')->group(function () {
                     Route::post('/create', 'create')->middleware(['checkRoleAndPermission:admin,create_permission']);
                     Route::post('/{permission}', 'update')->middleware(['checkRoleAndPermission:admin,edit_permission']);
                     Route::delete('/{permission}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_permission']);
+                    Route::delete('/delete/selected-permission', 'deleteSelectedPermission');
                 });
             });
 
+            //service category
+            Route::group(['prefix' => 'service-category', 'controller' => ServiceCategoryController::class], function () {
+
+                Route::get('/', 'index');
+                Route::get('/{category}', 'show');
+                Route::get('/{category}/restore', 'restore');
+                Route::post('/create', 'create');
+                Route::post('/{category}', 'update');
+                Route::delete('/{category}', 'destroy');
+                Route::delete('/delete/selected-service-category', 'deleteSelectedServiceCategory');
+            });
+
             //services routes
-            Route::prefix('/services')->group(function () {
+            Route::prefix('/service')->group(function () {
 
                 Route::controller(ServiceController::class)->group(function () {
 
                     Route::get('/', 'index')->middleware(['checkRoleAndPermission:admin,view_service']);
-                    Route::get('/{services}', 'show')->middleware(['checkRoleAndPermission:admin,view_service']);
-                    Route::get('/{services}/restore', 'restore')->middleware(['checkRoleAndPermission:admin,restore_data']);
+                    Route::get('/{service}', 'show')->middleware(['checkRoleAndPermission:admin,view_service']);
+                    Route::get('/{service}/restore', 'restore')->middleware(['checkRoleAndPermission:admin,restore_data']);
                     Route::post('/create', 'create')->middleware(['checkRoleAndPermission:admin,create_service']);
                     Route::post('/{service}', 'update')->middleware(['checkRoleAndPermission:admin,edit_service']);
                     Route::delete('/{service}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_service']);
+                    Route::delete('/delete/selected-service', 'deleteSelectedService');
                 });
             });
 
@@ -152,11 +185,12 @@ Route::prefix('v1')->group(function () {
                 Route::controller(ServiceSectionController::class)->group(function () {
 
                     Route::get('/', 'index')->middleware(['checkRoleAndPermission:admin,view_service_section']);
-                    Route::get('/{service_section}','show')->middleware(['checkRoleAndPermission:admin,view_service_section']);
-                    Route::get('/{service_section}/restore','restore')->middleware(['checkRoleAndPermission:admin,restore_data']);
+                    Route::get('/{service_section}', 'show')->middleware(['checkRoleAndPermission:admin,view_service_section']);
+                    Route::get('/{service_section}/restore', 'restore')->middleware(['checkRoleAndPermission:admin,restore_data']);
                     Route::post('/create', 'create')->middleware(['checkRoleAndPermission:admin,create_service_section']);
                     Route::post('/{service_section}', 'update')->middleware(['checkRoleAndPermission:admin,edit_service_section']);
                     Route::delete('/{service_section}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_service_section']);
+                    Route::delete('/delete/selected-service-section', 'deleteSelectedServiceSection');
                 });
             });
 
@@ -172,6 +206,7 @@ Route::prefix('v1')->group(function () {
                     Route::post('/create', 'create')->middleware(['checkRoleAndPermission:admin,create_product']);
                     Route::post('/{product}', 'update')->middleware(['checkRoleAndPermission:admin,edit_product']);
                     Route::delete('/{product}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_product']);
+                    Route::delete('/delete/selected-product', 'deleteSelectedProduct');
                 });
             });
 
@@ -186,31 +221,44 @@ Route::prefix('v1')->group(function () {
                     Route::post('/create', 'create')->middleware(['checkRoleAndPermission:admin,create_productCategory']);
                     Route::post('/{productcategories}', 'update')->middleware(['checkRoleAndPermission:admin,edit_ProductCategory']);
                     Route::delete('/{productcategories}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_productCategory']);
+                    Route::delete('/delete/selected-product-category', 'deleteSelectedProductCategory');
+                });
+            });
+
+            //notification category
+            Route::prefix('notification-category')->group(function(){
+                Route::controller(NotificationCategoryController::class)->group(function(){
+                    Route::get('/', 'index');
+                    Route::Post('/create', 'store');
+                    Route::get('/{category}', 'show');
+                    Route::Post('/update/{category}', 'update');
+                    Route::delete('/{category}', 'destroy');
                 });
             });
 
             //notice routes
-            Route::prefix('/notice')->group(function (){
+            Route::prefix('/notice')->group(function () {
 
                 Route::controller(NoticeController::class)->group(function () {
 
                     Route::get('/', 'index')->middleware(['checkRoleAndPermission:admin,view_notice']);
-                    Route::get('/{notice}','show')->middleware(['checkRoleAndPermission:admin,view_notice']);
-                    Route::get('/{notice}/restore','restore')->middleware(['checkRoleAndPermission:admin,restore_data']);
+                    Route::get('/{notice}', 'show')->middleware(['checkRoleAndPermission:admin,view_notice']);
+                    Route::get('/{notice}/restore', 'restore')->middleware(['checkRoleAndPermission:admin,restore_data']);
                     Route::post('/create', 'create')->middleware(['checkRoleAndPermission:admin,create_notice']);
                     Route::post('/{notice}', 'update')->middleware(['checkRoleAndPermission:admin,edit_notice']);
                     Route::delete('/{notice}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_notice']);
+                    Route::delete('/delete/selected-notice', 'deleteSelectedNotice');
                 });
             });
 
             //download category routes
-            Route::prefix('/download-category')->group(function (){
+            Route::prefix('/download-category')->group(function () {
 
                 Route::controller(DownloadCategoryController::class)->group(function () {
 
                     Route::get('/', 'index')->middleware(['checkRoleAndPermission:admin,view_download_category']);
-                    Route::get('/{downloadCategory}','show')->middleware(['checkRoleAndPermission:admin,view_download_category']);
-                    Route::get('/{downloadCategory}/restore','restore')->middleware(['checkRoleAndPermission:admin,restore_data']);
+                    Route::get('/{downloadCategory}', 'show')->middleware(['checkRoleAndPermission:admin,view_download_category']);
+                    Route::get('/{downloadCategory}/restore', 'restore')->middleware(['checkRoleAndPermission:admin,restore_data']);
                     Route::post('/create', 'create')->middleware(['checkRoleAndPermission:admin,create_download_category']);
                     Route::post('/{downloadCategory}', 'update')->middleware(['checkRoleAndPermission:admin,edit_download_category']);
                     Route::delete('/{downloadCategory}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_download_category']);
@@ -218,13 +266,13 @@ Route::prefix('v1')->group(function () {
             });
 
             //download routes
-            Route::prefix('/download')->group(function (){
+            Route::prefix('/download')->group(function () {
 
-                Route::controller(DownloadController::class)->group(function (){
+                Route::controller(DownloadController::class)->group(function () {
 
                     Route::get('/', 'index')->middleware(['checkRoleAndPermission:admin,view_download']);
-                    Route::get('/{download}','show')->middleware(['checkRoleAndPermission:admin,view_download']);
-                    Route::get('/{download}/restore','restore')->middleware(['checkRoleAndPermission:admin,restore_data']);
+                    Route::get('/{download}', 'show')->middleware(['checkRoleAndPermission:admin,view_download']);
+                    Route::get('/{download}/restore', 'restore')->middleware(['checkRoleAndPermission:admin,restore_data']);
                     Route::post('/create', 'create')->middleware(['checkRoleAndPermission:admin,create_download']);
                     Route::post('/{download}', 'update')->middleware(['checkRoleAndPermission:admin,edit_download']);
                     Route::delete('/{download}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_download']);
@@ -232,13 +280,13 @@ Route::prefix('v1')->group(function () {
             });
 
             //blog category routes
-            Route::prefix('/blog-category')->group(function (){
+            Route::prefix('/blog-category')->group(function () {
 
-                Route::controller(BlogCategoryController::class)->group(function(){
+                Route::controller(BlogCategoryController::class)->group(function () {
 
                     Route::get('/', 'index')->middleware(['checkRoleAndPermission:admin,view_blog_category']);
-                    Route::get('/{blogCategory}','show')->middleware(['checkRoleAndPermission:admin,view_blog_category']);
-                    Route::get('/{blogCategory}/restore','restore')->middleware(['checkRoleAndPermission:admin,restore_data']);
+                    Route::get('/{blogCategory}', 'show')->middleware(['checkRoleAndPermission:admin,view_blog_category']);
+                    Route::get('/{blogCategory}/restore', 'restore')->middleware(['checkRoleAndPermission:admin,restore_data']);
                     Route::post('/create', 'create')->middleware(['checkRoleAndPermission:admin,create_blog_category']);
                     Route::post('/{blogCategory}', 'update')->middleware(['checkRoleAndPermission:admin,edit_blog_category']);
                     Route::delete('/{blogCategory}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_blog_category']);
@@ -246,23 +294,34 @@ Route::prefix('v1')->group(function () {
             });
 
             //blog routes
-            Route::prefix('/blog')->group(function (){
+            Route::prefix('/blog')->group(function () {
 
-                Route::controller(BlogController::class)->group(function(){
+                Route::controller(BlogController::class)->group(function () {
 
                     Route::get('/', 'index')->middleware(['checkRoleAndPermission:admin,view_blog']);
-                    Route::get('/{blog}','show')->middleware(['checkRoleAndPermission:admin,view_blog']);
-                    Route::get('/{blog}/restore','restore')->middleware(['checkRoleAndPermission:admin,restore_data']);
+                    Route::get('/{blog}', 'show')->middleware(['checkRoleAndPermission:admin,view_blog']);
+                    Route::get('/{blog}/restore', 'restore')->middleware(['checkRoleAndPermission:admin,restore_data']);
                     Route::post('/create', 'create')->middleware(['checkRoleAndPermission:admin,create_blog']);
                     Route::post('/{blog}', 'update')->middleware(['checkRoleAndPermission:admin,edit_blog']);
                     Route::delete('/{blog}', 'destroy')->middleware(['checkRoleAndPermission:admin,delete_blog']);
                 });
             });
 
-            //custom form
-            Route::prefix('/custom-form')->group(function(){
+            //career jobs crud
+            Route::prefix('/career-job')->group(function () {
+                Route::controller(CareerController::class)->group(function () {
+                    Route::get('/', 'index');
+                    Route::Post('/create', 'store');
+                    Route::get('/{job}', 'show');
+                    Route::Post('/update/{id}', 'update');
+                    Route::delete('/{id}', 'destroy');
+                });
+            });
 
-                Route::controller(CustomFormController::class)->group(function(){
+            //custom form
+            Route::prefix('/custom-form')->group(function () {
+
+                Route::controller(CustomFormController::class)->group(function () {
 
                     Route::get('/', 'index');
                     Route::get('/{form}', 'show');
@@ -276,106 +335,217 @@ Route::prefix('v1')->group(function () {
             });
 
             //Holiday
-            Route::prefix('/holiday')->group(function(){
+            Route::prefix('/holiday')->group(function () {
 
-                Route::controller(HolidayController::class)->group(function(){
+                Route::controller(HolidayController::class)->group(function () {
 
                     Route::get('/', 'index');
-                    Route::get('/{holiday}','show');
-                    Route::get('/{holiday}/restore','restore');
+                    Route::get('/{holiday}', 'show');
+                    Route::get('/{holiday}/restore', 'restore');
                     Route::post('/create', 'create');
                     Route::post('/{holiday}', 'update');
                     Route::delete('/{holiday}', 'destroy');
                 });
             });
 
-        //     Route::get('/{any}', function () {
-        //         return view('errors.404');
-        //     })->where('any', '.*');
-        // });
-
             //static pages
-            Route::prefix('/static-page')->group(function(){
+            Route::prefix('/static-page')->group(function () {
 
-                Route::controller(StaticPageConroller::class)->group(function(){
+                Route::controller(StaticPageConroller::class)->group(function () {
 
                     Route::get('/', 'index');
-                    Route::get('/{staticPage}','show');
-                    Route::get('/{staticPage}/restore','restore');
+                    Route::get('/{staticPage}', 'show');
+                    Route::get('/{staticPage}/restore', 'restore');
                     Route::post('/create', 'create');
                     Route::post('/{staticPage}', 'update');
                     Route::delete('/{staticPage}', 'destroy');
                 });
-
             });
 
             //static page sections
-            Route::prefix('/static-page-section')->group(function(){
+            Route::prefix('/static-page-section')->group(function () {
 
-                Route::controller(StaticPageSectionController::class)->group(function(){
+                Route::controller(StaticPageSectionController::class)->group(function () {
 
                     Route::get('/', 'index');
-                    Route::get('/{staticPageSection}','show');
-                    Route::get('/{staticPageSection}/restore','restore');
+                    Route::get('/{staticPageSection}', 'show');
+                    Route::get('/{staticPageSection}/restore', 'restore');
                     Route::post('/create', 'create');
                     Route::post('/{staticPageSection}', 'update');
                     Route::delete('/{staticPageSection}', 'destroy');
                 });
-
             });
 
-            //static page section items
+            //workflow
+            Route::prefix('/workflow')->group(function () {
+
+                Route::controller(WorkflowController::class)->group(function () {
+
+                    Route::get('/', 'index');
+                    Route::get('/{workflow}', 'show');
+                    Route::get('/{workflow}/restore', 'restore');
+                    Route::post('/create', 'create');
+                    Route::post('/{workflow}', 'update');
+                    Route::delete('/{workflow}', 'destroy');
+                });
+            });
+
+            //testimonial
+            Route::prefix('/testimonial')->group(function () {
+
+                Route::controller(TestimonialController::class)->group(function () {
+
+                    Route::get('/', 'index');
+                    Route::get('/{testimonial}', 'show');
+                    Route::get('/{testimonial}/restore', 'restore');
+                    Route::post('/create', 'create');
+                    Route::post('/{testimonial}', 'update');
+                    Route::delete('/{testimonial}', 'destroy');
+                });
+            });
+
+            //associates routes
+            Route::prefix('/associate')->group(function () {
+
+                Route::controller(AssociateController::class)->group(function () {
+
+                    Route::get('/', 'index');
+                    Route::get('/{associates}', 'show');
+                    Route::get('/{associates}/restore', 'restore');
+                    Route::post('/create', 'create');
+                    Route::post('/{associates}', 'update');
+                    Route::delete('/{associates}', 'destroy');
+                });
+            });
+
+            //team routes
+            Route::prefix('/team')->group(function () {
+
+                Route::controller(TeamController::class)->group(function () {
+
+                    Route::get('/', 'index');
+                    Route::get('/{team}', 'show');
+                    Route::post('/create', 'create');
+                    Route::post('/{team}', 'update');
+                    Route::delete('/{team}', 'destroy');
+                });
+            });
+
+            //client routes
+            Route::prefix('/client-user')->group(function () {
+
+                Route::controller(ClientUserController::class)->group(function () {
+
+                    Route::get('/', 'index');
+                    Route::get('/{client}', 'show');
+                    Route::get('/{client}/restore', 'restore');
+                    Route::post('/create', 'create');
+                    Route::post('/{client}', 'update');
+                    Route::delete('/{client}', 'destroy');
+                });
+            });
+
+            //contact us routes
+            Route::prefix('contact-us')->group(function () {
+
+                Route::controller(ContactUsController::class)->group(function () {
+
+                    //get contact us information
+                    Route::get('/details', 'getContactDetails');
+                    //create contact us information
+                    Route::post('/create', 'CreateContactDetails');
+                    //update contact us information
+                    Route::post('/update/{contact}', 'UpdateContactDetails');
+                });
+            });
+
+            //Gallery routes
+            Route::prefix('gallery')->group(function () {
+                Route::controller(GalleryController::class)->group(function () {
+                    Route::get('/', 'index');
+                    Route::get('/{gallery}', 'show');
+                    Route::post('/create', 'store');
+                    Route::post('/{gallery}', 'update');
+                    Route::delete('/{gallery}', 'destroy');
+                });
+            });
+
+            //knowledgebase category routes
+            Route::prefix('knowledge-base-category')->group(function () {
+                Route::controller(KnowledgeBaseCategoryController::class)->group(function () {
+                    Route::get('/', 'index');
+                    Route::get('/{base}', 'show');
+                    Route::post('/create', 'store');
+                    Route::post('/{base}', 'update');
+                    Route::delete('/{base}', 'destroy');
+                });
+            });
+
+            //knowledgebase routes
+            Route::prefix('/knowledge-base')->group(function () {
+                Route::controller(KnowledgeBaseController::class)->group(function () {
+                    Route::get('/', 'index');
+                    Route::get('/{base}', 'show');
+                    Route::post('/create', 'store');
+                    Route::post('/{base}', 'update');
+                    Route::delete('/{base}', 'destroy');
+                });
+            });
 
             //media
-            Route::prefix('/media')->group(function(){
+            Route::prefix('/media')->group(function () {
 
-                Route::post('/upload', function (Request $request){
+                Route::post('/upload', function (Request $request) {
                     return MediaHelper::uploadImage($request);
                 });
 
-                Route::get('/get', function (){
+                Route::get('/get', function () {
                     return MediaHelper::getAllImages();
                 });
 
-                Route::delete('/destroy/{media}', function ($id){
+                Route::delete('/destroy/{media}', function ($id) {
                     return MediaHelper::deleteMedia($id);
                 });
 
-                Route::Post('/update/{media}', function(Request $request, string $name){
+                Route::Post('/update/{media}', function (Request $request, string $name) {
                     return MediaHelper::updateImage($request, $name);
+                });
+
+                Route::get('/{media}', function (String $media) {
+
+                    return MediaHelper::getMediaByName($media);
                 });
             });
 
             //Document
-            Route::prefix('/document')->group(function(){
+            Route::prefix('/document')->group(function () {
 
-                Route::post('/upload', function (Request $request){
+                Route::post('/upload-Document', function (Request $request) {
                     return DocumentHelper::uploadDocument($request);
                 });
 
-                Route::get('/get', function (){
+                Route::get('/get', function () {
                     return DocumentHelper::getAllDocuments();
                 });
 
-                Route::delete('/destroy/{document}', function ($id){
+                Route::delete('/destroy/{document}', function ($id) {
                     return DocumentHelper::deleteDocument($id);
                 });
 
-                Route::Post('/update/{document}', function(Request $request, string $name){
-                    return DocumentHelper::updateDocument($request, $name);
-                });
+                // Route::Post('/update/{document}', function (Request $request, string $name) {
+                //     return DocumentHelper::updateDocument($request, $name);
+                // });
 
-                Route::get('/download/{document}', function (string $id){
+                Route::get('/download/{document}', function (string $id) {
                     return DocumentHelper::downloadDocument($id);
                 });
             });
-
         });
 
         //Client accessible routes
         Route::middleware('verified')->group(function () {
 
-            Route::prefix('/client')->group(function (){
+            Route::prefix('/client')->group(function () {
 
                 Route::controller(ClientController::class)->group(function () {
 
@@ -387,5 +557,13 @@ Route::prefix('v1')->group(function () {
             });
         });
 
+        //for unknown routes
+        Route::get('/{any}', function () {
+
+            return response()->json([
+                'success' => false,
+                'message' => '404, Page Not found, please try again',
+            ], 404);
+        })->where('any', '.*');
     });
 });

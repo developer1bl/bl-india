@@ -72,7 +72,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' =>  'Asia/Kolkata',  //'UTC',
 
     /*
     |--------------------------------------------------------------------------
@@ -170,7 +170,9 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        Intervention\Image\ImageServiceProvider::class
+        Intervention\Image\ImageServiceProvider::class,
+        Mews\Captcha\CaptchaServiceProvider::class,
+        Barryvdh\DomPDF\ServiceProvider::class
     ])->toArray(),
 
     /*
@@ -186,7 +188,9 @@ return [
 
     'aliases' => Facade::defaultAliases()->merge([
         // 'Example' => App\Facades\Example::class,
-        'Image' => Intervention\Image\Facades\Image::class
+        'Image' => Intervention\Image\Facades\Image::class,
+        'Captcha' => Mews\Captcha\Facades\Captcha::class,
+        'PDF' => Barryvdh\DomPDF\Facade::class,
     ])->toArray(),
 
 ];
