@@ -180,7 +180,7 @@ class MediaHelper{
 
         if ($media) {
 
-            return $media->media_path;
+            return  Storage::url($media->media_path);
         }else{
 
             return null;
