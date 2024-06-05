@@ -38,6 +38,7 @@ use App\Http\Controllers\Api\GalleryController;
 use App\Http\Controllers\Api\KnowledgebaseCategoryController;
 use App\Http\Controllers\Api\KnowledgeBaseController;
 use App\Http\Controllers\Api\NotificationCategoryController;
+use App\Http\Controllers\Api\SocialMediaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -489,6 +490,17 @@ Route::prefix('v1')->group(function () {
                     Route::post('/create', 'store');
                     Route::post('/{base}', 'update');
                     Route::delete('/{base}', 'destroy');
+                });
+            });
+
+            //social media
+            Route::prefix('/social-media')->group(function () {
+                Route::controller(SocialMediaController::class)->group(function () {
+                    Route::get('/', 'index');
+                    Route::get('/{socialMedia}', 'show');
+                    Route::post('/create', 'store');
+                    Route::post('/{socialMedia}', 'update');
+                    Route::delete('/{socialMedia}', 'destroy');
                 });
             });
 

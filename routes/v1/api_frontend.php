@@ -16,6 +16,8 @@ use App\Http\Controllers\Api\GalleryController;
 use App\Models\KnowledgeBaseCategory;
 use App\Helpers\DownloadBrochureHelper;
 use App\Http\Controllers\Api\Frontend\NotificationController;
+use App\Http\Controllers\Api\Frontend\ProductController;
+use App\Http\Controllers\Api\Frontend\SocialMediaController;
 
 Route::prefix('v1')->group(function () {
 
@@ -132,6 +134,17 @@ Route::prefix('v1')->group(function () {
 
     });
 
+    //product page route
+    Route::group(['prefix' => 'product', 'controller' => ProductController::class], function () {
+
+        //get product details
+        Route::get('/{product}', 'getProductDetails');
+        //get product all services
+        Route::get('/{product}/services', 'getProductAllServices');
+        //get single service
+        Route::get('/{product}/service/{service}', 'getProductSingleService');
+    });
+
     //careers
     Route::group(['prefix' => 'careers', 'controller' => CareerController::class], function () {
         Route::get('/', 'index');
@@ -162,6 +175,12 @@ Route::prefix('v1')->group(function () {
         Route::get('/category/all', 'getNotificationCategory');
         //get single notification category
         Route::get('/category/{category}', 'getSingleNotificationCategory');
+    });
+
+    //social media
+    Route::group(['prefix' => 'social-media', 'controller' => SocialMediaController::class], function (){
+        //get all social media
+        Route::get('/', 'getSocialMedia');
     });
 
     //for unknown routes
