@@ -19,6 +19,11 @@ use App\Helpers\LanguageHelper;
 use App\Http\Controllers\Api\Frontend\NotificationController;
 use App\Http\Controllers\Api\Frontend\ProductController;
 use App\Http\Controllers\Api\Frontend\SocialMediaController;
+use App\Models\Associate;
+use App\Models\Certificate;
+use App\Models\ContactUs;
+use App\Models\Service;
+use App\Models\SocialMedia;
 use Illuminate\Http\Request;
 
 Route::prefix('v1')->group(function () {
@@ -231,6 +236,60 @@ Route::prefix('v1')->group(function () {
                                        'message' => 'no data available',
                                         ],204);
             }
+        });
+   });
+
+   //footer section api
+   Route::prefix('footer')->group(function(){
+        //for associate
+        Route::get('/associate', function(){
+
+            $associate = Associate::orderByDesc('associate_id')->get();
+
+            return response()->json([
+                                    'data' => $associate ?? [],
+                                    'success' => true
+                                    ], 200);
+        });
+
+        //for social media icons
+        Route::get('/social-media', function(){
+
+            $socialMedia = SocialMedia::all();
+
+            return response()->json(['data' => $socialMedia ?? []], 200);
+        });
+
+        //company imformation
+        Route::get('/company-information', function(){
+
+            $information = ContactUs::first();
+
+            return response()->json([
+                                    'data' => $information?? [],
+                                    'success' => true
+                                    ], 200);
+        });
+
+        //service
+        Route::get('/service', function(){
+            $service = Service::all('service_name');
+
+            return response()->json([
+                                    'data' => $service?? [],
+                                    'success' => true
+                                    ], 200);
+        });
+
+        //certificates
+        Route::get('/certificates', function(){
+
+            $certificates = Certificate::all();
+
+            return response()->json([
+                                    'data' => $certificates?? [],
+                                    'success' => true
+                                    ], 200);
         });
    });
 

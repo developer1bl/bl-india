@@ -34,6 +34,7 @@ use App\Helpers\MediaHelper;
 use App\Helpers\DocumentHelper;
 use App\Http\Controllers\Api\Auth\TokenController;
 use App\Http\Controllers\Api\CareerController;
+use App\Http\Controllers\Api\CertificateController;
 use App\Http\Controllers\Api\GalleryController;
 use App\Http\Controllers\Api\KnowledgebaseCategoryController;
 use App\Http\Controllers\Api\KnowledgeBaseController;
@@ -501,6 +502,17 @@ Route::prefix('v1')->group(function () {
                     Route::post('/create', 'store');
                     Route::post('/{socialMedia}', 'update');
                     Route::delete('/{socialMedia}', 'destroy');
+                });
+            });
+
+            //certificates routes
+            Route::prefix('/certificate')->group(function () {
+                Route::controller(CertificateController::class)->group(function () {
+                    Route::get('/', 'index');
+                    Route::get('/{certificate}', 'show');
+                    Route::post('/create', 'create');
+                    Route::post('/{certificate}', 'update');
+                    Route::delete('/{certificate}', 'destroy');
                 });
             });
 
