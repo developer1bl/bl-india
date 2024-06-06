@@ -23,7 +23,7 @@ return new class extends Migration
             $table->dateTime('login_at')->nullable()->comment('this field will be update everytime when the user is logged');
             $table->string('otp')->nullable()->comment('this field store the OTP at the time of login/register');
             $table->dateTime('otp_generated_at')->nullable()->comment('we are storing date and time information of the otp generated');
-            $table->macAddress('otp_generated_address')->nullable()->comment("here we store the address of request otp user's device");
+            $table->string('otp_generated_address')->nullable()->comment("here we store the address of request otp user's device");
             $table->boolean('is_online')->default(false)->comment('this column help to check is user online or offline');
             $table->boolean('is_active')->default(true)->comment('this column help to check is user active or not');
             $table->string('email_verification_token')->nullable()->comment('this column help to');

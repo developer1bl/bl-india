@@ -86,70 +86,63 @@ class RegisterController extends Controller
      */
     public function registerClient(Request $request)
     {
-
+        // Validate the incoming request data
         $validator = Validator::make($request->all(), [
             'name' => 'required',
-            'email' => 'required|email:rfc,dns|unique:clients',
+            'email' => 'required|email:rfc,dns|unique:clients,email',
             'phone' => 'required|numeric',
             'password' => 'required',
             'country_code' => 'required',
         ]);
 
-        //if the request have some validation errors
+        // Check if validation fails
         if ($validator->fails()) {
-
             return response()->json([
-                                    'success' => false,
-                                    'message' => $validator->messages()
-                                    ], 400);
+                'success' => false,
+                'message' => $validator->errors()->first(),
+            ], 400);
         }
 
-
-        $countries = $request->country_code ?? null;
+        // Parse country code
+        $countries = $request->country_code;
+        $country = null;
+        $phonecode = null;
 
         if ($countries) {
-            // Removing brackets and spaces from the string
+            // Remove brackets and spaces from the string
             $requestValue = str_replace(['[', ']', ' '], '', $countries);
-            // Exploding the string into an array
+            // Explode the string into an array
             $requestArray = explode(',', $requestValue);
-            // Extracting values
+            // Extract country and phone code
             $country = $requestArray[0];
             $phonecode = $requestArray[1];
-        } else {
-            $country = null;
-            $phonecode = null;
         }
 
-        $data = [
+        // Create new client
+        $client = Client::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => $request->password,
             'phone' => '+' . $phonecode . '-' . $request->phone,
             'country' => $country,
-        ];
-       
-        // create new client
-        $client = Client::create($data);
+        ]);
 
-        if (!empty($client)) {
-
-            //send verification email to client email address
-           $this->sendVerificationMail($client);
-            //event(new Registered($client));
-
-            return response()->json([
-                                    'success' => true,
-                                    'message' => "client registration successful, Verification email sent on Client's Email Please verify it",
-                                    'token' => $client->createToken($request->email)->plainTextToken
-                                    ], 201);
-
-        } else {
-
+        // Check if client creation fails
+        if (!$client) {
             return response()->json([
                                     'success' => false,
-                                    'message' => 'client registration failed'
+                                    'message' => 'Client registration failed',
                                     ], 400);
         }
+
+        // Send verification email to client's email address
+        $this->sendVerificationMail($client);
+
+        return response()->json([
+                                'success' => true,
+                                'message' => "Client registration successful. Verification email sent to client's email address.",
+                                'token' => $client->createToken($request->email)->plainTextToken,
+                                ], 201);
     }
 
     /**
