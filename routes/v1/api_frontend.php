@@ -187,7 +187,7 @@ Route::prefix('v1')->group(function () {
 
     //language api
    Route::prefix('language')->group(function(){
-    
+
         Route::get('/', function(Request $request){
 
             $language = LanguageHelper::getLanguageByRegion($request->ip() ?? null);
@@ -206,6 +206,31 @@ Route::prefix('v1')->group(function () {
                                         ]);
             }
 
+        });
+   });
+
+   //for data render api (convert editor json data into normal text format)
+   Route::prefix('data-render')->group(function(){
+
+        Route::post('/', function(Request $request){
+
+            $data = json_decode($request->field_data) ?? null;
+
+            $filteredData = DownloadBrochureHelper::extractTextFromData($data ?? null);
+
+            if (!empty($filteredData)) {
+
+                return response()->json([
+                                        'success' => true,
+                                        'data' => $filteredData
+                                        ],200);
+            } else {
+
+                return response()->json([
+                                       'success' => false,
+                                       'message' => 'no data available',
+                                        ],204);
+            }
         });
    });
 

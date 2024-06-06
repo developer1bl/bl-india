@@ -328,23 +328,28 @@ class DownloadBrochureHelper
     public static function extractTextFromData($data)
     {
         $textValues = [];
-        $dataCollection = array($data);
 
-        // Check if the 'blocks' key exists and it is an array
-        if (isset($dataCollection[0]->blocks) && is_array($dataCollection[0]->blocks)) {
+       if (isset($data)){
 
-            // Loop through each block
-            foreach ($dataCollection[0]->blocks as $block) {
+            $dataCollection = array($data);
 
-                // Check if the 'data' key exists and it is an array, and if 'text' key exists
-                if (isset($block->data) && isset($block->data->text)) {
-                    // Add the 'text' value to the $textValues array
-                    $textValues[] = $block->data->text;
+            // Check if the 'blocks' key exists and it is an array
+            if (isset($dataCollection[0]->blocks) && is_array($dataCollection[0]->blocks)) {
+
+                // Loop through each block
+                foreach ($dataCollection[0]->blocks as $block) {
+
+                    // Check if the 'data' key exists and it is an array, and if 'text' key exists
+                    if (isset($block->data) && isset($block->data->text)) {
+                        // Add the 'text' value to the $textValues array
+                        $textValues[] = $block->data->text;
+                    }
                 }
             }
-        }
+            return implode(' ', $textValues) ?? '';
+       }
 
-        return implode(' ', $textValues) ?? '';
+       return $textValues;
     }
 
     public static function SendThanksMail($data)
