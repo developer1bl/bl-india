@@ -33,7 +33,7 @@ class ServiceController extends Controller
     public function create(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'service_name' => ['required', 'string', 'max:150', Rule::unique('services', 'service_name')->whereNull('deleted_at')],
+            'service_name' => ['required', 'string', 'max:150'],
             'service_slug' => ['required', 'string', 'max:255', Rule::unique('services', 'service_slug')->whereNull('deleted_at')],
             'service_image_id' => 'required|exists:media,media_id',
             'service_category_id' => 'required|exists:service_categories,id',
@@ -53,7 +53,7 @@ class ServiceController extends Controller
                     ->whereService_slug($request->service_slug)
                     ->exists()
         ) {
-            throw new UserExistPreviouslyException('Oops! It appears that the chosen Service Name or slug is already in use. Please select a different one and try again.');
+            throw new UserExistPreviouslyException('Oops! It appears that the chosen Service slug is already in use. Please select a different one and try again.');
         }
 
         $PageImagePath = MediaHelper::getMediaPath($request->service_image_id ?? null);
@@ -66,7 +66,7 @@ class ServiceController extends Controller
             'service_img_alt' => $request->service_img_alt,
             'service_compliance' => $request->service_compliance,
             'service_description' => $request->service_description,
-            'faqs' => $request->faq,
+            'faqs' => json_decode($request->faq),
             'seo_title' => $request->seo_title,
             'seo_description' => $request->seo_description,
             'seo_keywords' => $request->seo_keywords,
@@ -137,7 +137,6 @@ class ServiceController extends Controller
      */
     public function show(string $id)
     {
-        // $service = Service::with(['notices', 'service_section'])->find($id);
         $service = Service::find($id);
 
         if ($service) {
@@ -183,7 +182,7 @@ class ServiceController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'service_name' => ['required', 'string', 'max:150', Rule::unique('services', 'service_name')->ignore($id, 'service_id')],
+            'service_name' => ['required', 'string', 'max:150'],
             'service_slug' => ['required', 'string', 'max:255', Rule::unique('services', 'service_slug')->ignore($id, 'service_id')],
             'service_image_id' => 'required|exists:media,media_id',
             'service_category_id' => 'required|exists:service_categories,id',
