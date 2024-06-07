@@ -39,7 +39,7 @@ class StaticPageSectionController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'static_page_id' => 'required|integer|exists:static_pages,static_page_id',
-            'section_media_id' => 'integer|exists:media,media_id',
+            'section_media_id' => ['nullable','integer','exists:media,media_id'],
             'section_img_alt' => 'nullable|string',
             'section_name' => ['required','string','max:150'],
             'section_slug' => ['required','string','max:150', Rule::unique('static_page_sections', 'section_slug')->whereNull('deleted_at')],
@@ -179,7 +179,7 @@ class StaticPageSectionController extends Controller
 
         $validator = Validator::make($request->all(), [
             'static_page_id' => 'required|integer|exists:static_pages,static_page_id',
-            'section_media_id' => 'integer|exists:media,media_id',
+            'section_media_id' => ['nullable','integer','exists:media,media_id'],
             'section_img_alt' => 'nullable|string',
             'section_name' => ['required','string','max:150'],
             'section_slug' => ['required','string','max:150', Rule::unique('static_page_sections', 'section_slug')->ignore($id,'static_page_section_id')->whereNull('deleted_at')],
