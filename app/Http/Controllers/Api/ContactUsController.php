@@ -42,11 +42,6 @@ class ContactUsController extends Controller
             'page_description' => 'required|string',
             'address' => 'required|string|max:255',
             'company_email' => 'required|email|max:255',
-            'mobile_numbers' => 'required|array',
-            'mobile_numbers.*.mobile_number' => 'required|string',
-            'office_numbers' => 'required|array',
-            'office_numbers.*.office_number' => 'required|string',
-            'feedback_person.email' => 'required|email',
         ]);
 
         //if the request have some validation errors
@@ -58,7 +53,7 @@ class ContactUsController extends Controller
             ], 403);
         }
 
-        if (ContactUs::first()->exists()) {
+        if (ContactUs::first()) {
 
             return response()->json([
                 'success' => true,

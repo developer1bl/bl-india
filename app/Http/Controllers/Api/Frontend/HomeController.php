@@ -149,7 +149,7 @@ class HomeController extends Controller
      */
     public function getHomeTestimonialsData(){
 
-        $testimonials = Testimonial::orderByDesc('testimonial_id')->take(3)->get();
+        $testimonials = Testimonial::orderByDesc('testimonial_id')->get();
 
         return response()->json([
                                 'data' => $testimonials ?? [],
