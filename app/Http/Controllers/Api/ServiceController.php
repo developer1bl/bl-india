@@ -207,7 +207,7 @@ class ServiceController extends Controller
             'service_img_alt' => $request->service_img_alt,
             'service_compliance' => $request->service_compliance,
             'service_description' => $request->service_description,
-            'faqs' => $request->faq,
+            'faqs' => json_decode($request->faq),
             'seo_title' => $request->seo_title,
             'seo_description' => $request->seo_description,
             'seo_keywords' => $request->seo_keywords,
