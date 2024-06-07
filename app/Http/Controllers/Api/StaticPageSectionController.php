@@ -69,13 +69,13 @@ class StaticPageSectionController extends Controller
             'section_img_alt' => $request->section_img_alt,
             'section_name' => $request->section_name,
             'section_slug' => $request->section_slug,
-            'section_tagline' => $request->section_tagline,
-            'section_description' => $request->section_description,
-            'section_content' => $request->section_content,
+            'section_tagline' => json_decode($request->section_tagline) ?? null,
+            'section_description' => json_decode($request->section_description) ?? null,
+            'section_content' => json_decode($request->section_content) ?? null,
             'section_status' => true,
             'section_order' => $request->section_order
         ];
-    
+
         $staticPageSection = StaticPageSection::create($data);
 
         if ($staticPageSection) {
@@ -202,9 +202,9 @@ class StaticPageSectionController extends Controller
             'section_img_alt' => $request->section_img_alt,
             'section_name' => $request->section_name,
             'section_slug' => $request->section_slug,
-            'section_tagline' => $request->section_tagline,
-            'section_description' => $request->section_description,
-            'section_content' => $request->section_content,
+            'section_tagline' => json_decode($request->section_tagline) ?? null,
+            'section_description' => json_decode($request->section_description) ?? null,
+            'section_content' => json_decode($request->section_content) ?? null,
             'section_status' => $request->section_status,
             'section_order' => $request->section_order
         ];
