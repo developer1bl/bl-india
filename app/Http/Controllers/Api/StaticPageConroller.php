@@ -37,7 +37,7 @@ class StaticPageConroller extends Controller
             'page_name' => ['required','string','max:150'],
             'page_slug' => ['required','string','max:150', Rule::unique('static_pages', 'page_slug')->whereNull('deleted_at')],
             'tagline' => 'string|nullable',
-            'page_image_id' => 'exists:media,media_id',
+            'page_image_id' => ['nullable','exists:media,media_id'],
             'page_image_alt' => 'nullable|string',
             'seo_title' => 'string|nullable',
             'seo_keywords' => 'string|nullable',
