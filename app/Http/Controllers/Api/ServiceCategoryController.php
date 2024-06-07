@@ -64,7 +64,8 @@ class ServiceCategoryController extends Controller
             'service_category_slug' => $request->service_category_slug,
             'category_img_url' => $categoryImagPath,
             'category_img_alt' => $request->category_img_alt,
-            'service_category_type' => $request->category_img_alt
+            'service_category_type' => $request->service_category_type,
+            'category_status' =>  true,
         ];
 
         $result = ServiceCategory::create($data);
