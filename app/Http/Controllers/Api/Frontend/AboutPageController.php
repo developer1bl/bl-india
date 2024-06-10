@@ -8,6 +8,7 @@ use App\Models\StaticPage;
 use App\Models\StaticPageSection;
 use App\Models\Team;
 use App\Models\ClientUser;
+use App\Models\FounderVoice;
 
 class AboutPageController extends Controller
 {
@@ -72,16 +73,10 @@ class AboutPageController extends Controller
      */
     public function getFounderVoiceData(){
 
-        $pageSectionData = StaticPage::Select('static_page_sections.*')
-                                        ->join('static_page_sections', function($q){
-                                            $q->on('static_page_sections.static_page_section_id', 'static_pages.static_page_id');
-                                         })
-                                       ->where('static_pages.page_name', 'about')
-                                       ->where('static_page_sections.section_slug', 'about-founder-voice-section')
-                                       ->get();
+        $foundVoice = FounderVoice::get();
 
         return response()->json([
-                                'data' => $pageSectionData ?? [],
+                                'data' => $foundVoice ?? [],
                                 'success' => true,
                                 ], 200);
     }
