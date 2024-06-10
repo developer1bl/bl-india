@@ -188,42 +188,41 @@ class ProductController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        // Find the product by ID
         $product = Product::find($id);
 
         if (!$product) {
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Product not found'
-            ], 404);
+             return response()->json([
+                                    'success' => false,
+                                    'message' => 'Product not found'
+                                    ], 404);
         }
 
+        // Validate the request data
         $validator = Validator::make(
             $request->all(),
             [
                 'product_name' => ['required', 'string', 'max:150'],
-                'product_slug' => ['required', 'string', 'max:150', Rule::unique('products', 'product_slug')->whereNull('deleted_at')],
+                'product_slug' => ['required', 'string', 'max:150', Rule::unique('products', 'product_slug')
+                                                                          ->ignore($id, 'product_id')
+                                                                          ->whereNull('deleted_at')],
                 'product_category_id' => 'exists:product_categories,product_category_id',
                 'product_image_id' => 'integer|exists:media,media_id',
                 'product_technical_name' => 'nullable|string',
                 'product_img_alt' => 'nullable|string',
-                'product_content' => 'nullable|array',
-                'services' => [
-                    'required',
-                    'array',
-                ],
             ]
         );
 
-        //if the request have some validation errors
+        // Check for validation errors
         if ($validator->fails()) {
-
             return response()->json([
-                'success' => false,
-                'message' => $validator->messages()
-            ], 403);
+                                    'success' => false,
+                                    'message' => $validator->messages()
+                                    ], 403);
         }
 
+        // Prepare the updated data
         $productImagePath = MediaHelper::getMediaPath($request->product_image_id ?? null);
 
         $data = [
@@ -236,47 +235,43 @@ class ProductController extends Controller
             'seo_title' => $request->seo_title,
             'seo_description' => $request->seo_description,
             'seo_keywords' => $request->seo_keywords,
-            'product_status' => $request->product_status,
+            'product_status' => $request->product_status ?? 1,
             'product_order' => $request->product_order,
         ];
 
-        //attach product category with product
+        // Update the product
+        $product->update($data);
+
+        // Sync product categories
         $category = explode(',', $request->product_category_id);
         $category = array_map('intval', $category);
         $product->productCategories()->sync($category);
 
-        //attach services on product
-        $services = [];
-        $serviceData = json_decode($request->service);
+        // Sync product services
+        $services = $complains = [];
+        $requestService = json_decode($request->service);
 
-        foreach ($serviceData as $serviceData) {
-
+        foreach ($requestService as $serviceData) {
             $serviceId = $serviceData->service_id;
             $serviceType = $serviceData->service_type;
-            $serviceCompliance = json_encode(explode(',', $serviceData->service_compliance));
+            $complianceData = [];
+
+            foreach ($serviceData->service_compliance as $compliance) {
+                $complianceData[$compliance->name] = $compliance->value;
+            }
 
             $services[$serviceId] = [
                 'service_type' => $serviceType,
-                'service_compliance' => $serviceCompliance,
+                'service_compliance' => json_encode($complianceData),
             ];
         }
+
         $product->productService()->sync($services);
 
-        $result = $product->update($data);
-
-        if ($result) {
-
-            return response()->json([
-                'success' => true,
-                'message' => 'product update successfully '
-            ], 201);
-        } else {
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Something went wrong, try again later'
-            ], 422);
-        }
+        return response()->json([
+                                'success' => true,
+                                'message' => 'Product updated successfully'
+                                ], 200);
     }
 
     /**
