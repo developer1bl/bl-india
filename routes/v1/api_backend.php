@@ -40,6 +40,7 @@ use App\Http\Controllers\Api\GalleryController;
 use App\Http\Controllers\Api\KnowledgebaseCategoryController;
 use App\Http\Controllers\Api\KnowledgeBaseController;
 use App\Http\Controllers\Api\NotificationCategoryController;
+use App\Http\Controllers\Api\QuickLinkController;
 use App\Http\Controllers\Api\SocialMediaController;
 
 /*
@@ -484,7 +485,7 @@ Route::prefix('v1')->group(function () {
                 });
             });
 
-            //knowledgebase routes
+            //knowledgeBase routes
             Route::prefix('/knowledge-base')->group(function () {
                 Route::controller(KnowledgeBaseController::class)->group(function () {
                     Route::get('/', 'index');
@@ -525,6 +526,17 @@ Route::prefix('v1')->group(function () {
                     Route::post('/create', 'store');
                     Route::post('/{founderVoice}', 'update');
                     Route::delete('/{founderVoice}', 'destroy');
+                });
+            });
+
+            //quick link
+            Route::prefix('/quick-link')->group(function(){
+                Route::controller(QuickLinkController::class)->group(function () {
+                    Route::get('/', 'getQuickLinks');
+                    Route::get('/{quickLink}', 'show');
+                    Route::post('/create', 'createQuickLink');
+                    Route::post('/{quickLink}', 'updateQuickLink');
+                    Route::delete('/{quickLink}', 'deleteQuickLink');
                 });
             });
 

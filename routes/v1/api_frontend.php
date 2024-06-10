@@ -23,6 +23,7 @@ use App\Http\Controllers\Api\Frontend\SocialMediaController;
 use App\Models\Associate;
 use App\Models\Certificate;
 use App\Models\ContactUs;
+use App\Models\QuickLink;
 use App\Models\Service;
 use App\Models\SocialMedia;
 use Illuminate\Http\Request;
@@ -300,6 +301,15 @@ Route::prefix('v1')->group(function () {
 
             return response()->json([
                                     'data' => $certificates?? [],
+                                    'success' => true
+                                    ], 200);
+        });
+
+        //quick link
+        Route::get('/quick-link', function(){
+            $quickLink = QuickLink::all();
+            return response()->json([
+                                    'data' => $quickLink?? [],
                                     'success' => true
                                     ], 200);
         });
