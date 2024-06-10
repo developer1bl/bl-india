@@ -22,7 +22,7 @@ class ProductController extends Controller
         if ($product) {
             return response()->json(['data' => $product, 'status' => true],200);
         }else{
-            return response()->json(['data' => [], 'status' => false ], 404);
+            return response()->json(['data' => [], 'status' => false, 'message' => 'No Product found' ], 404);
         }
     }
 
