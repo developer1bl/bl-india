@@ -27,7 +27,7 @@ class DownloadController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function getDownloadByCategory($category){
-        
+
         $downloadCategory = DownloadCategory::find($category);
 
         if ($downloadCategory) {
@@ -56,7 +56,7 @@ class DownloadController extends Controller
      */
     public function getDownload(){
 
-        $downloads = Download::with('downloadCategories', 'documents')->get();
+        $downloads = Download::with('documents')->get();
 
         $downloads = $downloads->map(function ($download) {
             $download->documents = $download->documents->map(function ($document) {
