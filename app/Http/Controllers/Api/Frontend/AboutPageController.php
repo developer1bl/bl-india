@@ -73,7 +73,7 @@ class AboutPageController extends Controller
      */
     public function getFounderVoiceData(){
 
-        $foundVoice = FounderVoice::get();
+        $foundVoice = FounderVoice::all();
 
         return response()->json([
                                 'data' => $foundVoice ?? [],
@@ -88,7 +88,7 @@ class AboutPageController extends Controller
      */
     public function getAboutClientData(){
 
-        $clientUser = ClientUser::orderByDesc('client_users_id')->get();
+        $clientUser = ClientUser::all();
 
         return response()->json([
                                 'data' => $clientUser ?? [],
