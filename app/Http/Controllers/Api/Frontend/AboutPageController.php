@@ -37,13 +37,12 @@ class AboutPageController extends Controller
      */
     public function getAboutSectionData(string $slug){
 
-        $pageSectionData = StaticPage::Select('static_page_sections.*')
-                                        ->join('static_page_sections', function($q){
-                                            $q->on('static_page_sections.static_page_section_id', 'static_pages.static_page_id');
-                                         })
-                                       ->where('static_pages.page_name', 'about')
-                                       ->where('static_page_sections.section_slug', $slug)
-                                       ->get();
+        $pageSectionData = StaticPageSection::Select('static_page_sections.*')
+                                              ->leftJoin('static_pages', function ($q){
+                                                $q->on('static_pages.static_page_id','static_page_sections.static_page_id');
+                                              })
+                                              ->where('static_page_sections.section_slug', $slug)
+                                              ->first();
 
         return response()->json([
                                 'data' => $pageSectionData ?? [],

@@ -35,6 +35,7 @@ use App\Helpers\DocumentHelper;
 use App\Http\Controllers\Api\Auth\TokenController;
 use App\Http\Controllers\Api\CareerController;
 use App\Http\Controllers\Api\CertificateController;
+use App\Http\Controllers\Api\FounderVoiceController;
 use App\Http\Controllers\Api\GalleryController;
 use App\Http\Controllers\Api\KnowledgebaseCategoryController;
 use App\Http\Controllers\Api\KnowledgeBaseController;
@@ -513,6 +514,17 @@ Route::prefix('v1')->group(function () {
                     Route::post('/create', 'create');
                     Route::post('/{certificate}', 'update');
                     Route::delete('/{certificate}', 'destroy');
+                });
+            });
+
+            //founder voice
+            Route::prefix('/founder-voice')->group(function () {
+                Route::controller(FounderVoiceController::class)->group(function () {
+                    Route::get('/', 'index');
+                    Route::get('/{founderVoice}', 'show');
+                    Route::post('/create', 'store');
+                    Route::post('/{founderVoice}', 'update');
+                    Route::delete('/{founderVoice}', 'destroy');
                 });
             });
 
