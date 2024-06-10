@@ -68,7 +68,7 @@ class MediaHelper{
      */
     public static function getAllImages(){
 
-        $media = Media::orderByDesc('media_id')->limit(15)->get();
+        $media = Media::orderByDesc('media_id')->get();
 
         foreach($media as $key => $value) {
             $media[$key]['media_path'] = Storage::url($value['media_path']);
