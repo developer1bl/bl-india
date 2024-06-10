@@ -143,13 +143,14 @@ Route::prefix('v1')->group(function () {
 
     //product page route
     Route::group(['prefix' => 'product', 'controller' => ProductController::class], function () {
-
+        //get product category
+        Route::get('/product-category', 'getProductCategory');
+        //get product by category
+        Route::get('/category/{category}', 'getProductByCategory');
         //get product details
         Route::get('/{product}', 'getProductDetails');
         //get product all services
         Route::get('/{product}/services', 'getProductAllServices');
-        //get single service
-        Route::get('/{product}/service/{service}', 'getProductSingleService');
     });
 
     //careers
