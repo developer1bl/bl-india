@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\GalleryController;
 use App\Models\KnowledgeBaseCategory;
 use App\Helpers\DownloadBrochureHelper;
 use App\Helpers\LanguageHelper;
+use App\Http\Controllers\Api\Frontend\DownloadController;
 use App\Http\Controllers\Api\Frontend\NotificationController;
 use App\Http\Controllers\Api\Frontend\ProductController;
 use App\Http\Controllers\Api\Frontend\SocialMediaController;
@@ -215,6 +216,16 @@ Route::prefix('v1')->group(function () {
         });
    });
 
+   //download api
+   Route::group(['prefix' => 'download', 'controller' => DownloadController::class], function (){
+        //get all download categories
+        Route::get('/category', 'getCategory');
+        //get download list based on category
+        Route::get('/category/{category}', 'getDownloadByCategory');
+        //get download list based
+        Route::get('/', 'getDownload');
+   });
+
    //for data render api (convert editor json data into normal text format)
    Route::prefix('data-render')->group(function(){
 
@@ -245,7 +256,7 @@ Route::prefix('v1')->group(function () {
         //for associate
         Route::get('/associate', function(){
 
-            $associate = Associate::orderByDesc('associate_id')->get();
+            $associate = Associate::orderBy('associate_id')->get();
 
             return response()->json([
                                     'data' => $associate ?? [],

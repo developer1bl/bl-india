@@ -9,6 +9,17 @@ use App\Models\ProductCategories;
 
 class ProductController extends Controller
 {
+
+     /**
+     * home page work-flow section
+     *
+     * @param product $product
+     * @return \Illuminate\Http\Response
+     */
+    public function getProductByService($id){
+        
+    }
+
     /**
      * home page work-flow section
      *
@@ -53,7 +64,7 @@ class ProductController extends Controller
      */
     public function getProductCategory()
     {
-        $category = ProductCategories::all();
+        $category = ProductCategories::withCount('products')->get();
         return response()->json(['data' => $category, 'status' => true],200);
     }
 

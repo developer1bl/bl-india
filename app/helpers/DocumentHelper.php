@@ -17,7 +17,7 @@ class DocumentHelper{
      * @return Response
      */
     public static function uploadDocument(Request  $request)
-    { 
+    {
         $validator = Validator::make($request->all(), [
             'document_file' => 'required|file|mimes:pdf',
         ],[
@@ -67,7 +67,7 @@ class DocumentHelper{
      */
     public static function getAllDocuments(){
 
-        $documents = Document::orderBy('document_id', 'desc')->limit(15)->get();
+        $documents = Document::all();
 
         foreach($documents as $key => $value) {
             $documents[$key]['document_path'] = Storage::url($value['document_path']);
@@ -208,7 +208,7 @@ class DocumentHelper{
 
         if ($document) {
 
-            return $document->document_path;
+            return Storage::url($document->document_path);
 
         } else {
 

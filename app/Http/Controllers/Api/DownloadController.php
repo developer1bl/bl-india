@@ -9,28 +9,37 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use App\Exceptions\UserExistPreviouslyException;
 use App\Models\Document;
+use Illuminate\Support\Facades\Storage;
 
 class DownloadController extends Controller
 {
     /**
      * Display a listing of the resource.
-     * 
+     *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        $download = Download::with('downloadCategories', 'documents')->get();
+        $downloads = Download::with('downloadCategories', 'documents')->get();
+
+        $downloads = $downloads->map(function ($download) {
+            $download->documents = $download->documents->map(function ($document) {
+                $document->document_path =  Storage::url($document->document_path);
+                return $document;
+            });
+            return $download;
+        });
 
         return response()->json([
-                                'data' => $download ?? [],
+                                'data' => $downloads ?? [],
                                 'success' => true,
                                 ], 200);
-        
+
     }
 
     /**
      * Show the form for creating a new resource.
-     * 
+     *
      * @param Request $request
      * @return Response
      */
@@ -63,7 +72,7 @@ class DownloadController extends Controller
                                 $fail('Invalid Document type.');
                             }
                         }
-    
+
                         return;
                     }
                     }
@@ -82,37 +91,37 @@ class DownloadController extends Controller
         if (Download::withTrashed()
                       ->where('download_name', $request->download_name)
                       ->orWhere('download_slug', $request->download_slug)
-                      ->exists()) 
-        {    
+                      ->exists())
+        {
             throw new UserExistPreviouslyException('Oops! It appears that the chosen Download Name or slug is already in use. Please select a different one and try again');
         }
 
-        
+
         $download = [
             'download_name' => $request->download_name,
             'download_slug' => $request->download_slug,
             'download_status' => $request->download_status,
             'download_category_id' => $request->download_category_id,
         ];
-        
+
         $download = Download::create($download);
 
         $donwload_document = json_decode($request->download_documents);
 
         //attach document with downloads
         foreach ($donwload_document as $key) {
-            
-            $download->documents()->attach($key->document_id, ['download_type' => strtolower($key->ducument_type)]); 
+
+            $download->documents()->attach($key->document_id, ['download_type' => strtolower($key->ducument_type)]);
         }
 
         if ($download) {
-            
+
             return response()->json([
                                     'success' => true,
                                     'message' => 'Download created successfully'
                                     ], 201);
         } else {
-            
+
             return response()->json([
                                     'success' => false,
                                     'message' => 'Something went wrong, please try again later'
@@ -122,7 +131,7 @@ class DownloadController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     * 
+     *
      * @param string $request
      * @return response
      */
@@ -133,7 +142,7 @@ class DownloadController extends Controller
                              ->first();
 
         if ($download) {
-            
+
             $download->restore();
 
             return response()->json([
@@ -141,7 +150,7 @@ class DownloadController extends Controller
                                     'message' => 'Download restored successfully'
                                     ], 202);
         } else {
-            
+
             return response()->json([
                                     'success' => false,
                                     'message' => 'Download not found'
@@ -151,7 +160,7 @@ class DownloadController extends Controller
 
     /**
      * Display the specified resource.
-     * 
+     *
      * @param string $id
      * @return Response
      */
@@ -160,7 +169,7 @@ class DownloadController extends Controller
         $download = Download::find($id);
 
         if ($download) {
-            
+
             return response()->json([
                                     'data' => $download,
                                     'success' => true,
@@ -186,7 +195,7 @@ class DownloadController extends Controller
 
     /**
      * Update the specified resource in storage.
-     * 
+     *
      * @param string $id
      * @param Request $request
      * @return Response
@@ -196,7 +205,7 @@ class DownloadController extends Controller
         $download = Download::find($id);
 
         if (!$download) {
-            
+
             return response()->json([
                                     'success' => false,
                                     'message' => 'Download not found'
@@ -231,7 +240,7 @@ class DownloadController extends Controller
                                 $fail('Invalid Document type.');
                             }
                         }
-    
+
                         return;
                     }
                     }
@@ -248,7 +257,7 @@ class DownloadController extends Controller
         }
 
         $download_document = json_encode($request->download_documents);
-        
+
         $download_doc = [
             'download_name' => $request->download_name,
             'download_slug' => $request->download_slug,
@@ -263,18 +272,18 @@ class DownloadController extends Controller
 
         //attach document with downloads
         foreach ($donwload_document as $key) {
-            
-            $download->documents()->attach($key->document_id, ['download_type' => strtolower($key->ducument_type)]); 
+
+            $download->documents()->attach($key->document_id, ['download_type' => strtolower($key->ducument_type)]);
         }
 
         if ($result) {
-            
+
             return response()->json([
                                     'success' => true,
                                     'message' => 'Download updated successfully'
                                     ], 202);
         } else {
-            
+
             return response()->json([
                                     'success' => false,
                                     'message' => 'Something went wrong, please try again later'
@@ -284,16 +293,16 @@ class DownloadController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     * 
+     *
      * @param string $id
      * @return response
      */
     public function destroy(string $id)
-    { 
+    {
         $download = Download::find($id);
 
         if (!$download) {
-            
+
             return response()->json([
                                     'success' => false,
                                     'message' => 'Download not found'
@@ -303,13 +312,13 @@ class DownloadController extends Controller
         $result = $download->delete();
 
         if ($result) {
-            
+
             return response()->json([
                                     'success' => true,
                                     'message' => 'Download deleted successfully'
                                     ], 202);
         } else {
-            
+
             return response()->json([
                                    'success' => false,
                                    'message' => 'Something went wrong, please try again later'
