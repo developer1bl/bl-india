@@ -19,13 +19,13 @@ class ProductController extends Controller
     public function index()
     {
         $product = Product::with(['productCategories'])
-            ->orderByDesc('product_id')
-            ->get();
+                            ->orderByDesc('product_id')
+                            ->get();
 
         return response()->json([
-            'data' => $product ?? [],
-            'success' => true
-        ], 200);
+                                'data' => $product ?? [],
+                                'success' => true
+                                ], 200);
     }
 
     /**
@@ -52,14 +52,14 @@ class ProductController extends Controller
         if ($validator->fails()) {
 
             return response()->json([
-                'success' => false,
-                'message' => $validator->messages()
-            ], 403);
+                                    'success' => false,
+                                    'message' => $validator->messages()
+                                    ], 403);
         }
 
         if (Product::withTrashed(true)
-            ->Where('product_slug', $request->product_slug)
-            ->exists()
+                    ->Where('product_slug', $request->product_slug)
+                    ->exists()
         ) {
             throw new UserExistPreviouslyException('Oops! It appears that the chosen Product slug is already in use. Please select a different one and try again');
         }
@@ -88,7 +88,7 @@ class ProductController extends Controller
         $product->productCategories()->sync($category);
 
         //attach services on product
-        $services = $complains = [];
+        $services = [];
         $requestService = json_decode($request->service);
 
         foreach ($requestService as $serviceData) {
@@ -111,15 +111,15 @@ class ProductController extends Controller
 
         if ($product) {
             return response()->json([
-                'success' => true,
-                'message' => 'Product created successfully'
-            ], 200);
+                                    'success' => true,
+                                    'message' => 'Product created successfully'
+                                    ], 200);
         } else {
 
             return response()->json([
-                'success' => false,
-                'message' => 'Something went wrong, try again later'
-            ], 422);
+                                    'success' => false,
+                                    'message' => 'Something went wrong, try again later'
+                                    ], 422);
         }
     }
 
