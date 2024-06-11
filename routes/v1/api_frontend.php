@@ -140,7 +140,8 @@ Route::prefix('v1')->group(function () {
         Route::get('/get/{service}', 'getSingleService');
         //service detail page section
         Route::get('/{service?}/service-section/{section?}', 'getServiceSectionDetails');
-
+        //get all service sections
+        Route::get('/{service?}/get/service-section', 'getAllServiceSectionList');
     });
 
     //product page route

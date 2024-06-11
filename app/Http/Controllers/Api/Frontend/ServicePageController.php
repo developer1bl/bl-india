@@ -100,7 +100,7 @@ class ServicePageController extends Controller
         $lowercaseName = strtolower($name);
 
         // Keywords to check in the name parameter
-        $keywords = ['mandatory product list', 'product list', 'list'];
+        $keywords = ['mandatory-product-list', 'product list', 'list'];
         $is_productList = false;
 
         // Check if the lowercase name parameter contains any of the keywords
@@ -148,4 +148,24 @@ class ServicePageController extends Controller
 
         return $mandatoryProductList ?? [];
     }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     **/
+    public function getAllServiceSectionList($service)
+    {   
+        $serviceSection = ServiceSection::Join('services', function ($query) use ($service){
+                                        $query->on('services.service_id', '=', 'service_sections.service_section_id')
+                                              ->where('services.service_id', $service);
+                            })->get();
+
+
+        return response()->json([
+                                'success' => true,
+                                'data' => $serviceSection?? []
+                                ], 200);
+    }
+
 }
