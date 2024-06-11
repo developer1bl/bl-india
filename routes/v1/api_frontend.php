@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\GalleryController;
 use App\Models\KnowledgeBaseCategory;
 use App\Helpers\DownloadBrochureHelper;
 use App\Helpers\LanguageHelper;
+use App\Http\Controllers\Api\Frontend\CareerController as FrontendCareerController;
 use App\Http\Controllers\Api\Frontend\DownloadController;
 use App\Http\Controllers\Api\Frontend\NotificationController;
 use App\Http\Controllers\Api\Frontend\ProductController;
@@ -315,6 +316,27 @@ Route::prefix('v1')->group(function () {
                                     ], 200);
         });
    });
+
+   //career list
+   Route::group(['prefix' => 'career-list', 'controller' => FrontendCareerController::class], function () {
+        //get all jobs
+        Route::get('/', 'getCurrentOpenedJobs');
+        //get single job
+        Route::get('/{career}', 'getSingleJobs');
+        //Recruitment process
+        Route::get('/job/process', 'getRecruitmentProcess');
+        //related jobs list
+        Route::get('/related-job/{job}', 'getRelatedJob');
+    });
+
+    //for unknown routes
+    Route::get('/{any}', function () {
+
+        return response()->json([
+           'success' => false,
+           'message' => '404, Page Not found, please try again',
+        ], 404);
+    })->where('any', '.*');
 
     //for unknown routes
     Route::get('/{any}', function () {

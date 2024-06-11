@@ -14,7 +14,7 @@ class CareerController extends Controller
      */
     public function index()
     {
-        $jobs = Career::whereJob_status(true)->get();
+        $jobs = Career::all();
 
         return response()->json([
             'data' => $jobs ?? [],
@@ -120,7 +120,7 @@ class CareerController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $job = Career::whereJob_status(true)->find($id);
+        $job = Career::find($id);
 
         if (!$job) {
 

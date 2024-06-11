@@ -27,4 +27,14 @@ class Career extends Model
         'experience_range' => 'string',
     ];
 
+    public function similarJobs($limit = 5)
+    {
+        return self::where('experience_range', $this->experience_range)
+                    ->where('job_status', 1)
+                    ->where('career_id', '!=', $this->career_id)
+                    ->OrWhere('job_title', '=', $this->job_title)
+                    ->limit($limit)
+                    ->get();
+    }
+
 }
