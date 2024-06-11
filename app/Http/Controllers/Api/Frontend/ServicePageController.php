@@ -155,11 +155,12 @@ class ServicePageController extends Controller
      * @return Response
      **/
     public function getAllServiceSectionList($service)
-    {   
-        $serviceSection = ServiceSection::Join('services', function ($query) use ($service){
-                                        $query->on('services.service_id', '=', 'service_sections.service_section_id')
+    {
+        $serviceSection = ServiceSection::select('service_sections.*')
+                                        ->leftJoin('services', function ($query) use ($service){
+                                            $query->on('services.service_id', '=', 'service_sections.service_section_id')
                                               ->where('services.service_id', $service);
-                            })->get();
+                                        })->get();
 
 
         return response()->json([
