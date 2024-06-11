@@ -118,20 +118,18 @@ class ServicePageController extends Controller
         }else{
             // Proceed with the original logic if no keyword is found
             $sectionData = ServiceSection::select('service_sections.*')
-                                            ->join('services', function ($query) use ($service) {
-                                                $query->on('services.service_id', '=', 'service_sections.service_section_id')
-                                                    ->where('services.service_id', '=', $service)
-                                                    ->where('services.service_status', true);
-                                            })
-                                            ->where('service_sections.service_section_name', $name)
-                                            ->where('service_sections.service_section_status', true)
+                                            ->join('services', 'services.service_id', '=', 'service_sections.service_id')
+                                            ->where('services.service_id', '=', $service)
+                                            ->where('services.service_status', 1)
+                                            ->where('service_sections.service_section_slug', $name) // Assuming $slug is the correct variable for the slug
                                             ->first();
+
         }
 
         return response()->json([
-            'success' => true,
-            'data' => $sectionData ?? []
-        ], 200);
+                                'success' => true,
+                                'data' => $sectionData ?? []
+                                ], 200);
     }
 
     /**
