@@ -19,7 +19,7 @@ class MediaHelper{
     public static function uploadImage(Request $request){
 
         $validator = Validator::make($request->all(), [
-            'media_image' => 'required|image|max:1024',
+            'media_image' => 'required|image|max:32768',
         ],[
             'media_image.max' => 'The media image field must not be greater than 1 MB.',
         ]);
