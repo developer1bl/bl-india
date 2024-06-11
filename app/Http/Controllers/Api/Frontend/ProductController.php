@@ -17,7 +17,7 @@ class ProductController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function getProductByService($id){
-        
+
     }
 
     /**
@@ -28,7 +28,7 @@ class ProductController extends Controller
      */
     public function getProductDetails($product){
 
-        $product = Product::find($product);
+        $product = Product::with('productCategories')->find($product);
 
         if ($product) {
             return response()->json(['data' => $product, 'status' => true],200);

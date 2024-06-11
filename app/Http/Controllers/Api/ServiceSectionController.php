@@ -40,7 +40,7 @@ class ServiceSectionController extends Controller
         $validator = Validator::make($request->all(), [
             'service_section_name' => ['required', 'string'],
             'service_section_slug' => ['required', 'string', Rule::unique('service_sections', 'service_section_slug')->whereNull('deleted_at')],
-            'service_section_content' =>  'required',
+            'service_section_content' =>  'nullable',
             'service_section_status' => 'nullable|boolean',
             'service_section_order' => 'nullable|integer',
             'service_id' => 'integer|exists:services,service_id'
@@ -175,7 +175,7 @@ class ServiceSectionController extends Controller
             'service_section_slug' => ['required', 'string', Rule::unique('service_sections', 'service_section_slug')
                                                                    ->ignore($id, 'service_section_id')
                                                                    ->whereNull('deleted_at')],
-            'service_section_content' => 'required',
+            'service_section_content' => 'nullable',
             'service_section_status' => 'nullable|boolean',
             'service_section_order' => 'nullable|integer',
             'service_id' => 'integer|exists:services,service_id'

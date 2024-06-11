@@ -31,7 +31,7 @@ class BlogPageController extends Controller
      */
     public function getBlogsCategory()
     {
-        $blogCategory = BlogCategory::with('blogs')->get();
+        $blogCategory = BlogCategory::withCount('blogs')->get();
 
         return response()->json([
                                 'data' => $blogCategory?? [],

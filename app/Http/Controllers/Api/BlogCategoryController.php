@@ -32,7 +32,7 @@ class BlogCategoryController extends Controller
     public function create(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'blog_category_name' => ['required', 'string', Rule::unique('blog_categories', 'blog_category_name')->whereNull('deleted_at')],
+            'blog_category_name' => ['required', 'string'],
             'blog_category_slug' => ['required', 'string', Rule::unique('blog_categories', 'blog_category_slug')->whereNull('deleted_at')],
             'blog_category_description' => 'nullable|string',
             'seo_title' => 'nullable|string',
@@ -57,7 +57,7 @@ class BlogCategoryController extends Controller
                           ->OrWhere('blog_category_slug', $request->blog_category_slug)
                           ->exists())
         {
-            throw new UserExistPreviouslyException('Oops! It appears that the chosen Blog Category Name or slug is already in use. Please select a different one and try again');
+            throw new UserExistPreviouslyException('Oops! It appears that the chosen Blog Category slug is already in use. Please select a different one and try again');
         }
 
         $result = BlogCategory::create($request->all());
@@ -161,7 +161,7 @@ class BlogCategoryController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'blog_category_name' => ['required', 'string', Rule::unique('blog_categories', 'blog_category_name')->ignore($id, 'blog_category_id')],
+            'blog_category_name' => ['required', 'string'],
             'blog_category_slug' => ['required', 'string', Rule::unique('blog_categories', 'blog_category_slug')->ignore($id, 'blog_category_id')],
             'blog_category_description' => 'nullable|string',
             'seo_title' => 'nullable|string',
