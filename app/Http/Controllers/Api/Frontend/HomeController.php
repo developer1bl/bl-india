@@ -41,7 +41,7 @@ class HomeController extends Controller
     public function getHomeSectionData(string $slug){
 
         $pageSection = StaticPage::Select('static_page_sections.*')
-                                   ->where('page_name', 'home')
+                                   ->where('page_slug', 'home')
                                    ->where('page_status', 1)
                                    ->leftJoin('static_page_sections', 'static_page_sections.static_page_id', '=', 'static_pages.static_page_id')
                                    ->where('static_page_sections.section_slug', $slug)
