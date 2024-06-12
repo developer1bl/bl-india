@@ -61,7 +61,8 @@ class HomeController extends Controller
      */
     public function getHomeServiceData(){
 
-        $homeService = Service::LatestService();
+        $homeService = Service::select('service_name', 'service_slug', 'service_img_url', 'service_img_alt', 'service_description')
+                                ->take(4)->get();
 
         return response()->json([
                                 'data' => $homeService ?? [],
