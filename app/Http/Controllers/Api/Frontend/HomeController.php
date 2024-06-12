@@ -135,7 +135,7 @@ class HomeController extends Controller
      */
     public function getHomeWorkFlowData(){
 
-        $workFlow = WorkFlow::orderBy('id')->get();
+        $workFlow = WorkFlow::orderBy('flow_order')->get();
 
         return response()->json([
                                 'data' => $workFlow ?? [],
