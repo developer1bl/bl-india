@@ -23,7 +23,7 @@ class HomeController extends Controller
 
         //check data for the home page
         $page = StaticPage::wherePage_status(1)
-                            ->Where('page_name', 'home')
+                            ->Where('page_slug', 'home')
                             ->first();
 
         return response()->json([

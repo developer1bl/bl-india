@@ -21,7 +21,7 @@ class AboutPageController extends Controller
 
         //check data for the About page
         $page = StaticPage::wherePage_status(1)
-                            ->Where('page_name', 'about')
+                            ->Where('page_slug', 'about')
                             ->first();
 
         return response()->json([
