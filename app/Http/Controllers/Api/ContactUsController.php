@@ -112,8 +112,8 @@ class ContactUsController extends Controller
             'page_description' => 'required|string',
             'address' => 'required|string|max:255',
             'company_email' => 'required|email|max:255',
-            'mobile_number' => ['required', 'json'],
-            'office_number' => 'required|json',
+            'mobile_numbers' => ['required', 'json'],
+            'office_numbers' => 'required|json',
             'feedback_person' => 'required|json',
         ]);
 
@@ -131,9 +131,9 @@ class ContactUsController extends Controller
             'page_description' => $request->page_description,
             'company_address' => $request->address,
             'company_email' => $request->company_email,
-            'mobile_number' => json_encode($request->mobile_number),
-            'office_number' => json_encode($request->office_number),
-            'feedback_person' => json_encode($request->feedback_person),
+            'mobile_number' => $request->mobile_numbers,
+            'office_number' => $request->office_numbers,
+            'feedback_person' => $request->feedback_person,
         ];
 
         $result = $contact->update($data);
