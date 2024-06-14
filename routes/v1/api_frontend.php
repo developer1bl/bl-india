@@ -26,6 +26,7 @@ use App\Models\Certificate;
 use App\Models\ContactUs;
 use App\Models\QuickLink;
 use App\Models\Service;
+use App\Models\SiteCertificate;
 use App\Models\SocialMedia;
 use Illuminate\Http\Request;
 
@@ -315,6 +316,19 @@ Route::prefix('v1')->group(function () {
                                     'success' => true
                                     ], 200);
         });
+
+        //Site certificates
+        Route::get('/site-certificates', function(){
+
+            $certificates = SiteCertificate::all();
+
+            return response()->json([
+                                    'data' => $certificates?? [],
+                                    'success' => true
+                                    ], 200);
+        });
+
+        //Site certificates
    });
 
    //career list

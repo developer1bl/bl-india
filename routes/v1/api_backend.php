@@ -41,6 +41,7 @@ use App\Http\Controllers\Api\KnowledgebaseCategoryController;
 use App\Http\Controllers\Api\KnowledgeBaseController;
 use App\Http\Controllers\Api\NotificationCategoryController;
 use App\Http\Controllers\Api\QuickLinkController;
+use App\Http\Controllers\Api\SiteCertificateController;
 use App\Http\Controllers\Api\SocialMediaController;
 
 /*
@@ -515,6 +516,17 @@ Route::prefix('v1')->group(function () {
                     Route::post('/create', 'create');
                     Route::post('/{certificate}', 'update');
                     Route::delete('/{certificate}', 'destroy');
+                });
+            });
+
+            //site certificate routes
+            Route::prefix('/site-certificate')->group(function () {
+                Route::controller(SiteCertificateController::class)->group(function () {
+                    Route::get('/', 'index');
+                    Route::get('/{siteCertificate}', 'show');
+                    Route::post('/create', 'create');
+                    Route::post('/{siteCertificate}', 'update');
+                    Route::delete('/{siteCertificate}', 'destroy');
                 });
             });
 

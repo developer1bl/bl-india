@@ -6,62 +6,99 @@ use App\Http\Controllers\Controller;
 use App\Models\SiteCertificate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
+use App\Helpers\MediaHelper;
 
 class SiteCertificateController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @param Request $request
-     * @return Response
+     * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
         $siteCertificates = SiteCertificate::all();
 
         return response()->json([
-            'data' => $siteCertificates ?? [],
-            'success' => true
-        ], 200);
+                                'data' => $siteCertificates ?? [],
+                                'success' => true
+                                ], 200);
     }
 
     /**
      * Show the form for creating a new resource.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        // No implementation needed for API controller
+        $validator = Validator::make($request->all(),[
+            'site_certificate_name' => ['required', 'string', 'max:255'],
+            'site_certificate_slug' => ['required', 'string', 'max:255', Rule::unique('site_certificates', 'site_certificate_slug')->whereNull('deleted_at')],
+            'site_certificate_img_id' => ['required', 'integer', 'exists:media,media_id'],
+        ]);
+
+        // Check for validation failure
+        if ($validator->fails()) {
+
+            return response()->json([
+                                    'success' => false,
+                                    'message' => $validator->errors()
+                                    ], 403);
+        }
+
+        $siteCertificateImagePath = MediaHelper::getMediaPath($request->site_certificate_img_id);
+
+        $data = [
+            'site_certificate_name' => $request->site_certificate_name,
+            'site_certificate_slug' => $request->site_certificate_slug,
+            'site_certificate_url' => $siteCertificateImagePath,
+            'site_certificate_status' => true,
+        ];
+
+        $siteCertificate = SiteCertificate::create($data);
+
+        if ($siteCertificate) {
+
+            return response()->json([
+                                    'success' => true,
+                                    'message' => 'Site Certificate Created Successfully',
+                                    ], 200);
+        } else {
+
+            return response()->json([
+                                    'success' => false,
+                                    'message' => 'Something went wrong'
+                                    ], 403);
+        }
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
+     * @param string $name
      * @return Response
      */
-    public function store(Request $request)
+    public function restore(string $name)
     {
-        $validator = Validator::make($request->all(), [
-            'site_certificate_name' => 'required|string|max:255',
-            'site_certificate_slug' => 'required|string|max:255|unique:site_certificates',
-            'site_certificate_url' => 'required|url',
-            'site_certificate_status' => 'required|boolean',
-        ]);
+        $siteCertificate = SiteCertificate::withTrashed()->where('site_certificate_name', $name)->first();
 
-        if ($validator->fails()) {
+        if ($siteCertificate) {
+            $siteCertificate->restore();
+
             return response()->json([
-                'success' => false,
-                'message' => $validator->messages()
-            ], 403);
+                                    'success' => true,
+                                    'message' => 'Site Certificate Restored Successfully',
+                                    ], 200);
+        } else {
+
+            return response()->json([
+                                    'success' => false,
+                                    'message' => 'Something went wrong'
+                                    ], 403);
         }
-
-        $siteCertificate = SiteCertificate::create($request->all());
-
-        return response()->json([
-            'success' => true,
-            'data' => $siteCertificate,
-            'message' => 'Site Certificate created successfully'
-        ], 201);
     }
 
     /**
@@ -75,17 +112,19 @@ class SiteCertificateController extends Controller
         $siteCertificate = SiteCertificate::find($id);
 
         if ($siteCertificate) {
+
             return response()->json([
-                'data' => $siteCertificate,
-                'success' => true,
-                'message' => '',
-            ], 200);
+                                    'success' => true,
+                                    'data' => $siteCertificate,
+                                    'message' => ''
+                                    ], 200);
         } else {
+
             return response()->json([
-                'data' => [],
-                'success' => false,
-                'message' => 'Site Certificate not found',
-            ], 404);
+                                    'success' => false,
+                                    'data' => [],
+                                    'message' => 'Site Certificate not found.'
+                                    ], 404);
         }
     }
 
@@ -100,65 +139,79 @@ class SiteCertificateController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
+     * @param \Illuminate\Http\Request $request
      * @param string $id
-     * @return Response
+     * @return \Illuminate\Http\Response
      */
     public function update(Request $request, string $id)
     {
-        $validator = Validator::make($request->all(), [
-            'site_certificate_name' => 'required|string|max:255',
-            'site_certificate_slug' => 'required|string|max:255|unique:site_certificates,site_certificate_slug,' . $id,
-            'site_certificate_url' => 'required|url',
-            'site_certificate_status' => 'required|boolean',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => $validator->messages()
-            ], 403);
-        }
-
         $siteCertificate = SiteCertificate::find($id);
 
-        if ($siteCertificate) {
-            $siteCertificate->update($request->all());
+        if (!$siteCertificate) {
 
             return response()->json([
-                'success' => true,
-                'message' => 'Site Certificate updated successfully'
-            ], 200);
-        } else {
-            return response()->json([
-                'success' => false,
-                'message' => 'Site Certificate not found'
-            ], 404);
+                                    'success' => false,
+                                    'message' => 'Site Certificate not found.'
+                                    ], 404);
         }
+
+        $validator = Validator::make($request->all(),[
+            'site_certificate_name' => ['required', 'string', 'max:255'],
+            'site_certificate_slug' => ['required', 'string', 'max:255', Rule::unique('site_certificates', 'site_certificate_slug')
+                                                                                ->ignore($id, 'id')
+                                                                                ->whereNull('deleted_at')],
+            'site_certificate_img_id' => ['required', 'integer', 'exists:media,media_id'],
+            'site_certificate_status' => ['required', 'boolean'],
+        ]);
+
+        // Check for validation failure
+        if ($validator->fails()) {
+
+            return response()->json([
+                                    'success' => false,
+                                    'message' => $validator->errors()
+                                    ], 403);
+        }
+
+        $siteCertificateImagePath = MediaHelper::getMediaPath($request->site_certificate_img_id);
+
+        $data = [
+            'site_certificate_name' => $request->site_certificate_name,
+            'site_certificate_slug' => $request->site_certificate_slug,
+            'site_certificate_url' => $siteCertificateImagePath,
+            'site_certificate_status' => $request->site_certificate_status,
+        ];
+
+        $siteCertificate->update($data);
+
+        return response()->json([
+                                'success' => true,
+                                'message' => 'Site Certificate Updated Successfully',
+                                ], 200);
     }
 
     /**
      * Remove the specified resource from storage.
      *
      * @param string $id
-     * @return Response
+     * @return \Illuminate\Http\Response
      */
     public function destroy(string $id)
     {
         $siteCertificate = SiteCertificate::find($id);
 
-        if ($siteCertificate) {
-            $siteCertificate->delete();
-
+        if (!$siteCertificate) {
             return response()->json([
-                'success' => true,
-                'message' => 'Site Certificate deleted successfully'
-            ], 202);
-        } else {
-            return response()->json([
-                'success' => false,
-                'message' => 'Site Certificate not found'
-            ], 404);
+                                    'success' => false,
+                                    'message' => 'Site Certificate not found.'
+                                    ], 404);
         }
+
+        $siteCertificate->delete();
+
+        return response()->json([
+                                'success' => true,
+                                'message' => 'Site Certificate Deleted Successfully',
+                                ], 200);
     }
 }
